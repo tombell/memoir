@@ -1,0 +1,9 @@
+-- UP
+
+CREATE TABLE tracks (
+  id uuid PRIMARY KEY
+);
+
+-- DOWN
+
+DROP TABLE IF EXISTS tracks CASCADE;
