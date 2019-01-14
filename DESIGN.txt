@@ -1,11 +1,11 @@
 tracks
 ------------------------
 id              uuid
-artist          text
-title           text
-genre           text
+artist          char(256)
+name            char(256)
+genre           char(128)
 bpm             number
-key             text
+key             char(8)
 
 tracklists
 ------------------------
