@@ -1,0 +1,19 @@
+tracks
+------------------------
+id              uuid
+artist          text
+title           text
+genre           text
+bpm             number
+key             text
+
+tracklists
+------------------------
+id              uuid
+date            date
+
+tracklist_tracks
+------------------------
+id              uuid
+track_id        uuid
+tracklist_id    uuid
