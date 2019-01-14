@@ -1,7 +1,7 @@
 -- UP
 
 CREATE TABLE tracks (
-  id     uuid PRIMARY KEY,
+  id     UUID PRIMARY KEY,
   artist VARCHAR (256) NOT NULL,
   name   VARCHAR (256) NOT NULL,
   genre  VARCHAR (128) NOT NULL,
