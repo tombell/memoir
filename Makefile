@@ -25,6 +25,6 @@ test:
 	go test ${MODFLAGS} ${TESTFLAGS} ./...
 
 create-migration:
-	touch 'migrations/$(shell date "+%Y%m%d%H%M%S")_$(NAME).sql'
+	echo "-- UP\n\n-- DOWN" > 'migrations/$(shell date "+%Y%m%d%H%M%S")_$(NAME).sql'
 
 .PHONY: all clean dev memoir-dev memoir-import-dev memoir-migrate-dev test create-migration
