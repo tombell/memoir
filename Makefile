@@ -24,4 +24,7 @@ memoir-migrate-dev:
 test:
 	go test ${MODFLAGS} ${TESTFLAGS} ./...
 
-.PHONY: all clean dev memoir-dev memoir-import-dev memoir-migrate-dev test
+create-migration:
+	touch 'migrations/$(shell date "+%Y%m%d%H%M%S")_$(NAME).sql'
+
+.PHONY: all clean dev memoir-dev memoir-import-dev memoir-migrate-dev test create-migration
