@@ -1,7 +1,8 @@
 -- UP
 
 CREATE TABLE tracklists (
-  id uuid PRIMARY KEY
+  id      uuid PRIMARY KEY,
+  created TIMESTAMP NOT NULL
 );
 
 -- DOWN
