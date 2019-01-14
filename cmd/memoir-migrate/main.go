@@ -73,20 +73,20 @@ func main() {
 	case "rollback":
 		rollbackCmd.Parse(os.Args[2:])
 	default:
-		fmt.Printf("err: %q is not a valid command.\n", os.Args[1])
+		fmt.Fprintf(os.Stderr, "err: %q is not a valid command\n", os.Args[1])
 		os.Exit(2)
 	}
 
 	if applyCmd.Parsed() {
 		if err := trek.Apply("postgres", *applyDsn, "migrations"); err != nil {
-			fmt.Println(err)
+			fmt.Fprintf(os.Stderr, "err: %v\n", err)
 			os.Exit(1)
 		}
 	}
 
 	if rollbackCmd.Parsed() {
 		if err := trek.Rollback("postgres", *rollbackDsn, "migrations"); err != nil {
-			fmt.Println(err)
+			fmt.Fprintf(os.Stderr, "err: %v\n", err)
 			os.Exit(1)
 		}
 	}
