@@ -7,6 +7,10 @@ import (
 )
 
 const helpText = `usage: memoir-import [args]
+
+Special options:
+  --help      show this message, then exit
+  --version   show the version number, then exit
 `
 
 var (
