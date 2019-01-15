@@ -22,4 +22,15 @@ const (
 		FROM tracks
 		WHERE id = $1
 		LIMIT 1`
+
+	sqlGetTracksByGenre = `
+		SELECT
+			id,
+			artist,
+			name,
+			genre,
+			bpm,
+			key
+		FROM tracks
+		WHERE genre = $1`
 )
