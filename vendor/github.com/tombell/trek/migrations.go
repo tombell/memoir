@@ -3,6 +3,7 @@ package trek
 import (
 	"database/sql"
 	"io/ioutil"
+	"log"
 	"path"
 	"sort"
 	"strings"
@@ -16,9 +17,9 @@ func (m Migrations) Len() int           { return len(m) }
 func (m Migrations) Less(i, j int) bool { return m[i].Version.Before(m[j].Version) }
 func (m Migrations) Swap(i, j int)      { m[i], m[j] = m[j], m[i] }
 
-// LoadMigrationsFromPath returns all the loaded migrations from the given
-// directory path.
-func LoadMigrationsFromPath(migrationsPath string) (Migrations, error) {
+// LoadMigrations returns all the loaded migrations from the given directory
+// path.
+func LoadMigrations(migrationsPath string) (Migrations, error) {
 	files, err := ioutil.ReadDir(migrationsPath)
 	if err != nil {
 		return nil, err
@@ -48,8 +49,10 @@ func LoadMigrationsFromPath(migrationsPath string) (Migrations, error) {
 
 // Apply applies all the migrations that have not already been applied to the
 // given database.
-func (m Migrations) Apply(driver Driver, db *sql.DB) error {
+func (m Migrations) Apply(logger *log.Logger, driver Driver, db *sql.DB) error {
 	sort.Sort(m)
+
+	logger.Println("applying migrations...")
 
 	for _, migration := range m {
 		hasBeenMigrated, err := migration.HasBeenMigrated(driver, db)
@@ -58,6 +61,8 @@ func (m Migrations) Apply(driver Driver, db *sql.DB) error {
 		}
 
 		if !hasBeenMigrated {
+			logger.Printf("applying %q..\n", migration.Name)
+
 			if err := migration.Apply(driver, db); err != nil {
 				return err
 			}
@@ -69,8 +74,10 @@ func (m Migrations) Apply(driver Driver, db *sql.DB) error {
 
 // Rollback rolls back all the migrations that have been applied to the given
 // database.
-func (m Migrations) Rollback(driver Driver, db *sql.DB) error {
+func (m Migrations) Rollback(logger *log.Logger, driver Driver, db *sql.DB) error {
 	sort.Reverse(m)
+
+	logger.Println("rolling back migrations...")
 
 	for _, migration := range m {
 		hasBeenMigrated, err := migration.HasBeenMigrated(driver, db)
@@ -79,6 +86,8 @@ func (m Migrations) Rollback(driver Driver, db *sql.DB) error {
 		}
 
 		if hasBeenMigrated {
+			logger.Printf("rolling back %q..\n", migration.Name)
+
 			if err := migration.Rollback(driver, db); err != nil {
 				return err
 			}

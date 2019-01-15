@@ -1,5 +1,5 @@
 # github.com/lib/pq v1.0.0
 github.com/lib/pq
 github.com/lib/pq/oid
-# github.com/tombell/trek v0.0.1
+# github.com/tombell/trek v0.0.2
 github.com/tombell/trek

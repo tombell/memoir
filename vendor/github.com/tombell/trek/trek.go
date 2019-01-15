@@ -3,11 +3,12 @@ package trek
 import (
 	"database/sql"
 	"fmt"
+	"log"
 )
 
 // Apply applies the migrations in the given path, to the database using the
 // given driver.
-func Apply(driverName string, dsn string, migrationsPath string) error {
+func Apply(logger *log.Logger, driverName, dsn, migrationsPath string) error {
 	driver, err := getDriver(driverName)
 	if err != nil {
 		return err
@@ -19,21 +20,25 @@ func Apply(driverName string, dsn string, migrationsPath string) error {
 	}
 	defer db.Close()
 
+	if err := db.Ping(); err != nil {
+		return err
+	}
+
 	if err := driver.CreateVersionsTable(db); err != nil {
 		return err
 	}
 
-	migrations, err := LoadMigrationsFromPath(migrationsPath)
+	migrations, err := LoadMigrations(migrationsPath)
 	if err != nil {
 		return err
 	}
 
-	return migrations.Apply(driver, db)
+	return migrations.Apply(logger, driver, db)
 }
 
 // Rollback rolls back the migrations in the given path, to the database using
 // the given driver.
-func Rollback(driverName string, dsn string, migrationsPath string) error {
+func Rollback(logger *log.Logger, driverName, dsn, migrationsPath string) error {
 	driver, err := getDriver(driverName)
 	if err != nil {
 		return err
@@ -45,16 +50,20 @@ func Rollback(driverName string, dsn string, migrationsPath string) error {
 	}
 	defer db.Close()
 
+	if err := db.Ping(); err != nil {
+		return err
+	}
+
 	if err := driver.CreateVersionsTable(db); err != nil {
 		return err
 	}
 
-	migrations, err := LoadMigrationsFromPath(migrationsPath)
+	migrations, err := LoadMigrations(migrationsPath)
 	if err != nil {
 		return err
 	}
 
-	return migrations.Rollback(driver, db)
+	return migrations.Rollback(logger, driver, db)
 }
 
 func getDriver(driver string) (Driver, error) {
