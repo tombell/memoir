@@ -3,6 +3,7 @@ package main
 import (
 	"flag"
 	"fmt"
+	"log"
 	"os"
 
 	_ "github.com/lib/pq"
@@ -59,6 +60,8 @@ func main() {
 		flag.Usage()
 	}
 
+	logger := log.New(os.Stderr, "[memoir-migrate] ", log.LstdFlags)
+
 	applyCmd := flag.NewFlagSet("apply", flag.ExitOnError)
 	applyCmd.Usage = usage(applyHelpText)
 	applyDsn := applyCmd.String("db", "", "")
@@ -78,14 +81,14 @@ func main() {
 	}
 
 	if applyCmd.Parsed() {
-		if err := trek.Apply("postgres", *applyDsn, "migrations"); err != nil {
+		if err := trek.Apply(logger, "postgres", *applyDsn, "migrations"); err != nil {
 			fmt.Fprintf(os.Stderr, "err: %v\n", err)
 			os.Exit(1)
 		}
 	}
 
 	if rollbackCmd.Parsed() {
-		if err := trek.Rollback("postgres", *rollbackDsn, "migrations"); err != nil {
+		if err := trek.Rollback(logger, "postgres", *rollbackDsn, "migrations"); err != nil {
 			fmt.Fprintf(os.Stderr, "err: %v\n", err)
 			os.Exit(1)
 		}
