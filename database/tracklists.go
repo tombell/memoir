@@ -1,6 +1,9 @@
 package database
 
+import "time"
+
 // TracklistRecord ...
 type TracklistRecord struct {
-	ID string
+	ID      string
+	Created time.Time
 }
