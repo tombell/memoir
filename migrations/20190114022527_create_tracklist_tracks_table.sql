@@ -6,6 +6,12 @@ CREATE TABLE tracklist_tracks (
   track_id     UUID REFERENCES tracks (id)
 );
 
+CREATE INDEX tracklist_tracks_tracklist_id_idx ON tracklist_tracks (tracklist_id);
+CREATE INDEX tracklist_tracks_track_id_idx ON tracklist_tracks (track_id);
+
 -- DOWN
+
+DROP INDEX IF EXISTS tracklist_tracks_track_id_idx CASCADE;
+DROP INDEX IF EXISTS tracklist_tracks_tracklist_id_idx CASCADE;
 
 DROP TABLE IF EXISTS tracklist_tracks CASCADE;
