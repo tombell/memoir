@@ -1,12 +1,14 @@
 -- UP
 
 CREATE TABLE tracks (
-  id     UUID PRIMARY KEY,
-  artist VARCHAR (256) NOT NULL,
-  name   VARCHAR (256) NOT NULL,
-  genre  VARCHAR (128) NOT NULL,
-  bpm    INTEGER NOT NULL,
-  key    VARCHAR (8) NOT NULL
+  id      UUID PRIMARY KEY,
+  artist  VARCHAR (256) NOT NULL,
+  name    VARCHAR (256) NOT NULL,
+  genre   VARCHAR (128) NOT NULL,
+  bpm     INTEGER NOT NULL,
+  key     VARCHAR (8) NOT NULL,
+  created TIMESTAMP NOT NULL,
+  updated TIMESTAMP NOT NULL
 );
 
 CREATE INDEX tracks_artist_idx ON tracks ((lower(artist)));
