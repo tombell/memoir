@@ -47,3 +47,37 @@ func (db *Database) GetTrack(id string) (*TrackRecord, error) {
 		return &track, nil
 	}
 }
+
+// GetTracksByGenre ...
+func (db *Database) GetTracksByGenre(genre string) ([]*TrackRecord, error) {
+	rows, err := db.conn.Query(sqlGetTracksByGenre, genre)
+	if err != nil {
+		return nil, err
+	}
+
+	var tracks []*TrackRecord
+
+	for rows.Next() {
+		var track TrackRecord
+
+		err := rows.Scan(
+			&track.ID,
+			&track.Artist,
+			&track.Name,
+			&track.Genre,
+			&track.BPM,
+			&track.Key)
+
+		if err != nil {
+			return nil, err
+		}
+
+		tracks = append(tracks, &track)
+	}
+
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return tracks, nil
+}
