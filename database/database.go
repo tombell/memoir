@@ -8,9 +8,9 @@ type Database struct {
 }
 
 // Close ...
-func (d *Database) Close() error {
-	if d.conn != nil {
-		return d.conn.Close()
+func (db *Database) Close() error {
+	if db.conn != nil {
+		return db.conn.Close()
 	}
 
 	return nil
