@@ -8,8 +8,10 @@ const (
 			name,
 			genre,
 			bpm,
-			key
-		) VALUES ($1, $2, $3, $4, $5, $6);`
+			key,
+			created,
+			updated,
+		) VALUES ($1, $2, $3, $4, $5, $6, $7, $8);`
 
 	sqlGetTrackByID = `
 		SELECT
@@ -19,6 +21,8 @@ const (
 			genre,
 			bpm,
 			key
+			created,
+			updated,
 		FROM tracks
 		WHERE id = $1
 		LIMIT 1`
@@ -30,7 +34,9 @@ const (
 			name,
 			genre,
 			bpm,
-			key
+			key,
+			created,
+			updated,
 		FROM tracks
 		WHERE genre = $1`
 )

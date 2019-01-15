@@ -1,15 +1,20 @@
 package database
 
-import "database/sql"
+import (
+	"database/sql"
+	"time"
+)
 
 // TrackRecord  represents a single track row in the database.
 type TrackRecord struct {
-	ID     string
-	Artist string
-	Name   string
-	Genre  string
-	BPM    int
-	Key    string
+	ID      string
+	Artist  string
+	Name    string
+	Genre   string
+	BPM     int
+	Key     string
+	Created time.Time
+	Updated time.Time
 }
 
 // InsertTrack inserts a new track into the database.
@@ -20,7 +25,9 @@ func (db *Database) InsertTrack(tx *sql.Tx, track *TrackRecord) error {
 		track.Name,
 		track.Genre,
 		track.BPM,
-		track.Key)
+		track.Key,
+		track.Created,
+		track.Updated)
 
 	return err
 }
@@ -36,7 +43,9 @@ func (db *Database) GetTrack(id string) (*TrackRecord, error) {
 		&track.Name,
 		&track.Genre,
 		&track.BPM,
-		&track.Key)
+		&track.Key,
+		&track.Created,
+		&track.Updated)
 
 	switch {
 	case err == sql.ErrNoRows:
@@ -66,7 +75,9 @@ func (db *Database) GetTracksByGenre(genre string) ([]*TrackRecord, error) {
 			&track.Name,
 			&track.Genre,
 			&track.BPM,
-			&track.Key)
+			&track.Key,
+			&track.Created,
+			&track.Updated)
 
 		if err != nil {
 			return nil, err
