@@ -6,4 +6,5 @@ import "time"
 type TracklistRecord struct {
 	ID      string
 	Created time.Time
+	Updated time.Time
 }
