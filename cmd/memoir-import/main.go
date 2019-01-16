@@ -30,4 +30,9 @@ func main() {
 		fmt.Fprintf(os.Stdout, "memoir-import %s (%s)\n", Version, Commit)
 		os.Exit(0)
 	}
+
+	args := flag.Args()
+	if len(args) != 1 {
+		flag.Usage()
+	}
 }
