@@ -60,7 +60,7 @@ func main() {
 		flag.Usage()
 	}
 
-	logger := log.New(os.Stderr, "[memoir-migrate] ", log.LUTC)
+	logger := log.New(os.Stderr, "[memoir-migrate] ", log.Ltime)
 
 	applyCmd := flag.NewFlagSet("apply", flag.ExitOnError)
 	applyCmd.Usage = usage(applyHelpText)
@@ -72,25 +72,30 @@ func main() {
 
 	switch os.Args[1] {
 	case "apply":
+		if *applyDsn == "" {
+			applyCmd.Usage()
+		}
+
 		applyCmd.Parse(os.Args[2:])
 	case "rollback":
+		if *rollbackDsn == "" {
+			rollbackCmd.Usage()
+		}
+
 		rollbackCmd.Parse(os.Args[2:])
 	default:
-		fmt.Fprintf(os.Stderr, "err: %q is not a valid command\n", os.Args[1])
-		os.Exit(2)
+		logger.Fatalf("err: %q is not a valid command\n", os.Args[1])
 	}
 
 	if applyCmd.Parsed() {
 		if err := trek.Apply(logger, "postgres", *applyDsn, "migrations"); err != nil {
-			fmt.Fprintf(os.Stderr, "err: %v\n", err)
-			os.Exit(1)
+			logger.Fatalf("err: %v\n", err)
 		}
 	}
 
 	if rollbackCmd.Parsed() {
 		if err := trek.Rollback(logger, "postgres", *rollbackDsn, "migrations"); err != nil {
-			fmt.Fprintf(os.Stderr, "err: %v\n", err)
-			os.Exit(1)
+			logger.Fatalf("err: %v\n", err)
 		}
 	}
 }

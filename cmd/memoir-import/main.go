@@ -3,6 +3,7 @@ package main
 import (
 	"flag"
 	"fmt"
+	"log"
 	"os"
 	"time"
 
@@ -29,13 +30,6 @@ func usage() {
 	os.Exit(2)
 }
 
-func exitIfError(err error) {
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "err: %v\n", err)
-		os.Exit(1)
-	}
-}
-
 func main() {
 	flag.Usage = usage
 	flag.Parse()
@@ -50,11 +44,17 @@ func main() {
 		flag.Usage()
 	}
 
+	logger := log.New(os.Stderr, "[memoir-import] ", log.Ltime)
+
 	records, err := parser.ParseSeratoExport(args[0])
-	exitIfError(err)
+	if err != nil {
+		logger.Fatalf("err: %v\n", err)
+	}
 
 	t, err := time.Parse(dateTimeFormat, records[0][0])
-	exitIfError(err)
+	if err != nil {
+		logger.Fatalf("err: %v\n", err)
+	}
 
-	fmt.Fprintf(os.Stdout, "tracklist from %v\n\n", t.Format(dateTimeFormat))
+	logger.Printf("importing tracklist from %v...\n", t.Format(dateTimeFormat))
 }
