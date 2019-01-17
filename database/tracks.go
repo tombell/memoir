@@ -5,7 +5,7 @@ import (
 	"time"
 )
 
-// TrackRecord  represents a single track row in the database.
+// TrackRecord represents a single track row in the database.
 type TrackRecord struct {
 	ID      string
 	Artist  string
@@ -57,8 +57,34 @@ func (db *Database) GetTrack(id string) (*TrackRecord, error) {
 	}
 }
 
-// GetTracksByGenre ...
-func (db *Database) GetTracksByGenre(genre string) ([]*TrackRecord, error) {
+// FindTrack finds a track with the given artist and name in the database.
+// Returns nil if no matching track is found.
+func (db *Database) FindTrack(artist, name string) (*TrackRecord, error) {
+	var track TrackRecord
+
+	err := db.conn.QueryRow(sqlGetTrackByArtistAndName, artist, name).Scan(
+		&track.ID,
+		&track.Artist,
+		&track.Name,
+		&track.Genre,
+		&track.BPM,
+		&track.Key,
+		&track.Created,
+		&track.Updated)
+
+	switch {
+	case err == sql.ErrNoRows:
+		return nil, nil
+	case err != nil:
+		return nil, err
+	default:
+		return &track, nil
+	}
+}
+
+// FindTracksByGenre finds all tracks with the given genre in the database.
+// Returns an empty slice if no matching tracks are found.
+func (db *Database) FindTracksByGenre(genre string) ([]*TrackRecord, error) {
 	rows, err := db.conn.Query(sqlGetTracksByGenre, genre)
 	if err != nil {
 		return nil, err
