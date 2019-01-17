@@ -17,3 +17,12 @@ tracklist_tracks
 id              uuid
 track_id        uuid
 tracklist_id    uuid
+
+## IMPORT
+
+create tracklist
+
+check if track exists
+  if not create track
+
+add tracklist_tracks entry for tracklist + track
