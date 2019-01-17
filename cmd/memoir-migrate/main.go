@@ -76,13 +76,17 @@ func main() {
 			applyCmd.Usage()
 		}
 
-		applyCmd.Parse(os.Args[2:])
+		if err := applyCmd.Parse(os.Args[2:]); err != nil {
+			logger.Fatalf("err: %v\n", err)
+		}
 	case "rollback":
 		if *rollbackDsn == "" {
 			rollbackCmd.Usage()
 		}
 
-		rollbackCmd.Parse(os.Args[2:])
+		if err := rollbackCmd.Parse(os.Args[2:]); err != nil {
+			logger.Fatalf("err: %v\n", err)
+		}
 	default:
 		logger.Fatalf("err: %q is not a valid command\n", os.Args[1])
 	}
