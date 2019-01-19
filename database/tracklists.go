@@ -10,6 +10,7 @@ import (
 // TracklistRecord represents a single tracklist row in the database.
 type TracklistRecord struct {
 	ID      string
+	Name    string
 	Date    time.Time
 	Created time.Time
 	Updated time.Time
@@ -19,6 +20,7 @@ type TracklistRecord struct {
 func (db *Database) InsertTracklist(tx *sql.Tx, tracklist *TracklistRecord) error {
 	_, err := tx.Exec(sqlInsertTracklist,
 		tracklist.ID,
+		tracklist.Name,
 		tracklist.Date,
 		tracklist.Created,
 		tracklist.Updated)
@@ -45,6 +47,8 @@ func (db *Database) GetTracklist(id string) (*TracklistRecord, error) {
 
 	err := db.conn.QueryRow(sqlGetTracklistByID, id).Scan(
 		&tracklist.ID,
+		&tracklist.Name,
+		&tracklist.Date,
 		&tracklist.Created,
 		&tracklist.Updated)
 
