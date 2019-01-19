@@ -16,6 +16,11 @@ func (db *Database) Close() error {
 	return nil
 }
 
+// Begin ...
+func (db *Database) Begin() (*sql.Tx, error) {
+	return db.conn.Begin()
+}
+
 // Open ...
 func Open(dsn string) (*Database, error) {
 	conn, err := sql.Open("postgres", dsn)
