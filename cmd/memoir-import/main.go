@@ -7,7 +7,9 @@ import (
 	"os"
 	"time"
 
+	"github.com/tombell/memoir/database"
 	"github.com/tombell/memoir/parser"
+	"github.com/tombell/memoir/services"
 )
 
 const helpText = `usage: memoir-import [args]
@@ -23,6 +25,7 @@ const (
 
 var (
 	version = flag.Bool("version", false, "")
+	dsn     = flag.String("db", "", "")
 )
 
 func usage() {
@@ -57,4 +60,20 @@ func main() {
 	}
 
 	logger.Printf("importing tracklist from %v...\n", t.Format(dateTimeFormat))
+
+	db, err := database.Open(*dsn)
+	if err != nil {
+		logger.Fatalf("err: %v\n", err)
+	}
+
+	svc := services.Services{
+		Logger: logger,
+		DB:     db,
+	}
+
+	if err := svc.ImportTracklist(t, records[2:]); err != nil {
+		logger.Fatalf("err: %v\n", err)
+	}
+
+	logger.Println("finished importing")
 }
