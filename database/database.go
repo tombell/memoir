@@ -1,6 +1,11 @@
 package database
 
-import "database/sql"
+import (
+	"database/sql"
+
+	// Import the Postgres driver for database/sql.
+	_ "github.com/lib/pq"
+)
 
 // Database ...
 type Database struct {
