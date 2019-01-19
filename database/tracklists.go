@@ -3,11 +3,14 @@ package database
 import (
 	"database/sql"
 	"time"
+
+	"github.com/gofrs/uuid"
 )
 
 // TracklistRecord represents a single tracklist row in the database.
 type TracklistRecord struct {
 	ID      string
+	Date    time.Time
 	Created time.Time
 	Updated time.Time
 }
@@ -18,6 +21,18 @@ func (db *Database) InsertTracklist(tx *sql.Tx, tracklist *TracklistRecord) erro
 		tracklist.ID,
 		tracklist.Created,
 		tracklist.Updated)
+
+	return err
+}
+
+// InsertTracklistToTrack ...
+func (db *Database) InsertTracklistToTrack(tx *sql.Tx, tracklistID string, trackID string) error {
+	id, _ := uuid.NewV4()
+
+	_, err := tx.Exec(sqlInsertTracklistTrack,
+		id.String(),
+		tracklistID,
+		trackID)
 
 	return err
 }

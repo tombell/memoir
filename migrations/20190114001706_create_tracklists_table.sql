@@ -2,6 +2,7 @@
 
 CREATE TABLE tracklists (
   id      UUID PRIMARY KEY,
+  date    TIMESTAMP NOT NULL,
   created TIMESTAMP NOT NULL,
   updated TIMESTAMP NOT NULL
 );
