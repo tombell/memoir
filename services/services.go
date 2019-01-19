@@ -1,8 +1,13 @@
 package services
 
-import "github.com/tombell/memoir/database"
+import (
+	"log"
+
+	"github.com/tombell/memoir/database"
+)
 
 // Services ...
 type Services struct {
-	DB *database.Database
+	Logger *log.Logger
+	DB     *database.Database
 }
