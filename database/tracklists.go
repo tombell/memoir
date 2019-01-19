@@ -19,6 +19,7 @@ type TracklistRecord struct {
 func (db *Database) InsertTracklist(tx *sql.Tx, tracklist *TracklistRecord) error {
 	_, err := tx.Exec(sqlInsertTracklist,
 		tracklist.ID,
+		tracklist.Date,
 		tracklist.Created,
 		tracklist.Updated)
 
