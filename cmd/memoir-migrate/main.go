@@ -6,6 +6,9 @@ import (
 	"log"
 	"os"
 
+	// Import the Postgres driver for database/sql.
+	_ "github.com/lib/pq"
+
 	"github.com/tombell/trek"
 )
 
