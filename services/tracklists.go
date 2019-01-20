@@ -55,7 +55,7 @@ func (s *Services) ImportTracklist(name string, date time.Time, tracks [][]strin
 		return nil, err
 	}
 
-	s.Logger.Println("tracklist doesn't exist, creating tracklist...")
+	s.Logger.Println("tracklist doesn't exist, creating...")
 
 	if err := s.DB.InsertTracklist(tx, tracklist); err != nil {
 		tx.Rollback()
@@ -93,7 +93,7 @@ func (s *Services) ImportTracklist(name string, date time.Time, tracks [][]strin
 			Updated: time.Now().UTC(),
 		}
 
-		s.Logger.Printf("track doesn't exist, creating track...\n")
+		s.Logger.Printf("track doesn't exist, creating...\n")
 
 		if err := s.DB.InsertTrack(tx, track); err != nil {
 			tx.Rollback()
