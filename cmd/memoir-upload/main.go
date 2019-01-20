@@ -7,6 +7,9 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"strings"
+
+	slugify "github.com/metal3d/go-slugify"
 
 	"github.com/tombell/memoir/database"
 	"github.com/tombell/memoir/services"
@@ -101,13 +104,17 @@ func main() {
 		DB:     db,
 	}
 
-	// TODO: slugify for nicer filename?
-	key := filepath.Base(args[0])
+	filename := filepath.Base(args[0])
+	ext := filepath.Ext(filename)
+	slug := slugify.Marshal(filename[:len(filename)-len(ext)])
+	key := strings.ToLower(slug + ext)
+
+	logger.Printf("uploading mix %q as %q...", filename, key)
 
 	location, err := svc.Upload(f, key, contentType)
 	if err != nil {
 		logger.Fatalf("err: %v\n", err)
 	}
 
-	logger.Printf("file uploaded to %s\n", location)
+	logger.Printf("uploaded mix to %s\n", location)
 }
