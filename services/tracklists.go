@@ -125,3 +125,34 @@ func (s *Services) ImportTracklist(name string, date time.Time, tracks [][]strin
 
 	return tl, nil
 }
+
+// RemoveTracklist removes a tracklist with the given name from the database.
+func (s *Services) RemoveTracklist(name string) error {
+	s.Logger.Printf("checking if tracklist %q exists...\n", name)
+
+	tracklist, err := s.DB.FindTracklist(name)
+	if err != nil {
+		return err
+	}
+	if tracklist == nil {
+		return fmt.Errorf("tracklist named %q doesn't exist", name)
+	}
+
+	tx, err := s.DB.Begin()
+	if err != nil {
+		return err
+	}
+
+	s.Logger.Println("removing tracklist...")
+	if err := s.DB.RemoveTracklist(tx, tracklist.ID); err != nil {
+		tx.Rollback()
+		return err
+	}
+
+	if err := tx.Commit(); err != nil {
+		tx.Rollback()
+		return err
+	}
+
+	return nil
+}
