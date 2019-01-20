@@ -22,6 +22,8 @@ type Tracklist struct {
 // ImportTracklist imports a new tracklist into the database, including the
 // tracklist, and any new tracks that have not been imported before.
 func (s *Services) ImportTracklist(name string, date time.Time, tracks [][]string) (*Tracklist, error) {
+	s.Logger.Printf("checking if tracklist %q already exists...\n", name)
+
 	tracklist, err := s.DB.FindTracklist(name)
 	if err != nil {
 		return nil, err
@@ -53,6 +55,8 @@ func (s *Services) ImportTracklist(name string, date time.Time, tracks [][]strin
 		return nil, err
 	}
 
+	s.Logger.Println("tracklist doesn't exist, creating tracklist...")
+
 	if err := s.DB.InsertTracklist(tx, tracklist); err != nil {
 		tx.Rollback()
 		return nil, err
@@ -61,12 +65,16 @@ func (s *Services) ImportTracklist(name string, date time.Time, tracks [][]strin
 	var records []*database.TrackRecord
 
 	for _, data := range tracks {
+		s.Logger.Printf("checking if track \"%s - %s\" already exists...\n", data[1], data[0])
+
 		track, err := s.DB.FindTrack(data[1], data[0])
 		if err != nil {
 			tx.Rollback()
 			return nil, err
 		}
 		if track != nil {
+			s.Logger.Printf("track already exists: %q\n", track.ID)
+
 			records = append(records, track)
 			continue
 		}
@@ -84,6 +92,8 @@ func (s *Services) ImportTracklist(name string, date time.Time, tracks [][]strin
 			Created: time.Now().UTC(),
 			Updated: time.Now().UTC(),
 		}
+
+		s.Logger.Printf("track doesn't exist, creating track...\n")
 
 		if err := s.DB.InsertTrack(tx, track); err != nil {
 			tx.Rollback()
