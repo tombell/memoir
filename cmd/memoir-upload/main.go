@@ -8,8 +8,8 @@ import (
 
 const helpText = `usage: memoir-upload [args] <path to mix mp3>
 
-  --db    connection string for connecting to the database
-  --name  name of the tracklist to associate the uploaded mix with
+  --db         connection string for connecting to the database
+  --tracklist  name of the tracklist to associate the uploaded mix with
 
 Special options:
   --help      show this message, then exit
@@ -17,9 +17,9 @@ Special options:
 `
 
 var (
-	dsn     = flag.String("db", "", "")
-	name    = flag.String("name", "", "")
-	version = flag.Bool("version", false, "")
+	dsn       = flag.String("db", "", "")
+	tracklist = flag.String("tracklist", "", "")
+	version   = flag.Bool("version", false, "")
 )
 
 func usage() {

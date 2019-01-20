@@ -12,8 +12,8 @@ import (
 
 const helpText = `usage: memoir-delete [args]
 
-  --db    connection string for connecting to the database
-  --name  name of the tracklist to delete
+  --db         connection string for connecting to the database
+  --tracklist  name of the tracklist to delete
 
 Special options:
   --help     show this message, then exit
@@ -21,9 +21,9 @@ Special options:
 `
 
 var (
-	dsn     = flag.String("db", "", "")
-	name    = flag.String("name", "", "")
-	version = flag.Bool("version", false, "")
+	dsn       = flag.String("db", "", "")
+	tracklist = flag.String("tracklist", "", "")
+	version   = flag.Bool("version", false, "")
 )
 
 func usage() {
@@ -40,7 +40,7 @@ func main() {
 		os.Exit(0)
 	}
 
-	if *dsn == "" || *name == "" {
+	if *dsn == "" || *tracklist == "" {
 		flag.Usage()
 	}
 
@@ -56,9 +56,9 @@ func main() {
 		DB:     db,
 	}
 
-	if err := svc.RemoveTracklist(*name); err != nil {
+	if err := svc.RemoveTracklist(*tracklist); err != nil {
 		logger.Fatalf("err: %v\n", err)
 	}
 
-	logger.Printf("finished deleting tracklist %q\n", *name)
+	logger.Printf("finished deleting tracklist %q\n", *tracklist)
 }
