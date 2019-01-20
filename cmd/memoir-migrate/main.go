@@ -12,7 +12,8 @@ import (
 	"github.com/tombell/trek"
 )
 
-const helpText = `usage: memoir-migrate <command> [args]
+const (
+	helpText = `usage: memoir-migrate <command> [args]
 
 Commands:
   apply     apply migrations not currently applied to the database
@@ -23,8 +24,7 @@ Special options:
   --version  show the version number, then exit
 `
 
-// TODO: update help text for apply
-const applyHelpText = `usage: memoir-migrate apply [args]
+	applyHelpText = `usage: memoir-migrate apply [args]
 
   --db  connection string for connecting to the database
 
@@ -32,14 +32,14 @@ Special options:
   --help  show this message, then exit
 `
 
-// TODO: update help text for rollback
-const rollbackHelpText = `usage: memoir-migrate rollback [args]
+	rollbackHelpText = `usage: memoir-migrate rollback [args]
 
   --db  connection string for connecting to the database
 
 Special options:
   --help  show this message, then exit
 `
+)
 
 var (
 	version = flag.Bool("version", false, "")
