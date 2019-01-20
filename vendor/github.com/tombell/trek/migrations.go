@@ -52,7 +52,7 @@ func LoadMigrations(migrationsPath string) (Migrations, error) {
 func (m Migrations) Apply(logger *log.Logger, driver Driver, db *sql.DB) error {
 	sort.Sort(m)
 
-	logger.Println("applying migrations...")
+	logger.Println("applying migrations:")
 
 	for _, migration := range m {
 		hasBeenMigrated, err := migration.HasBeenMigrated(driver, db)
@@ -61,7 +61,7 @@ func (m Migrations) Apply(logger *log.Logger, driver Driver, db *sql.DB) error {
 		}
 
 		if !hasBeenMigrated {
-			logger.Printf("applying %q..\n", migration.Name)
+			logger.Printf(" - applying %q...\n", migration.Name)
 
 			if err := migration.Apply(driver, db); err != nil {
 				return err
@@ -77,7 +77,7 @@ func (m Migrations) Apply(logger *log.Logger, driver Driver, db *sql.DB) error {
 func (m Migrations) Rollback(logger *log.Logger, driver Driver, db *sql.DB) error {
 	sort.Reverse(m)
 
-	logger.Println("rolling back migrations...")
+	logger.Println("rolling back migrations:")
 
 	for _, migration := range m {
 		hasBeenMigrated, err := migration.HasBeenMigrated(driver, db)
@@ -86,7 +86,7 @@ func (m Migrations) Rollback(logger *log.Logger, driver Driver, db *sql.DB) erro
 		}
 
 		if hasBeenMigrated {
-			logger.Printf("rolling back %q..\n", migration.Name)
+			logger.Printf(" - rolling back %q...\n", migration.Name)
 
 			if err := migration.Rollback(driver, db); err != nil {
 				return err
