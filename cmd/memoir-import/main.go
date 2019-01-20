@@ -14,7 +14,8 @@ import (
 
 const helpText = `usage: memoir-import [args] <exported csv file>
 
-TODO: flags
+  --name      unqiue name for the tracklist
+  --db        connection string for connecting to the database
 
 Special options:
   --help      show this message, then exit
@@ -26,9 +27,9 @@ const (
 )
 
 var (
-	version = flag.Bool("version", false, "")
-	dsn     = flag.String("db", "", "")
 	name    = flag.String("name", "", "")
+	dsn     = flag.String("db", "", "")
+	version = flag.Bool("version", false, "")
 )
 
 func usage() {
