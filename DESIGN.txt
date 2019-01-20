@@ -1,3 +1,5 @@
+## DATABASE
+
 tracks
 ------------------------
 id              uuid
@@ -6,23 +8,19 @@ name            char(256)
 genre           char(128)
 bpm             number
 key             char(8)
+created         timestamp
+updated         timestamp
 
 tracklists
 ------------------------
 id              uuid
+name            char(256)
 date            date
+created         timestamp
+updated         timestamp
 
 tracklist_tracks
 ------------------------
 id              uuid
 track_id        uuid
 tracklist_id    uuid
-
-## IMPORT
-
-create tracklist
-
-check if track exists
-  if not create track
-
-add tracklist_tracks entry for tracklist + track
