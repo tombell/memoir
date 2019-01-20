@@ -65,7 +65,7 @@ func main() {
 		flag.Usage()
 	}
 
-	logger := log.New(os.Stderr, "[memoir-migrate] ", log.Ltime)
+	logger := log.New(os.Stderr, "", 0)
 
 	applyCmd := flag.NewFlagSet("apply", flag.ExitOnError)
 	applyCmd.Usage = usage(applyHelpText)
