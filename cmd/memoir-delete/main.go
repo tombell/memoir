@@ -31,6 +31,16 @@ func usage() {
 	os.Exit(2)
 }
 
+func validateFlags() {
+	if *dsn == "" {
+		flag.Usage()
+	}
+
+	if *tracklist == "" {
+		flag.Usage()
+	}
+}
+
 func main() {
 	flag.Usage = usage
 	flag.Parse()
@@ -40,11 +50,9 @@ func main() {
 		os.Exit(0)
 	}
 
-	if *dsn == "" || *tracklist == "" {
-		flag.Usage()
-	}
+	validateFlags()
 
-	logger := log.New(os.Stderr, "[memoir-delete] ", log.Ltime)
+	logger := log.New(os.Stderr, "", 0)
 
 	db, err := database.Open(*dsn)
 	if err != nil {
