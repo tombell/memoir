@@ -22,22 +22,12 @@ type Tracklist struct {
 // ImportTracklist imports a new tracklist into the database, including the
 // tracklist, and any new tracks that have not been imported before.
 func (s *Services) ImportTracklist(name string, date time.Time, tracks [][]string) (*Tracklist, error) {
-	s.Logger.Printf("checking if tracklist %q already exists...\n", name)
-
 	tracklist, err := s.DB.FindTracklist(name)
 	if err != nil {
 		return nil, err
 	}
 	if tracklist != nil {
-		tl := &Tracklist{
-			ID:      tracklist.ID,
-			Name:    tracklist.Name,
-			Date:    tracklist.Date,
-			Created: tracklist.Created,
-			Updated: tracklist.Updated,
-		}
-
-		return tl, fmt.Errorf("tracklist named %q already exists", name)
+		return nil, fmt.Errorf("tracklist named %q already exists", name)
 	}
 
 	id, _ := uuid.NewV4()
@@ -55,8 +45,6 @@ func (s *Services) ImportTracklist(name string, date time.Time, tracks [][]strin
 		return nil, err
 	}
 
-	s.Logger.Println("tracklist doesn't exist, creating...")
-
 	if err := s.DB.InsertTracklist(tx, tracklist); err != nil {
 		tx.Rollback()
 		return nil, err
@@ -65,16 +53,12 @@ func (s *Services) ImportTracklist(name string, date time.Time, tracks [][]strin
 	var records []*database.TrackRecord
 
 	for _, data := range tracks {
-		s.Logger.Printf("checking if track \"%s - %s\" already exists...\n", data[1], data[0])
-
 		track, err := s.DB.FindTrack(data[1], data[0])
 		if err != nil {
 			tx.Rollback()
 			return nil, err
 		}
 		if track != nil {
-			s.Logger.Printf("track already exists as %q\n", track.ID)
-
 			records = append(records, track)
 			continue
 		}
@@ -92,8 +76,6 @@ func (s *Services) ImportTracklist(name string, date time.Time, tracks [][]strin
 			Created: time.Now().UTC(),
 			Updated: time.Now().UTC(),
 		}
-
-		s.Logger.Printf("track doesn't exist, creating...\n")
 
 		if err := s.DB.InsertTrack(tx, track); err != nil {
 			tx.Rollback()
@@ -128,8 +110,6 @@ func (s *Services) ImportTracklist(name string, date time.Time, tracks [][]strin
 
 // RemoveTracklist removes a tracklist with the given name from the database.
 func (s *Services) RemoveTracklist(name string) error {
-	s.Logger.Printf("checking if tracklist %q exists...\n", name)
-
 	tracklist, err := s.DB.FindTracklist(name)
 	if err != nil {
 		return err
@@ -143,7 +123,6 @@ func (s *Services) RemoveTracklist(name string) error {
 		return err
 	}
 
-	s.Logger.Println("removing tracklist...")
 	if err := s.DB.RemoveTracklist(tx, tracklist.ID); err != nil {
 		tx.Rollback()
 		return err
