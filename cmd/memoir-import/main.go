@@ -40,6 +40,16 @@ func usage() {
 	os.Exit(2)
 }
 
+func validateFlags() {
+	if *dsn == "" {
+		flag.Usage()
+	}
+
+	if *name == "" {
+		flag.Usage()
+	}
+}
+
 func main() {
 	flag.Usage = usage
 	flag.Parse()
@@ -54,11 +64,9 @@ func main() {
 		flag.Usage()
 	}
 
-	if *dsn == "" || *name == "" {
-		flag.Usage()
-	}
+	validateFlags()
 
-	logger := log.New(os.Stderr, "[memoir-import] ", log.Ltime)
+	logger := log.New(os.Stderr, "", 0)
 
 	records, err := parseSeratoExport(args[0])
 	if err != nil {
@@ -88,7 +96,7 @@ func main() {
 	}
 
 	logger.Println("finished importing")
-	logger.Printf("created tracklist %q for %v with ID %q", tracklist.Name, tracklist.Date.Format(dateTimeFormat), tracklist.ID)
+	logger.Printf("created tracklist %q with ID %q", tracklist.Name, tracklist.ID)
 }
 
 func parseSeratoExport(filepath string) ([][]string, error) {
