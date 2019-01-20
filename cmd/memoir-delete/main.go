@@ -12,14 +12,17 @@ import (
 
 const helpText = `usage: memoir-delete [args]
 
+  --db    connection string for connecting to the database
+  --name  name of the tracklist to delete
+
 Special options:
   --help     show this message, then exit
   --version  show the version number, then exit
 `
 
 var (
-	name    = flag.String("name", "", "")
 	dsn     = flag.String("db", "", "")
+	name    = flag.String("name", "", "")
 	version = flag.Bool("version", false, "")
 )
 

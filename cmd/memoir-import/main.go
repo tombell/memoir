@@ -17,8 +17,8 @@ import (
 
 const helpText = `usage: memoir-import [args] <exported csv file>
 
-  --name  name for the tracklist
   --db    connection string for connecting to the database
+  --name  name for the tracklist being imported
 
 Special options:
   --help     show this message, then exit
@@ -30,8 +30,8 @@ const (
 )
 
 var (
-	name    = flag.String("name", "", "")
 	dsn     = flag.String("db", "", "")
+	name    = flag.String("name", "", "")
 	version = flag.Bool("version", false, "")
 )
 
