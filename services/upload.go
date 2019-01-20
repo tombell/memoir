@@ -17,9 +17,9 @@ const (
 // Upload uploads a new object to S3, reading the bytes from the given Reader.
 func (s *Services) Upload(r io.Reader, key string, contentType string) (string, error) {
 	input := &s3manager.UploadInput{
-		Bucket:      &defaultS3Bucket,
-		Key:         &key,
-		ContentType: &contentType,
+		Bucket:      aws.String(defaultS3Bucket),
+		Key:         aws.String(key),
+		ContentType: aws.String(contentType),
 		Body:        r,
 	}
 
