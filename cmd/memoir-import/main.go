@@ -17,8 +17,8 @@ import (
 
 const helpText = `usage: memoir-import [args] <exported csv file>
 
-  --db    connection string for connecting to the database
-  --name  name for the tracklist being imported
+  --db         connection string for connecting to the database
+  --tracklist  name for the tracklist being imported
 
 Special options:
   --help     show this message, then exit
@@ -30,9 +30,9 @@ const (
 )
 
 var (
-	dsn     = flag.String("db", "", "")
-	name    = flag.String("name", "", "")
-	version = flag.Bool("version", false, "")
+	dsn       = flag.String("db", "", "")
+	tracklist = flag.String("tracklist", "", "")
+	version   = flag.Bool("version", false, "")
 )
 
 func usage() {
@@ -45,7 +45,7 @@ func validateFlags() {
 		flag.Usage()
 	}
 
-	if *name == "" {
+	if *tracklist == "" {
 		flag.Usage()
 	}
 }
@@ -78,8 +78,6 @@ func main() {
 		logger.Fatalf("err: %v\n", err)
 	}
 
-	logger.Printf("importing tracklist from %v as %q...\n", t.Format(dateTimeFormat), *name)
-
 	db, err := database.Open(*dsn)
 	if err != nil {
 		logger.Fatalf("err: %v\n", err)
@@ -90,13 +88,14 @@ func main() {
 		DB:     db,
 	}
 
-	tracklist, err := svc.ImportTracklist(*name, t, records[1:])
+	logger.Printf("importing tracklist %q from %s...\n", *tracklist, t.Format(dateTimeFormat))
+
+	tracklist, err := svc.ImportTracklist(*tracklist, t, records[1:])
 	if err != nil {
 		logger.Fatalf("err: %v\n", err)
 	}
 
-	logger.Println("finished importing")
-	logger.Printf("created tracklist %q with ID %q", tracklist.Name, tracklist.ID)
+	logger.Printf("imported tracklist %q (%s)\n", tracklist.Name, tracklist.ID)
 }
 
 func parseSeratoExport(filepath string) ([][]string, error) {
