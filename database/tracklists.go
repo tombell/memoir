@@ -28,7 +28,8 @@ func (db *Database) InsertTracklist(tx *sql.Tx, tracklist *TracklistRecord) erro
 	return err
 }
 
-// InsertTracklistToTrack ...
+// InsertTracklistToTrack inserts a new tracklist to track mapping into the
+// database.
 func (db *Database) InsertTracklistToTrack(tx *sql.Tx, tracklistID string, trackID string) error {
 	id, _ := uuid.NewV4()
 
@@ -62,7 +63,8 @@ func (db *Database) GetTracklist(id string) (*TracklistRecord, error) {
 	}
 }
 
-// FindTracklist ...
+// FindTracklist finds a tracklist with the given name in the database.
+// Returns nil if no matching tracklist is found.
 func (db *Database) FindTracklist(name string) (*TracklistRecord, error) {
 	var tracklist TracklistRecord
 
