@@ -1,12 +1,16 @@
 package services
 
 import (
+	"fmt"
 	"io"
+	"time"
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/credentials"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/s3/s3manager"
+	"github.com/gofrs/uuid"
+	"github.com/tombell/memoir/database"
 )
 
 const (
@@ -34,4 +38,37 @@ func (s *Services) Upload(r io.Reader, key string, contentType string) (string, 
 	}
 
 	return result.Location, nil
+}
+
+// AssociateUpload associates an uploaded mix to the given tracklist.
+func (s *Services) AssociateUpload(filename string, location string, tracklistName string) error {
+	tracklist, err := s.DB.FindTracklist(tracklistName)
+	if err != nil {
+		return err
+	}
+	if tracklist == nil {
+		return fmt.Errorf("tracklist named %q doesn't exist", name)
+	}
+
+	tx, err := s.DB.Begin()
+	if err != nil {
+		return err
+	}
+
+	id, _ := uuid.NewV4()
+
+	upload = &database.MixUploadRecord{
+		ID:          id.String(),
+		TracklistID: tracklist.ID,
+		Filename:    filename,
+		Location:    location,
+		Created:     time.Now().UTC(),
+		Updated:     time.Now().UTC(),
+	}
+
+	if err := s.DB.InsertMixUpload(tx, upload); err != nil {
+		return err
+	}
+
+	return nil
 }
