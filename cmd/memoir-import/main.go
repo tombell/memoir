@@ -12,7 +12,9 @@ import (
 	"github.com/tombell/memoir/services"
 )
 
-const helpText = `usage: memoir-import [args]
+const helpText = `usage: memoir-import [args] <exported csv file>
+
+TODO: flags
 
 Special options:
   --help      show this message, then exit
@@ -26,6 +28,7 @@ const (
 var (
 	version = flag.Bool("version", false, "")
 	dsn     = flag.String("db", "", "")
+	name    = flag.String("name", "", "")
 )
 
 func usage() {
@@ -44,6 +47,10 @@ func main() {
 
 	args := flag.Args()
 	if len(args) != 1 {
+		flag.Usage()
+	}
+
+	if *dsn == "" || *name == "" {
 		flag.Usage()
 	}
 
@@ -71,7 +78,7 @@ func main() {
 		DB:     db,
 	}
 
-	if err := svc.ImportTracklist(t, records[2:]); err != nil {
+	if err := svc.ImportTracklist(*name, t, records[2:]); err != nil {
 		logger.Fatalf("err: %v\n", err)
 	}
 

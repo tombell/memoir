@@ -1,6 +1,7 @@
 package services
 
 import (
+	"fmt"
 	"strconv"
 	"time"
 
@@ -11,11 +12,20 @@ import (
 
 // ImportTracklist imports a new tracklist into the database, including the
 // tracklist, and any new tracks that have not been imported before.
-func (s *Services) ImportTracklist(date time.Time, tracks [][]string) error {
+func (s *Services) ImportTracklist(name string, date time.Time, tracks [][]string) error {
+	tracklist, err := s.DB.FindTracklist(name)
+	if err != nil {
+		return err
+	}
+	if tracklist != nil {
+		return fmt.Errorf("tracklist named %q already exists", name)
+	}
+
 	id, _ := uuid.NewV4()
 
-	tracklist := &database.TracklistRecord{
+	tracklist = &database.TracklistRecord{
 		ID:      id.String(),
+		Name:    name,
 		Date:    date,
 		Created: time.Now().UTC(),
 		Updated: time.Now().UTC(),
