@@ -73,7 +73,7 @@ func (s *Services) ImportTracklist(name string, date time.Time, tracks [][]strin
 			return nil, err
 		}
 		if track != nil {
-			s.Logger.Printf("track already exists: %q\n", track.ID)
+			s.Logger.Printf("track already exists as %q\n", track.ID)
 
 			records = append(records, track)
 			continue
