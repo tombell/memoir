@@ -41,5 +41,5 @@ const (
 
 	sqlRemoveTracklistTracks = `
 		DELETE FROM tracklist_tracks
-		WHERE id = $1`
+		WHERE tracklist_id = $1`
 )
