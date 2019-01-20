@@ -17,7 +17,7 @@ import (
 
 const helpText = `usage: memoir-import [args] <exported csv file>
 
-  --name  unqiue name for the tracklist
+  --name  name for the tracklist
   --db    connection string for connecting to the database
 
 Special options:
