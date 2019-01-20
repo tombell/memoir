@@ -10,7 +10,11 @@ all: dev
 clean:
 	rm -fr dist/
 
-dev: memoir-dev memoir-delete-dev memoir-import-dev memoir-migrate-dev
+dev: memoir-dev \
+     memoir-delete-dev \
+     memoir-import-dev \
+     memoir-migrate-dev \
+     memoir-upload-dev
 
 memoir-dev:
 	go build ${MODFLAGS} ${LDFLAGS} -o dist/memoir ./cmd/memoir
@@ -24,10 +28,22 @@ memoir-import-dev:
 memoir-migrate-dev:
 	go build ${MODFLAGS} ${LDFLAGS} -o dist/memoir-migrate ./cmd/memoir-migrate
 
+memoir-upload-dev:
+	go build ${MODFLAGS} ${LDFLAGS} -o dist/memoir-upload ./cmd/memoir-upload
+
 test:
 	go test ${MODFLAGS} ${TESTFLAGS} ./...
 
 create-migration:
 	echo "-- UP\n\n-- DOWN" > 'migrations/$(shell date "+%Y%m%d%H%M%S")_$(NAME).sql'
 
-.PHONY: all clean dev memoir-dev memoir-delete-dev memoir-import-dev memoir-migrate-dev test create-migration
+.PHONY: all \
+        clean \
+        dev \
+        memoir-dev \
+        memoir-delete-dev \
+        memoir-import-dev \
+        memoir-migrate-dev \
+        memoir-upload-dev \
+        test \
+        create-migration
