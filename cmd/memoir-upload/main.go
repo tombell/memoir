@@ -109,12 +109,12 @@ func main() {
 	slug := slugify.Marshal(filename[:len(filename)-len(ext)])
 	key := strings.ToLower(slug + ext)
 
-	logger.Printf("uploading mix %q as %q...", filename, key)
+	logger.Printf("uploading mix file %q as %q...", filename, key)
 
 	location, err := svc.Upload(f, key, contentType)
 	if err != nil {
 		logger.Fatalf("err: %v\n", err)
 	}
 
-	logger.Printf("uploaded mix to %s\n", location)
+	logger.Printf("uploaded mix file to %s\n", location)
 }
