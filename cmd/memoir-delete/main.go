@@ -33,7 +33,7 @@ func main() {
 	flag.Parse()
 
 	if *version {
-		fmt.Fprintf(os.Stdout, "memoir-import %s (%s)\n", Version, Commit)
+		fmt.Fprintf(os.Stdout, "memoir-delete %s (%s)\n", Version, Commit)
 		os.Exit(0)
 	}
 
