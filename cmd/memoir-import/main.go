@@ -79,7 +79,7 @@ func main() {
 		DB:     db,
 	}
 
-	tracklist, err := svc.ImportTracklist(*name, t, records[2:])
+	tracklist, err := svc.ImportTracklist(*name, t, records[1:])
 	if err != nil {
 		logger.Fatalf("err: %v\n", err)
 	}
