@@ -38,4 +38,8 @@ const (
 		FROM tracklists
 		WHERE name = $1
 		LIMIT 1`
+
+	sqlRemoveTracklistTracks = `
+		DELETE FROM tracklist_tracks
+		WHERE id = $1`
 )
