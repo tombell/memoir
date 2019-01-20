@@ -66,7 +66,7 @@ func main() {
 		logger.Fatalf("err: %v\n", err)
 	}
 
-	logger.Printf("importing tracklist from %v...\n", t.Format(dateTimeFormat))
+	logger.Printf("importing tracklist from %v as %q...\n", t.Format(dateTimeFormat), *name)
 
 	db, err := database.Open(*dsn)
 	if err != nil {
@@ -78,9 +78,11 @@ func main() {
 		DB:     db,
 	}
 
-	if err := svc.ImportTracklist(*name, t, records[2:]); err != nil {
+	tracklist, err := svc.ImportTracklist(*name, t, records[2:])
+	if err != nil {
 		logger.Fatalf("err: %v\n", err)
 	}
 
 	logger.Println("finished importing")
+	logger.Printf("created tracklist %q for %v with ID %q", tracklist.Name, tracklist.Date.Format(dateTimeFormat), tracklist.ID)
 }
