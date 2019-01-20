@@ -4,7 +4,7 @@ CREATE TABLE mix_uploads (
   id           UUID PRIMARY KEY,
   tracklist_id UUID REFERENCES tracklists (id) ON DELETE CASCADE,
   filename     VARCHAR(256) UNIQUE NOT NULL,
-  key          VARCHAR(256) UNIQUE NOT NULL,
+  location     VARCHAR(256) UNIQUE NOT NULL,
   created      TIMESTAMP NOT NULL,
   updated      TIMESTAMP NOT NULL
 );
