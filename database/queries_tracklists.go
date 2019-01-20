@@ -27,4 +27,15 @@ const (
 		FROM tracklists
 		WHERE id = $1
 		LIMIT 1`
+
+	sqlGetTracklistByName = `
+		SELECT
+			id,
+			name,
+			date,
+			created,
+			updated
+		FROM tracklists
+		WHERE name = $1
+		LIMIT 1`
 )

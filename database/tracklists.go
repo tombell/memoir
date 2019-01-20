@@ -61,3 +61,24 @@ func (db *Database) GetTracklist(id string) (*TracklistRecord, error) {
 		return &tracklist, nil
 	}
 }
+
+// FindTracklist ...
+func (db *Database) FindTracklist(name string) (*TracklistRecord, error) {
+	var tracklist TracklistRecord
+
+	err := db.conn.QueryRow(sqlGetTracklistByName, name).Scan(
+		&tracklist.ID,
+		&tracklist.Name,
+		&tracklist.Date,
+		&tracklist.Created,
+		&tracklist.Updated)
+
+	switch {
+	case err == sql.ErrNoRows:
+		return nil, nil
+	case err != nil:
+		return nil, err
+	default:
+		return &tracklist, nil
+	}
+}
