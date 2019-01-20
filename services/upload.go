@@ -1,7 +1,7 @@
 package services
 
 import (
-	"os"
+	"io"
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/credentials"
@@ -14,18 +14,13 @@ const (
 	defaultS3Bucket  = "memoir-uploads"
 )
 
-// UploadFile uploads a single file at the given path to S3.
-func (s *Services) UploadFile(filepath string, key string) (string, error) {
-	f, err := os.Open(filepath)
-	if err != nil {
-		return "", err
-	}
-	defer f.Close()
-
+// Upload uploads a new object to S3, reading the bytes from the given Reader.
+func (s *Services) Upload(r io.Reader, key string, contentType string) (string, error) {
 	input := &s3manager.UploadInput{
-		Bucket: aws.String(defaultS3Bucket),
-		Key:    aws.String(key),
-		Body:   f,
+		Bucket:      &defaultS3Bucket,
+		Key:         &key,
+		ContentType: &contentType,
+		Body:        r,
 	}
 
 	creds := credentials.NewStaticCredentials(s.Config.AWS.Key, s.Config.AWS.Secret, "")
