@@ -15,26 +15,30 @@ import (
 const helpText = `usage: memoir-migrate <command> [args]
 
 Commands:
-  apply       apply migrations not currently applied to the database
-  rollback    rolls back applied migrations from the database
+  apply     apply migrations not currently applied to the database
+  rollback  rolls back applied migrations from the database
 
 Special options:
-  --help      show this message, then exit
-  --version   show the version number, then exit
+  --help     show this message, then exit
+  --version  show the version number, then exit
 `
 
 // TODO: update help text for apply
 const applyHelpText = `usage: memoir-migrate apply [args]
 
+  --db  connection string for connecting to the database
+
 Special options:
-  --help      show this message, then exit
+  --help  show this message, then exit
 `
 
 // TODO: update help text for rollback
 const rollbackHelpText = `usage: memoir-migrate rollback [args]
 
+  --db  connection string for connecting to the database
+
 Special options:
-  --help      show this message, then exit
+  --help  show this message, then exit
 `
 
 var (

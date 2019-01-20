@@ -14,12 +14,12 @@ import (
 
 const helpText = `usage: memoir-import [args] <exported csv file>
 
-  --name      unqiue name for the tracklist
-  --db        connection string for connecting to the database
+  --name  unqiue name for the tracklist
+  --db    connection string for connecting to the database
 
 Special options:
-  --help      show this message, then exit
-  --version   show the version number, then exit
+  --help     show this message, then exit
+  --version  show the version number, then exit
 `
 
 const (
