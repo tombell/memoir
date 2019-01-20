@@ -3,18 +3,18 @@
 tracks
 ------------------------
 id              uuid
-artist          char(256)
-name            char(256)
-genre           char(128)
+artist          varchar(256)
+name            varchar(256)
+genre           varchar(128)
 bpm             number
-key             char(8)
+key             varchar(8)
 created         timestamp
 updated         timestamp
 
 tracklists
 ------------------------
 id              uuid
-name            char(256)
+name            varchar(256)
 date            date
 created         timestamp
 updated         timestamp
@@ -24,3 +24,12 @@ tracklist_tracks
 id              uuid
 track_id        uuid
 tracklist_id    uuid
+
+mix_uploads
+------------------------
+id              uuid
+tracklist_id    uuid
+filename        varchar(128)
+key             varchar(128)
+created         timestamp
+updated         timestamp
