@@ -7,12 +7,12 @@ import (
 	_ "github.com/lib/pq"
 )
 
-// Database ...
+// Database contains a connection to the database.
 type Database struct {
 	conn *sql.DB
 }
 
-// Close ...
+// Close closes an open connection to the database.
 func (db *Database) Close() error {
 	if db.conn != nil {
 		return db.conn.Close()
@@ -21,12 +21,13 @@ func (db *Database) Close() error {
 	return nil
 }
 
-// Begin ...
+// Begin begins a new transaction using the database connection.
 func (db *Database) Begin() (*sql.Tx, error) {
 	return db.conn.Begin()
 }
 
-// Open ...
+// Open opens a new connection to the database. Pings the database to check the
+// connection is good.
 func Open(dsn string) (*Database, error) {
 	conn, err := sql.Open("postgres", dsn)
 	if err != nil {
