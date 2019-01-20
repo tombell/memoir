@@ -1,14 +1,17 @@
 package main
 
 import (
+	"bytes"
+	"encoding/csv"
 	"flag"
 	"fmt"
+	"io"
+	"io/ioutil"
 	"log"
 	"os"
 	"time"
 
 	"github.com/tombell/memoir/database"
-	"github.com/tombell/memoir/parser"
 	"github.com/tombell/memoir/services"
 )
 
@@ -57,7 +60,7 @@ func main() {
 
 	logger := log.New(os.Stderr, "[memoir-import] ", log.Ltime)
 
-	records, err := parser.ParseSeratoExport(args[0])
+	records, err := parseSeratoExport(args[0])
 	if err != nil {
 		logger.Fatalf("err: %v\n", err)
 	}
@@ -86,4 +89,29 @@ func main() {
 
 	logger.Println("finished importing")
 	logger.Printf("created tracklist %q for %v with ID %q", tracklist.Name, tracklist.Date.Format(dateTimeFormat), tracklist.ID)
+}
+
+func parseSeratoExport(filepath string) ([][]string, error) {
+	in, err := ioutil.ReadFile(filepath)
+	if err != nil {
+		return nil, err
+	}
+
+	r := csv.NewReader(bytes.NewReader(in))
+
+	var records [][]string
+
+	for {
+		record, err := r.Read()
+		if err == io.EOF {
+			break
+		}
+		if err != nil {
+			return nil, err
+		}
+
+		records = append(records, record)
+	}
+
+	return records[1:], nil
 }
