@@ -34,7 +34,7 @@ const (
 			name,
 			genre,
 			bpm,
-			key
+			key,
 			created,
 			updated
 		FROM tracks
