@@ -39,7 +39,7 @@ const (
 		WHERE name = $1
 		LIMIT 1`
 
-	sqlRemoveTracklistTracks = `
-		DELETE FROM tracklist_tracks
-		WHERE tracklist_id = $1`
+	sqlRemoveTracklist = `
+		DELETE FROM tracklists
+		WHERE id = $1`
 )
