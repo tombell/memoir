@@ -89,6 +89,7 @@ func (db *Database) FindTracksByGenre(genre string) ([]*TrackRecord, error) {
 	if err != nil {
 		return nil, err
 	}
+	defer rows.Close()
 
 	var tracks []*TrackRecord
 
