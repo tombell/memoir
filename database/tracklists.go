@@ -18,6 +18,15 @@ type TracklistRecord struct {
 	Tracks []*TrackRecord
 }
 
+// TracklistTrackRecord represents a single tracklist_track row in the database.
+// Used for mapping a track to a tracklist.
+type TracklistTrackRecord struct {
+	ID          string
+	TracklistID string
+	TrackID     string
+	TrackNumber int
+}
+
 // InsertTracklist inserts a new tracklist into the database.
 func (db *Database) InsertTracklist(tx *sql.Tx, tracklist *TracklistRecord) error {
 	_, err := tx.Exec(sqlInsertTracklist,
