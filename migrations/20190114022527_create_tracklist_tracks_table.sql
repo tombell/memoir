@@ -2,9 +2,9 @@
 
 CREATE TABLE tracklist_tracks (
   id           UUID PRIMARY KEY,
-  track_number INTEGER NOT NULL,
   tracklist_id UUID REFERENCES tracklists (id) ON DELETE CASCADE,
-  track_id     UUID REFERENCES tracks (id)
+  track_id     UUID REFERENCES tracks (id),
+  track_number INTEGER NOT NULL
 );
 
 CREATE INDEX tracklist_tracks_tracklist_id_idx ON tracklist_tracks (tracklist_id);
