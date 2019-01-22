@@ -28,6 +28,22 @@ const (
 		WHERE id = $1
 		LIMIT 1`
 
+	sqlGetTracklistWithTracksByID = `
+		SELECT
+			tl.*,
+			t.id as track_id,
+			t.artist,
+			t.name,
+			t.genre,
+			t.bpm,
+			t.key,
+			t.created,
+			t.updated
+		FROM tracklists tl
+		JOIN tracklist_tracks tt ON tt.tracklist_id = tl.id
+		JOIN tracks t ON t.id = tt.track_id
+		WHERE tl.id = $1`
+
 	sqlGetTracklistByName = `
 		SELECT
 			id,
