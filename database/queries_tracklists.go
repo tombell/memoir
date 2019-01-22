@@ -14,8 +14,9 @@ const (
 		INSERT INTO tracklist_tracks (
 			id,
 			tracklist_id,
-			track_id
-		) VALUES ($1, $2, $3)`
+			track_id,
+			track_number
+		) VALUES ($1, $2, $3, $4)`
 
 	sqlGetTracklistByID = `
 		SELECT
@@ -42,7 +43,8 @@ const (
 		FROM tracklists tl
 		JOIN tracklist_tracks tt ON tt.tracklist_id = tl.id
 		JOIN tracks t ON t.id = tt.track_id
-		WHERE tl.id = $1`
+		WHERE tl.id = $1
+		ORDER BY tt.track_number ASC`
 
 	sqlGetTracklistByName = `
 		SELECT

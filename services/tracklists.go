@@ -85,8 +85,17 @@ func (s *Services) ImportTracklist(name string, date time.Time, tracks [][]strin
 		records = append(records, track)
 	}
 
-	for _, track := range records {
-		if err := s.DB.InsertTracklistToTrack(tx, tracklist.ID, track.ID); err != nil {
+	for idx, track := range records {
+		id, _ := uuid.NewV4()
+
+		tracklistTrack := &database.TracklistTrackRecord{
+			ID:          id.String(),
+			TracklistID: tracklist.ID,
+			TrackID:     track.ID,
+			TrackNumber: idx + 1,
+		}
+
+		if err := s.DB.InsertTracklistToTrack(tx, tracklistTrack); err != nil {
 			tx.Rollback()
 			return nil, err
 		}
