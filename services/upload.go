@@ -10,6 +10,7 @@ import (
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/s3/s3manager"
 	"github.com/gofrs/uuid"
+	"github.com/pkg/errors"
 	"github.com/tombell/memoir/database"
 )
 
@@ -34,7 +35,7 @@ func (s *Services) Upload(r io.Reader, key, contentType string) (string, error) 
 
 	result, err := uploader.Upload(input)
 	if err != nil {
-		return "", err
+		return "", errors.Wrap(err, "s3 upload failed")
 	}
 
 	return result.Location, nil
@@ -44,7 +45,7 @@ func (s *Services) Upload(r io.Reader, key, contentType string) (string, error) 
 func (s *Services) AssociateUpload(filename, location, tracklistName string) error {
 	tracklist, err := s.DB.FindTracklist(tracklistName)
 	if err != nil {
-		return err
+		return errors.Wrap(err, "find tracklist failed")
 	}
 	if tracklist == nil {
 		return fmt.Errorf("tracklist named %q doesn't exist", tracklistName)
@@ -52,7 +53,7 @@ func (s *Services) AssociateUpload(filename, location, tracklistName string) err
 
 	tx, err := s.DB.Begin()
 	if err != nil {
-		return err
+		return errors.Wrap(err, "db begin failed")
 	}
 
 	id, _ := uuid.NewV4()
@@ -66,9 +67,7 @@ func (s *Services) AssociateUpload(filename, location, tracklistName string) err
 		Updated:     time.Now().UTC(),
 	}
 
-	if err := s.DB.InsertMixUpload(tx, upload); err != nil {
-		return err
-	}
+	err = s.DB.InsertMixUpload(tx, upload)
 
-	return nil
+	return errors.Wrap(err, "insert mix_upload failed")
 }

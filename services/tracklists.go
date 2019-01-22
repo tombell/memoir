@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/gofrs/uuid"
+	"github.com/pkg/errors"
 
 	"github.com/tombell/memoir/database"
 )
@@ -25,7 +26,7 @@ type Tracklist struct {
 func (s *Services) ImportTracklist(name string, date time.Time, tracks [][]string) (*Tracklist, error) {
 	tracklist, err := s.DB.FindTracklist(name)
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrap(err, "find tracklist failed")
 	}
 	if tracklist != nil {
 		return nil, fmt.Errorf("tracklist named %q already exists", name)
@@ -43,12 +44,12 @@ func (s *Services) ImportTracklist(name string, date time.Time, tracks [][]strin
 
 	tx, err := s.DB.Begin()
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrap(err, "db begin failed")
 	}
 
 	if err := s.DB.InsertTracklist(tx, tracklist); err != nil {
 		tx.Rollback()
-		return nil, err
+		return nil, errors.Wrap(err, "insert tracklist failed")
 	}
 
 	var records []*database.TrackRecord
@@ -57,7 +58,7 @@ func (s *Services) ImportTracklist(name string, date time.Time, tracks [][]strin
 		track, err := s.DB.FindTrack(data[1], data[0])
 		if err != nil {
 			tx.Rollback()
-			return nil, err
+			return nil, errors.Wrap(err, "find track failed")
 		}
 		if track != nil {
 			records = append(records, track)
@@ -80,7 +81,7 @@ func (s *Services) ImportTracklist(name string, date time.Time, tracks [][]strin
 
 		if err := s.DB.InsertTrack(tx, track); err != nil {
 			tx.Rollback()
-			return nil, err
+			return nil, errors.Wrap(err, "insert track failed")
 		}
 
 		records = append(records, track)
@@ -98,13 +99,13 @@ func (s *Services) ImportTracklist(name string, date time.Time, tracks [][]strin
 
 		if err := s.DB.InsertTracklistToTrack(tx, tracklistTrack); err != nil {
 			tx.Rollback()
-			return nil, err
+			return nil, errors.Wrap(err, "insert tracklist_track failed")
 		}
 	}
 
 	if err := tx.Commit(); err != nil {
 		tx.Rollback()
-		return nil, err
+		return nil, errors.Wrap(err, "tx commit failed")
 	}
 
 	tl := &Tracklist{
@@ -122,7 +123,7 @@ func (s *Services) ImportTracklist(name string, date time.Time, tracks [][]strin
 func (s *Services) RemoveTracklist(name string) error {
 	tracklist, err := s.DB.FindTracklist(name)
 	if err != nil {
-		return err
+		return errors.Wrap(err, "find tracklist failed")
 	}
 	if tracklist == nil {
 		return fmt.Errorf("tracklist named %q doesn't exist", name)
@@ -130,17 +131,17 @@ func (s *Services) RemoveTracklist(name string) error {
 
 	tx, err := s.DB.Begin()
 	if err != nil {
-		return err
+		return errors.Wrap(err, "db begin failed")
 	}
 
 	if err := s.DB.RemoveTracklist(tx, tracklist.ID); err != nil {
 		tx.Rollback()
-		return err
+		return errors.Wrap(err, "remove tracklist failed")
 	}
 
 	if err := tx.Commit(); err != nil {
 		tx.Rollback()
-		return err
+		return errors.Wrap(err, "tx commit failed")
 	}
 
 	return nil
