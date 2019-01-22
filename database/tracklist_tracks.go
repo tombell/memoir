@@ -24,5 +24,5 @@ func (db *Database) InsertTracklistToTrack(tx *sql.Tx, tracklistTrack *Tracklist
 		tracklistTrack.TrackID,
 		tracklistTrack.TrackNumber)
 
-	return errors.Wrap(err, "insert tracklist_track failed")
+	return errors.Wrap(err, "tx exec failed")
 }

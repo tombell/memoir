@@ -27,5 +27,5 @@ func (db *Database) InsertMixUpload(tx *sql.Tx, mix *MixUploadRecord) error {
 		mix.Created,
 		mix.Updated)
 
-	return errors.Wrap(err, "insert mix_upload failed")
+	return errors.Wrap(err, "tx exec failed")
 }

@@ -31,7 +31,7 @@ func (db *Database) InsertTrack(tx *sql.Tx, track *TrackRecord) error {
 		track.Created,
 		track.Updated)
 
-	return errors.Wrap(err, "insert track failed")
+	return errors.Wrap(err, "tx exec failed")
 }
 
 // GetTrack returns a single track with the given ID from the database.
@@ -53,7 +53,7 @@ func (db *Database) GetTrack(id string) (*TrackRecord, error) {
 	case err == sql.ErrNoRows:
 		return nil, nil
 	case err != nil:
-		return nil, errors.Wrap(err, "get track failed")
+		return nil, errors.Wrap(err, "query row failed")
 	default:
 		return &track, nil
 	}
@@ -78,7 +78,7 @@ func (db *Database) FindTrack(artist, name string) (*TrackRecord, error) {
 	case err == sql.ErrNoRows:
 		return nil, nil
 	case err != nil:
-		return nil, errors.Wrap(err, "find track failed")
+		return nil, errors.Wrap(err, "query row failed")
 	default:
 		return &track, nil
 	}
@@ -89,7 +89,7 @@ func (db *Database) FindTrack(artist, name string) (*TrackRecord, error) {
 func (db *Database) FindTracksByGenre(genre string) ([]*TrackRecord, error) {
 	rows, err := db.conn.Query(sqlGetTracksByGenre, genre)
 	if err != nil {
-		return nil, errors.Wrap(err, "get tracks by genre failed")
+		return nil, errors.Wrap(err, "db query failed")
 	}
 	defer rows.Close()
 
@@ -109,14 +109,14 @@ func (db *Database) FindTracksByGenre(genre string) ([]*TrackRecord, error) {
 			&track.Updated)
 
 		if err != nil {
-			return nil, errors.Wrap(err, "scan tracks by genre failed")
+			return nil, errors.Wrap(err, "rows scan failed")
 		}
 
 		tracks = append(tracks, &track)
 	}
 
 	if err := rows.Err(); err != nil {
-		return nil, errors.Wrap(err, "iterating tracks by genre failed")
+		return nil, errors.Wrap(err, "rows next failed")
 	}
 
 	return tracks, nil
