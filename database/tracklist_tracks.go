@@ -1,6 +1,10 @@
 package database
 
-import "database/sql"
+import (
+	"database/sql"
+
+	"github.com/pkg/errors"
+)
 
 // TracklistTrackRecord represents a single tracklist_track row in the database.
 // Used for mapping a track to a tracklist.
@@ -20,5 +24,5 @@ func (db *Database) InsertTracklistToTrack(tx *sql.Tx, tracklistTrack *Tracklist
 		tracklistTrack.TrackID,
 		tracklistTrack.TrackNumber)
 
-	return err
+	return errors.Wrap(err, "insert tracklist_track failed")
 }

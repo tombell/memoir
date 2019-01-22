@@ -3,6 +3,8 @@ package database
 import (
 	"database/sql"
 	"time"
+
+	"github.com/pkg/errors"
 )
 
 // MixUploadRecord represents a single mix upload row in the database.
@@ -25,5 +27,5 @@ func (db *Database) InsertMixUpload(tx *sql.Tx, mix *MixUploadRecord) error {
 		mix.Created,
 		mix.Updated)
 
-	return err
+	return errors.Wrap(err, "insert mix_upload failed")
 }

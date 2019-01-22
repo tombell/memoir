@@ -3,6 +3,8 @@ package database
 import (
 	"database/sql"
 	"time"
+
+	"github.com/pkg/errors"
 )
 
 // TracklistRecord represents a single tracklist row in the database.
@@ -25,7 +27,7 @@ func (db *Database) InsertTracklist(tx *sql.Tx, tracklist *TracklistRecord) erro
 		tracklist.Created,
 		tracklist.Updated)
 
-	return err
+	return errors.Wrap(err, "insert tracklist failed")
 }
 
 // GetTracklist returns a single tracklist with the given ID from the database.
@@ -44,7 +46,7 @@ func (db *Database) GetTracklist(id string) (*TracklistRecord, error) {
 	case err == sql.ErrNoRows:
 		return nil, nil
 	case err != nil:
-		return nil, err
+		return nil, errors.Wrap(err, "get tracklist failed")
 	default:
 		return &tracklist, nil
 	}
@@ -56,7 +58,7 @@ func (db *Database) GetTracklist(id string) (*TracklistRecord, error) {
 func (db *Database) GetTracklistWithTracks(id string) (*TracklistRecord, error) {
 	rows, err := db.conn.Query(sqlGetTracklistWithTracksByID, id)
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrap(err, "get tracklist with tracks failed")
 	}
 	defer rows.Close()
 
@@ -81,10 +83,14 @@ func (db *Database) GetTracklistWithTracks(id string) (*TracklistRecord, error) 
 			&track.Updated)
 
 		if err != nil {
-			return nil, err
+			return nil, errors.Wrap(err, "scan tracklist with tracks failed")
 		}
 
 		tracklist.Tracks = append(tracklist.Tracks, &track)
+	}
+
+	if err := rows.Err(); err != nil {
+		return nil, errors.Wrap(err, "iterating tracklist with tracks failed")
 	}
 
 	return &tracklist, nil
@@ -106,7 +112,7 @@ func (db *Database) FindTracklist(name string) (*TracklistRecord, error) {
 	case err == sql.ErrNoRows:
 		return nil, nil
 	case err != nil:
-		return nil, err
+		return nil, errors.Wrap(err, "find tracklist failed")
 	default:
 		return &tracklist, nil
 	}
@@ -116,6 +122,5 @@ func (db *Database) FindTracklist(name string) (*TracklistRecord, error) {
 // Deleted the mapping rows, and cascades to the tracklist table.
 func (db *Database) RemoveTracklist(tx *sql.Tx, id string) error {
 	_, err := tx.Exec(sqlRemoveTracklist, id)
-
-	return err
+	return errors.Wrap(err, "remove tracklist failed")
 }
