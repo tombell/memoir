@@ -17,8 +17,8 @@ CREATE INDEX tracks_genre_idx ON tracks ((lower(genre)));
 
 -- DOWN
 
-DROP INDEX IF EXISTS tracks_genre_idx CASCADE;
-DROP INDEX IF EXISTS tracks_name_idx CASCADE;
-DROP INDEX IF EXISTS tracks_artist_idx CASCADE;
+DROP INDEX IF EXISTS tracks_genre_idx;
+DROP INDEX IF EXISTS tracks_name_idx;
+DROP INDEX IF EXISTS tracks_artist_idx;
 
-DROP TABLE IF EXISTS tracks CASCADE;
+DROP TABLE IF EXISTS tracks;

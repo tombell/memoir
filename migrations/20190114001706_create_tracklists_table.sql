@@ -12,6 +12,6 @@ CREATE INDEX tracklists_name_idx ON tracklists ((lower(name)));
 
 -- DOWN
 
-DROP INDEX IF EXISTS tracklists_name_idx CASCADE;
+DROP INDEX IF EXISTS tracklists_name_idx;
 
-DROP TABLE IF EXISTS tracklists CASCADE;
+DROP TABLE IF EXISTS tracklists;

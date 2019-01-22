@@ -13,6 +13,6 @@ CREATE INDEX mix_uploads_tracklist_id_idx ON mix_uploads (tracklist_id);
 
 -- DOWN
 
-DROP INDEX IF EXISTS mix_uploads_tracklist_id_idx CASCADE;
+DROP INDEX IF EXISTS mix_uploads_tracklist_id_idx;
 
-DROP TABLE IF EXISTS mix_uploads CASCADE;
+DROP TABLE IF EXISTS mix_uploads;
