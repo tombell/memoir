@@ -16,14 +16,14 @@ type MixUploadRecord struct {
 }
 
 // InsertMixUpload inserts a new mix upload into the database.
-func (db *Database) InsertMixUpload(tx *sql.Tx, upload *MixUploadRecord) error {
+func (db *Database) InsertMixUpload(tx *sql.Tx, mix *MixUploadRecord) error {
 	_, err := tx.Exec(sqlInsertMixUpload,
-		upload.ID,
-		upload.TracklistID,
-		upload.Filename,
-		upload.Location,
-		upload.Created,
-		upload.Updated)
+		mix.ID,
+		mix.TracklistID,
+		mix.Filename,
+		mix.Location,
+		mix.Created,
+		mix.Updated)
 
 	return err
 }
