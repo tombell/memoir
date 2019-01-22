@@ -47,7 +47,7 @@ func (s *Services) AssociateUpload(filename string, location string, tracklistNa
 		return err
 	}
 	if tracklist == nil {
-		return fmt.Errorf("tracklist named %q doesn't exist", name)
+		return fmt.Errorf("tracklist named %q doesn't exist", tracklistName)
 	}
 
 	tx, err := s.DB.Begin()
@@ -57,7 +57,7 @@ func (s *Services) AssociateUpload(filename string, location string, tracklistNa
 
 	id, _ := uuid.NewV4()
 
-	upload = &database.MixUploadRecord{
+	upload := &database.MixUploadRecord{
 		ID:          id.String(),
 		TracklistID: tracklist.ID,
 		Filename:    filename,
