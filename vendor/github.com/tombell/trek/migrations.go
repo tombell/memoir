@@ -14,8 +14,8 @@ import (
 type Migrations []*Migration
 
 func (m Migrations) Len() int           { return len(m) }
-func (m Migrations) Less(i, j int) bool { return m[i].Version.Before(m[j].Version) }
 func (m Migrations) Swap(i, j int)      { m[i], m[j] = m[j], m[i] }
+func (m Migrations) Less(i, j int) bool { return m[i].Version.Before(m[j].Version) }
 
 // LoadMigrations returns all the loaded migrations from the given directory
 // path.
@@ -75,7 +75,7 @@ func (m Migrations) Apply(logger *log.Logger, driver Driver, db *sql.DB) error {
 // Rollback rolls back all the migrations that have been applied to the given
 // database.
 func (m Migrations) Rollback(logger *log.Logger, driver Driver, db *sql.DB) error {
-	sort.Reverse(m)
+	sort.Sort(sort.Reverse(m))
 
 	logger.Println("rolling back migrations:")
 
