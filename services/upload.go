@@ -19,7 +19,7 @@ const (
 )
 
 // Upload uploads a new object to S3, reading the bytes from the given Reader.
-func (s *Services) Upload(r io.Reader, key string, contentType string) (string, error) {
+func (s *Services) Upload(r io.Reader, key, contentType string) (string, error) {
 	input := &s3manager.UploadInput{
 		Bucket:      aws.String(defaultS3Bucket),
 		Key:         aws.String(key),
@@ -41,7 +41,7 @@ func (s *Services) Upload(r io.Reader, key string, contentType string) (string, 
 }
 
 // AssociateUpload associates an uploaded mix to the given tracklist.
-func (s *Services) AssociateUpload(filename string, location string, tracklistName string) error {
+func (s *Services) AssociateUpload(filename, location, tracklistName string) error {
 	tracklist, err := s.DB.FindTracklist(tracklistName)
 	if err != nil {
 		return err

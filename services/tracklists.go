@@ -21,6 +21,7 @@ type Tracklist struct {
 
 // ImportTracklist imports a new tracklist into the database, including the
 // tracklist, and any new tracks that have not been imported before.
+// TODO: refactor into smaller chunks?
 func (s *Services) ImportTracklist(name string, date time.Time, tracks [][]string) (*Tracklist, error) {
 	tracklist, err := s.DB.FindTracklist(name)
 	if err != nil {
