@@ -14,6 +14,8 @@ type TracklistRecord struct {
 	Date    time.Time
 	Created time.Time
 	Updated time.Time
+
+	Tracks []*TrackRecord
 }
 
 // InsertTracklist inserts a new tracklist into the database.
@@ -61,6 +63,46 @@ func (db *Database) GetTracklist(id string) (*TracklistRecord, error) {
 	default:
 		return &tracklist, nil
 	}
+}
+
+// GetTracklistWithTracks returns a single tracklist with the given ID from the
+// database. Populates the tracklist with all the tracks for the tracklist.
+// Returns nil if the tracklist doesn't exist.
+func (db *Database) GetTracklistWithTracks(id string) (*TracklistRecord, error) {
+	rows, err := db.conn.Query(sqlGetTracklistWithTracksByID, id)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var tracklist TracklistRecord
+
+	for rows.Next() {
+		var track TrackRecord
+
+		err := rows.Scan(
+			&tracklist.ID,
+			&tracklist.Name,
+			&tracklist.Date,
+			&tracklist.Created,
+			&tracklist.Updated,
+			&track.ID,
+			&track.Artist,
+			&track.Name,
+			&track.Genre,
+			&track.BPM,
+			&track.Key,
+			&track.Created,
+			&track.Updated)
+
+		if err != nil {
+			return nil, err
+		}
+
+		tracklist.Tracks = append(tracklist.Tracks, &track)
+	}
+
+	return &tracklist, nil
 }
 
 // FindTracklist finds a tracklist with the given name in the database.
