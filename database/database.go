@@ -17,9 +17,7 @@ type Database struct {
 // Close closes an open connection to the database.
 func (db *Database) Close() error {
 	if db.conn != nil {
-		if err := db.conn.Close(); err != nil {
-			return errors.Wrap(err, "db close failed")
-		}
+		return db.conn.Close()
 	}
 
 	return nil
@@ -27,8 +25,7 @@ func (db *Database) Close() error {
 
 // Begin begins a new transaction using the database connection.
 func (db *Database) Begin() (*sql.Tx, error) {
-	err := db.conn.Begin()
-	return errors.Wrap(err, "db begin failed")
+	return db.conn.Begin()
 }
 
 // Open opens a new connection to the database. Pings the database to check the
