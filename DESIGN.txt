@@ -24,6 +24,7 @@ tracklist_tracks
 id              uuid
 track_id        uuid
 tracklist_id    uuid
+track_number    integer
 
 mix_uploads
 ------------------------

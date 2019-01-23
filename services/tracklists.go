@@ -20,6 +20,18 @@ type Tracklist struct {
 	Updated time.Time
 }
 
+// NewTracklist returns a new tracklist with fields mapped from a database
+// record.
+func NewTracklist(tracklist *database.TracklistRecord) *Tracklist {
+	return &Tracklist{
+		ID:      tracklist.ID,
+		Name:    tracklist.Name,
+		Date:    tracklist.Date,
+		Created: tracklist.Created,
+		Updated: tracklist.Updated,
+	}
+}
+
 // ImportTracklist imports a new tracklist into the database, including the
 // tracklist, and any new tracks that have not been imported before.
 // TODO: refactor into smaller chunks?
@@ -108,15 +120,7 @@ func (s *Services) ImportTracklist(name string, date time.Time, tracks [][]strin
 		return nil, errors.Wrap(err, "tx commit failed")
 	}
 
-	tl := &Tracklist{
-		ID:      tracklist.ID,
-		Name:    tracklist.Name,
-		Date:    tracklist.Date,
-		Created: tracklist.Created,
-		Updated: tracklist.Updated,
-	}
-
-	return tl, nil
+	return NewTracklist(tracklist), nil
 }
 
 // RemoveTracklist removes a tracklist with the given name from the database.
