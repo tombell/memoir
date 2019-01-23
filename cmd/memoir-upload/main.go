@@ -89,7 +89,7 @@ func main() {
 		logger.Fatalf("err: %v\n", err)
 	}
 
-	contentType := http.DetectContentType(buf)
+	contentType := http.DetectContentType(buf[:])
 
 	cfg := &services.Config{
 		AWS: &services.AWSConfig{
