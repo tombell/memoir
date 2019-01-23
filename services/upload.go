@@ -42,6 +42,7 @@ func (s *Services) Upload(r io.Reader, key, contentType string) (string, error) 
 }
 
 // AssociateUpload associates an uploaded mix to the given tracklist.
+// TODO: return a MixUpload?
 func (s *Services) AssociateUpload(filename, location, tracklistName string) error {
 	tracklist, err := s.DB.FindTracklist(tracklistName)
 	if err != nil {
@@ -67,7 +68,14 @@ func (s *Services) AssociateUpload(filename, location, tracklistName string) err
 		Updated:     time.Now().UTC(),
 	}
 
-	err = s.DB.InsertMixUpload(tx, upload)
+	if err := s.DB.InsertMixUpload(tx, upload); err != nil {
+		return errors.Wrap(err, "insert mix_upload failed")
+	}
 
-	return errors.Wrap(err, "insert mix_upload failed")
+	if err := tx.Commit(); err != nil {
+		tx.Rollback()
+		return errors.Wrap(err, "tx commit failed")
+	}
+
+	return nil
 }
