@@ -118,6 +118,50 @@ func (db *Database) FindTracklist(name string) (*TracklistRecord, error) {
 	}
 }
 
+// FindTracklistWithTracks finds a tracklist with the given name in the database.
+// Populates the tracklist with all the tracks for the tracklist. Returns nil if
+// no matching tracklist is found.
+func (db *Database) FindTracklistWithTracks(name string) (*TracklistRecord, error) {
+	rows, err := db.conn.Query(sqlGetTracklistWithTracksByName, name)
+	if err != nil {
+		return nil, errors.Wrap(err, "db query failed")
+	}
+	defer rows.Close()
+
+	var tracklist TracklistRecord
+
+	for rows.Next() {
+		var track TrackRecord
+
+		err := rows.Scan(
+			&tracklist.ID,
+			&tracklist.Name,
+			&tracklist.Date,
+			&tracklist.Created,
+			&tracklist.Updated,
+			&track.ID,
+			&track.Artist,
+			&track.Name,
+			&track.Genre,
+			&track.BPM,
+			&track.Key,
+			&track.Created,
+			&track.Updated)
+
+		if err != nil {
+			return nil, errors.Wrap(err, "rows scan failed")
+		}
+
+		tracklist.Tracks = append(tracklist.Tracks, &track)
+	}
+
+	if err := rows.Err(); err != nil {
+		return nil, errors.Wrap(err, "rows next failed")
+	}
+
+	return &tracklist, nil
+}
+
 // RemoveTracklist removes a tracklist with the given ID from the database.
 // Deleted the mapping rows, and cascades to the tracklist table.
 func (db *Database) RemoveTracklist(tx *sql.Tx, id string) error {
