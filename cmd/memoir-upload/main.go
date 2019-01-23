@@ -83,9 +83,9 @@ func main() {
 	}
 	defer f.Close()
 
-	var buf []byte
+	var buf [512]byte
 
-	if _, err := f.Read(buf); err != nil {
+	if _, err := f.Read(buf[:]); err != nil {
 		logger.Fatalf("err: %v\n", err)
 	}
 
