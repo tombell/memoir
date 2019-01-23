@@ -5,31 +5,22 @@ LDFLAGS=-ldflags "-X main.Version=${VERSION} -X main.Commit=${COMMIT}"
 MODFLAGS=-mod=vendor
 TESTFLAGS=-cover
 
+BINARIES=memoir         \
+         memoir-delete  \
+         memoir-export  \
+         memoir-import  \
+         memoir-migrate \
+         memoir-upload
+
 all: dev
 
 clean:
 	rm -fr dist/
 
-dev: memoir-dev \
-     memoir-delete-dev \
-     memoir-import-dev \
-     memoir-migrate-dev \
-     memoir-upload-dev
+dev: $(BINARIES)
 
-memoir-dev:
-	go build ${MODFLAGS} ${LDFLAGS} -o dist/memoir ./cmd/memoir
-
-memoir-delete-dev:
-	go build ${MODFLAGS} ${LDFLAGS} -o dist/memoir-delete ./cmd/memoir-delete
-
-memoir-import-dev:
-	go build ${MODFLAGS} ${LDFLAGS} -o dist/memoir-import ./cmd/memoir-import
-
-memoir-migrate-dev:
-	go build ${MODFLAGS} ${LDFLAGS} -o dist/memoir-migrate ./cmd/memoir-migrate
-
-memoir-upload-dev:
-	go build ${MODFLAGS} ${LDFLAGS} -o dist/memoir-upload ./cmd/memoir-upload
+$(BINARIES):
+	go build ${MODFLAGS} ${LDFLAGS} -o dist/$@ ./cmd/$@
 
 test:
 	go test ${MODFLAGS} ${TESTFLAGS} ./...
@@ -37,13 +28,8 @@ test:
 create-migration:
 	echo "-- UP\n\n-- DOWN" > 'migrations/$(shell date "+%Y%m%d%H%M%S")_$(NAME).sql'
 
-.PHONY: all \
-        clean \
-        dev \
-        memoir-dev \
-        memoir-delete-dev \
-        memoir-import-dev \
-        memoir-migrate-dev \
-        memoir-upload-dev \
-        test \
+.PHONY: all            \
+        clean          \
+        dev            \
+        test           \
         create-migration
