@@ -116,5 +116,9 @@ func main() {
 		logger.Fatalf("err: %v\n", err)
 	}
 
+	if err := svc.AssociateUpload(filename, location, *tracklist); err != nil {
+		logger.Fatalf("err: %v\n", err)
+	}
+
 	logger.Printf("uploaded mix file to %s\n", location)
 }
