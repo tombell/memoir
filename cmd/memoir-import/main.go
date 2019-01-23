@@ -82,6 +82,7 @@ func main() {
 	if err != nil {
 		logger.Fatalf("err: %v\n", err)
 	}
+	defer db.Close()
 
 	svc := services.Services{
 		Logger: logger,

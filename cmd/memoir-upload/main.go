@@ -76,6 +76,7 @@ func main() {
 	if err != nil {
 		logger.Fatalf("err: %v\n", err)
 	}
+	defer db.Close()
 
 	f, err := os.Open(args[0])
 	if err != nil {
