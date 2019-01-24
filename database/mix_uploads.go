@@ -29,3 +29,9 @@ func (db *Database) InsertMixUpload(tx *sql.Tx, mix *MixUploadRecord) error {
 
 	return errors.Wrap(err, "tx exec failed")
 }
+
+// RemoveMixUpload removes a mix upload with the given ID from the database.
+func (db *Database) RemoveMixUpload(tx *sql.Tx, id string) error {
+	_, err := tx.Exec(sqlRemoveMixUpload, id)
+	return errors.Wrap(err, "tx exec failed")
+}
