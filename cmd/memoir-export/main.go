@@ -7,6 +7,7 @@ import (
 	"os"
 
 	"github.com/tombell/memoir/database"
+	"github.com/tombell/memoir/services"
 )
 
 const helpText = `usage: memoir-export [args]
@@ -18,6 +19,10 @@ Special options:
   --help      show this message, then exit
   --version   show the version number, then exit
 `
+
+const (
+	dateTimeFormat = "02/01/2006"
+)
 
 var (
 	dsn       = flag.String("db", "", "")
@@ -58,4 +63,20 @@ func main() {
 		logger.Fatalf("err: %v\n", err)
 	}
 	defer db.Close()
+
+	svc := services.Services{
+		Logger: logger,
+		DB:     db,
+	}
+
+	tl, err := svc.ExportTracklist(*tracklist)
+	if err != nil {
+		logger.Fatalf("err: %v\n", err)
+	}
+
+	logger.Printf("%s (%s)\n", tl.Name, tl.Date.Format(dateTimeFormat))
+
+	for idx, track := range tl.Tracks {
+		logger.Printf("%3d: %s - %s\n", idx+1, track.Artist, track.Name)
+	}
 }
