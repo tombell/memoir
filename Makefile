@@ -33,8 +33,8 @@ $(PLATFORMS):
 	done
 
 $(BINARIES):
-		@echo building dist/$@
-		@go build ${MODFLAGS} ${LDFLAGS} -o dist/$@ ./cmd/$@
+	@echo building dist/$@
+	@go build ${MODFLAGS} ${LDFLAGS} -o dist/$@ ./cmd/$@
 
 clean:
 	rm -fr dist/
