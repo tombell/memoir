@@ -14,13 +14,13 @@ BINARIES=memoir         \
 
 all: dev
 
-clean:
-	rm -fr dist/
-
 dev: $(BINARIES)
 
 $(BINARIES):
 	go build ${MODFLAGS} ${LDFLAGS} -o dist/$@ ./cmd/$@
+
+clean:
+	rm -fr dist/
 
 test:
 	go test ${MODFLAGS} ${TESTFLAGS} ./...
@@ -29,7 +29,7 @@ create-migration:
 	echo "-- UP\n\n-- DOWN" > 'migrations/$(shell date "+%Y%m%d%H%M%S")_$(NAME).sql'
 
 .PHONY: all            \
-        clean          \
         dev            \
+        clean          \
         test           \
         create-migration
