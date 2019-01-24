@@ -5,19 +5,30 @@ LDFLAGS=-ldflags "-X main.Version=${VERSION} -X main.Commit=${COMMIT}"
 MODFLAGS=-mod=vendor
 TESTFLAGS=-cover
 
-BINARIES=memoir         \
-         memoir-delete  \
-         memoir-export  \
-         memoir-import  \
-         memoir-migrate \
-         memoir-upload
+PLATFORMS:=darwin linux windows
+
+BINARIES:=memoir         \
+          memoir-delete  \
+          memoir-export  \
+          memoir-import  \
+          memoir-migrate \
+          memoir-upload  \
 
 all: dev
 
-dev: $(BINARIES)
+dev:
+	@for target in $(BINARIES); do \
+		echo building dist/$$target; \
+		go build ${MODFLAGS} ${LDFLAGS} -o dist/$$target ./cmd/$$target; \
+	done
 
-$(BINARIES):
-	go build ${MODFLAGS} ${LDFLAGS} -o dist/$@ ./cmd/$@
+dist: $(PLATFORMS)
+
+$(PLATFORMS):
+	@for target in $(BINARIES); do \
+		echo building dist/$$target-$@-amd64; \
+		GOOS=$@ GOARCH=amd64 go build ${MODFLAGS} ${LDFLAGS} -o dist/$$target-$@-amd64 ./cmd/$$target; \
+	done
 
 clean:
 	rm -fr dist/
@@ -28,8 +39,10 @@ test:
 create-migration:
 	echo "-- UP\n\n-- DOWN" > 'migrations/$(shell date "+%Y%m%d%H%M%S")_$(NAME).sql'
 
-.PHONY: all            \
-        dev            \
-        clean          \
-        test           \
-        create-migration
+.PHONY: all              \
+        dev              \
+        dist             \
+        $(PLATFORMS)     \
+        clean            \
+        test             \
+        create-migration \
