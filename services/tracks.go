@@ -6,6 +6,14 @@ import (
 	"github.com/tombell/memoir/database"
 )
 
+// TrackImport ...
+type TrackImport struct {
+	Artist string
+	Name   string
+	BPM    string
+	Genre  string
+}
+
 // Track contains data about a specific track.
 type Track struct {
 	ID      string
@@ -30,4 +38,9 @@ func NewTrack(track *database.TrackRecord) *Track {
 		Created: track.Created,
 		Updated: track.Updated,
 	}
+}
+
+// ImportTrack ...
+func (s *Services) ImportTrack(trackImport *TrackImport) (*TrackRecord, error) {
+	return nil, nil
 }
