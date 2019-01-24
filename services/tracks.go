@@ -41,6 +41,6 @@ func NewTrack(track *database.TrackRecord) *Track {
 }
 
 // ImportTrack ...
-func (s *Services) ImportTrack(trackImport *TrackImport) (*TrackRecord, error) {
+func (s *Services) ImportTrack(trackImport *TrackImport) (*Track, error) {
 	return nil, nil
 }
