@@ -30,6 +30,10 @@ $(PLATFORMS):
 		GOOS=$@ GOARCH=amd64 go build ${MODFLAGS} ${LDFLAGS} -o dist/$$target-$@-amd64 ./cmd/$$target; \
 	done
 
+$(BINARIES):
+		@echo building dist/$@
+		@go build ${MODFLAGS} ${LDFLAGS} -o dist/$@ ./cmd/$@
+
 clean:
 	rm -fr dist/
 
@@ -43,6 +47,7 @@ create-migration:
         dev              \
         dist             \
         $(PLATFORMS)     \
+        $(BINARIES)      \
         clean            \
         test             \
         create-migration \
