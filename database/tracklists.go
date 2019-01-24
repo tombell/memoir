@@ -163,7 +163,6 @@ func (db *Database) FindTracklistWithTracks(name string) (*TracklistRecord, erro
 }
 
 // RemoveTracklist removes a tracklist with the given ID from the database.
-// Deleted the mapping rows, and cascades to the tracklist table.
 func (db *Database) RemoveTracklist(tx *sql.Tx, id string) error {
 	_, err := tx.Exec(sqlRemoveTracklist, id)
 	return errors.Wrap(err, "tx exec failed")
