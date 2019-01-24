@@ -9,6 +9,7 @@ import (
 	"path/filepath"
 	"strings"
 
+	"github.com/gofrs/uuid"
 	slugify "github.com/metal3d/go-slugify"
 
 	"github.com/tombell/memoir/database"
@@ -108,7 +109,10 @@ func main() {
 	filename := filepath.Base(args[0])
 	ext := filepath.Ext(filename)
 	slug := slugify.Marshal(filename[:len(filename)-len(ext)])
-	key := strings.ToLower(slug + ext)
+
+	id, _ := uuid.NewV4()
+
+	key := strings.ToLower(fmt.Sprintf("%s-%s%s", slug, id.String(), ext))
 
 	logger.Printf("uploading mix file %q as %q...", filename, key)
 
