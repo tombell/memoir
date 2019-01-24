@@ -18,18 +18,26 @@ type Tracklist struct {
 	Date    time.Time
 	Created time.Time
 	Updated time.Time
+
+	Tracks []*Track
 }
 
 // NewTracklist returns a new tracklist with fields mapped from a database
 // record.
 func NewTracklist(tracklist *database.TracklistRecord) *Tracklist {
-	return &Tracklist{
+	tl := &Tracklist{
 		ID:      tracklist.ID,
 		Name:    tracklist.Name,
 		Date:    tracklist.Date,
 		Created: tracklist.Created,
 		Updated: tracklist.Updated,
 	}
+
+	for _, track := range tracklist.Tracks {
+		tl.Tracks = append(tl.Tracks, NewTrack(track))
+	}
+
+	return tl
 }
 
 // ImportTracklist imports a new tracklist into the database, including the
@@ -118,6 +126,21 @@ func (s *Services) ImportTracklist(name string, date time.Time, tracks [][]strin
 	if err := tx.Commit(); err != nil {
 		tx.Rollback()
 		return nil, errors.Wrap(err, "tx commit failed")
+	}
+
+	return NewTracklist(tracklist), nil
+}
+
+// ExportTracklist exports a tracklist with the given name to the specific
+// format.
+// TODO: add options for file format, track format?
+func (s *Services) ExportTracklist(name string) (*Tracklist, error) {
+	tracklist, err := s.DB.FindTracklistWithTracks(name)
+	if err != nil {
+		return nil, errors.Wrap(err, "find tracklist with tracks failed")
+	}
+	if tracklist == nil {
+		return nil, fmt.Errorf("tracklist named %q doesn't exist", name)
 	}
 
 	return NewTracklist(tracklist), nil
