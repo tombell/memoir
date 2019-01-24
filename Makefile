@@ -19,8 +19,7 @@ all: dev
 dev:
 	@for target in $(BINARIES); do \
 		echo building dist/$$target; \
-		go build ${MODFLAGS} ${LDFLAGS} -o dist/$$target ./cmd/$$target; \
-		if [ "$$?" -ne "0" ]; then exit 1; fi \
+		go build ${MODFLAGS} ${LDFLAGS} -o dist/$$target ./cmd/$$target || exit 1; \
 	done
 
 dist: $(PLATFORMS)
@@ -28,8 +27,7 @@ dist: $(PLATFORMS)
 $(PLATFORMS):
 	@for target in $(BINARIES); do \
 		echo building dist/$$target-$@-amd64; \
-		GOOS=$@ GOARCH=amd64 go build ${MODFLAGS} ${LDFLAGS} -o dist/$$target-$@-amd64 ./cmd/$$target; \
-		if [ "$$?" -ne "0" ]; then exit 1; fi \
+		GOOS=$@ GOARCH=amd64 go build ${MODFLAGS} ${LDFLAGS} -o dist/$$target-$@-amd64 ./cmd/$$target || exit 1 \
 	done
 
 $(BINARIES):
