@@ -78,7 +78,5 @@ func (s *Services) AssociateUpload(filename, location, tracklistName string) err
 		return errors.Wrap(err, "tx commit failed")
 	}
 
-	// TODO: add id as meta data to the uploaded object
-
 	return nil
 }
