@@ -24,20 +24,20 @@ type Tracklist struct {
 
 // NewTracklist returns a new tracklist with fields mapped from a database
 // record.
-func NewTracklist(tracklist *database.TracklistRecord) *Tracklist {
-	tl := &Tracklist{
-		ID:      tracklist.ID,
-		Name:    tracklist.Name,
-		Date:    tracklist.Date,
-		Created: tracklist.Created,
-		Updated: tracklist.Updated,
+func NewTracklist(record *database.TracklistRecord) *Tracklist {
+	tracklist := &Tracklist{
+		ID:      record.ID,
+		Name:    record.Name,
+		Date:    record.Date,
+		Created: record.Created,
+		Updated: record.Updated,
 	}
 
-	for _, track := range tracklist.Tracks {
-		tl.Tracks = append(tl.Tracks, NewTrack(track))
+	for _, track := range record.Tracks {
+		tracklist.Tracks = append(tracklist.Tracks, NewTrack(track))
 	}
 
-	return tl
+	return tracklist
 }
 
 // ImportTracklist imports a new tracklist into the database, including the
