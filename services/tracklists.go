@@ -72,42 +72,34 @@ func (s *Services) ImportTracklist(name string, date time.Time, tracks [][]strin
 		return nil, errors.Wrap(err, "insert tracklist failed")
 	}
 
-	var records []*database.TrackRecord
-
-	for _, data := range tracks {
+	for idx, data := range tracks {
 		track, err := s.DB.FindTrack(data[1], data[0])
 		if err != nil {
 			tx.Rollback()
 			return nil, errors.Wrap(err, "find track failed")
 		}
-		if track != nil {
-			records = append(records, track)
-			continue
+
+		if track == nil {
+			id, _ := uuid.NewV4()
+			bpm, _ := strconv.Atoi(data[2])
+
+			track = &database.TrackRecord{
+				ID:      id.String(),
+				Name:    data[0],
+				Artist:  data[1],
+				BPM:     bpm,
+				Key:     data[3],
+				Genre:   data[4],
+				Created: time.Now().UTC(),
+				Updated: time.Now().UTC(),
+			}
+
+			if err := s.DB.InsertTrack(tx, track); err != nil {
+				tx.Rollback()
+				return nil, errors.Wrap(err, "insert track failed")
+			}
 		}
 
-		id, _ := uuid.NewV4()
-		bpm, _ := strconv.Atoi(data[2])
-
-		track = &database.TrackRecord{
-			ID:      id.String(),
-			Name:    data[0],
-			Artist:  data[1],
-			BPM:     bpm,
-			Key:     data[3],
-			Genre:   data[4],
-			Created: time.Now().UTC(),
-			Updated: time.Now().UTC(),
-		}
-
-		if err := s.DB.InsertTrack(tx, track); err != nil {
-			tx.Rollback()
-			return nil, errors.Wrap(err, "insert track failed")
-		}
-
-		records = append(records, track)
-	}
-
-	for idx, track := range records {
 		id, _ := uuid.NewV4()
 
 		tracklistTrack := &database.TracklistTrackRecord{
