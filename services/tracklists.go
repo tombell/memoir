@@ -2,7 +2,6 @@ package services
 
 import (
 	"fmt"
-	"strconv"
 	"time"
 
 	"github.com/gofrs/uuid"
@@ -73,31 +72,17 @@ func (s *Services) ImportTracklist(name string, date time.Time, tracks [][]strin
 	}
 
 	for idx, data := range tracks {
-		track, err := s.DB.FindTrack(data[1], data[0])
-		if err != nil {
-			tx.Rollback()
-			return nil, errors.Wrap(err, "find track failed")
+		trackImport := &TrackImport{
+			Name:   data[0],
+			Artist: data[1],
+			BPM:    data[2],
+			Genre:  data[3],
+			Key:    data[4],
 		}
 
-		if track == nil {
-			id, _ := uuid.NewV4()
-			bpm, _ := strconv.Atoi(data[2])
-
-			track = &database.TrackRecord{
-				ID:      id.String(),
-				Name:    data[0],
-				Artist:  data[1],
-				BPM:     bpm,
-				Key:     data[3],
-				Genre:   data[4],
-				Created: time.Now().UTC(),
-				Updated: time.Now().UTC(),
-			}
-
-			if err := s.DB.InsertTrack(tx, track); err != nil {
-				tx.Rollback()
-				return nil, errors.Wrap(err, "insert track failed")
-			}
+		track, err := s.ImportTrack(tx, trackImport)
+		if err != nil {
+			return nil, errors.Wrap(err, "import track failed")
 		}
 
 		id, _ := uuid.NewV4()
