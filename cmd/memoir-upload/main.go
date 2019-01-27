@@ -20,12 +20,12 @@ const helpText = `usage: memoir-upload [args] <path to mix mp3>
 
   --db         connection string for connecting to the database
   --tracklist  name of the tracklist to associate the uploaded mix with
-  --aws-key
-  --aws-secret
+  --aws-key    AWS access key ID
+  --aws-secret AWS secret access key
 
 Special options:
-  --help      show this message, then exit
-  --version   show the version number, then exit
+  --help     show this message, then exit
+  --version  show the version number, then exit
 `
 
 var (
