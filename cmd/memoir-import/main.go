@@ -68,19 +68,21 @@ func main() {
 
 	logger := log.New(os.Stderr, "", 0)
 
+	logger.Printf("importing tracklist %q...\n", *tracklist)
+
 	records, err := parseSeratoExport(args[0])
 	if err != nil {
-		logger.Fatalf("err: %v\n", err)
+		logger.Fatalf("error importing tracklist: %v\n", err)
 	}
 
-	t, err := time.Parse(dateTimeFormat, records[0][0])
+	date, err := time.Parse(dateTimeFormat, records[0][0])
 	if err != nil {
-		logger.Fatalf("err: %v\n", err)
+		logger.Fatalf("error importing tracklist: %v\n", err)
 	}
 
 	db, err := database.Open(*dsn)
 	if err != nil {
-		logger.Fatalf("err: %v\n", err)
+		logger.Fatalf("error importing tracklist: %v\n", err)
 	}
 	defer db.Close()
 
@@ -89,14 +91,12 @@ func main() {
 		DB:     db,
 	}
 
-	logger.Printf("importing tracklist %q from %s...\n", *tracklist, t.Format(dateTimeFormat))
-
-	tracklist, err := svc.ImportTracklist(*tracklist, t, records[1:])
+	tracklist, err := svc.ImportTracklist(*tracklist, date, records[1:])
 	if err != nil {
-		logger.Fatalf("err: %v\n", err)
+		logger.Fatalf("error importing tracklist: %v\n", err)
 	}
 
-	logger.Printf("imported tracklist %q (%s)\n", tracklist.Name, tracklist.ID)
+	logger.Printf("imported tracklist %q\n", tracklist.Name)
 }
 
 func parseSeratoExport(filepath string) ([][]string, error) {

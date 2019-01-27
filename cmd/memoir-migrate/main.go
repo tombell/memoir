@@ -78,7 +78,7 @@ func main() {
 	switch os.Args[1] {
 	case "apply":
 		if err := applyCmd.Parse(os.Args[2:]); err != nil {
-			logger.Fatalf("err: %v\n", err)
+			logger.Fatalf("error: %v\n", err)
 		}
 
 		if *applyDsn == "" {
@@ -86,19 +86,19 @@ func main() {
 		}
 	case "rollback":
 		if err := rollbackCmd.Parse(os.Args[2:]); err != nil {
-			logger.Fatalf("err: %v\n", err)
+			logger.Fatalf("error: %v\n", err)
 		}
 
 		if *rollbackDsn == "" {
 			rollbackCmd.Usage()
 		}
 	default:
-		logger.Fatalf("err: %q is not a valid command\n", os.Args[1])
+		logger.Fatalf("error: %q is not a valid command\n", os.Args[1])
 	}
 
 	if applyCmd.Parsed() {
 		if err := trek.Apply(logger, "postgres", *applyDsn, "migrations"); err != nil {
-			logger.Fatalf("err: %v\n", err)
+			logger.Fatalf("error migrating database: %v\n", err)
 		}
 
 		return
@@ -106,7 +106,7 @@ func main() {
 
 	if rollbackCmd.Parsed() {
 		if err := trek.Rollback(logger, "postgres", *rollbackDsn, "migrations"); err != nil {
-			logger.Fatalf("err: %v\n", err)
+			logger.Fatalf("error rolling back database: %v\n", err)
 		}
 
 		return

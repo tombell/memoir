@@ -71,7 +71,7 @@ func main() {
 
 	tl, err := svc.ExportTracklist(*tracklist)
 	if err != nil {
-		logger.Fatalf("err: %v\n", err)
+		logger.Fatalf("error exporting tracklist: %v\n", err)
 	}
 
 	logger.Printf("%s (%s)\n", tl.Name, tl.Date.Format(dateTimeFormat))

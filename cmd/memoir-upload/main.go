@@ -68,9 +68,11 @@ func main() {
 
 	logger := log.New(os.Stderr, "", 0)
 
+	logger.Printf("uploading mix %q...\n", *tracklist)
+
 	db, err := database.Open(*dsn)
 	if err != nil {
-		logger.Fatalf("err: %v\n", err)
+		logger.Fatalf("error: %v\n", err)
 	}
 	defer db.Close()
 
@@ -87,5 +89,5 @@ func main() {
 		logger.Fatalf("error uploading mix: %v\n", err)
 	}
 
-	logger.Printf("uploaded mix file: %s\n", key)
+	logger.Printf("uploaded mix: %s\n", key)
 }
