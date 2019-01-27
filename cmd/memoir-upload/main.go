@@ -4,13 +4,7 @@ import (
 	"flag"
 	"fmt"
 	"log"
-	"net/http"
 	"os"
-	"path/filepath"
-	"strings"
-
-	"github.com/gofrs/uuid"
-	slugify "github.com/metal3d/go-slugify"
 
 	"github.com/tombell/memoir/database"
 	"github.com/tombell/memoir/services"
@@ -79,20 +73,6 @@ func main() {
 	}
 	defer db.Close()
 
-	f, err := os.Open(args[0])
-	if err != nil {
-		logger.Fatalf("err: %v\n", err)
-	}
-	defer f.Close()
-
-	var buf [512]byte
-
-	if _, err := f.Read(buf[:]); err != nil {
-		logger.Fatalf("err: %v\n", err)
-	}
-
-	contentType := http.DetectContentType(buf[:])
-
 	cfg := &services.Config{
 		AWS: &services.AWSConfig{
 			Key:    *awsKey,
@@ -106,22 +86,8 @@ func main() {
 		DB:     db,
 	}
 
-	filename := filepath.Base(args[0])
-	ext := filepath.Ext(filename)
-	slug := slugify.Marshal(filename[:len(filename)-len(ext)])
-
-	id, _ := uuid.NewV4()
-
-	key := strings.ToLower(fmt.Sprintf("%s-%s%s", slug, id.String(), ext))
-
-	logger.Printf("uploading mix file %q as %q...", filename, key)
-
-	location, err := svc.Upload(f, key, contentType)
+	location, err := svc.UploadMix(args[0], *tracklist)
 	if err != nil {
-		logger.Fatalf("err: %v\n", err)
-	}
-
-	if err := svc.AssociateUpload(filename, location, *tracklist); err != nil {
 		logger.Fatalf("err: %v\n", err)
 	}
 
