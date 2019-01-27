@@ -11,7 +11,7 @@ import (
 	"github.com/tombell/memoir/database"
 )
 
-// TrackImport ...
+// TrackImport contains data about a track to import from a Serato CSV export.
 type TrackImport struct {
 	Artist string
 	Name   string
@@ -46,7 +46,8 @@ func NewTrack(track *database.TrackRecord) *Track {
 	}
 }
 
-// ImportTrack ...
+// ImportTrack imports the new track if it doesn't already exist in the
+// database.
 func (s *Services) ImportTrack(tx *sql.Tx, trackImport *TrackImport) (*Track, error) {
 	track, err := s.DB.FindTrack(trackImport.Artist, trackImport.Name)
 	if err != nil {

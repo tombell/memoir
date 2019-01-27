@@ -8,6 +8,7 @@ import (
 
 	"github.com/tombell/memoir/database"
 	"github.com/tombell/memoir/services"
+	"github.com/tombell/memoir/storage"
 )
 
 const helpText = `usage: memoir-upload [args] <path to mix mp3>
@@ -73,23 +74,18 @@ func main() {
 	}
 	defer db.Close()
 
-	cfg := &services.Config{
-		AWS: &services.AWSConfig{
-			Key:    *awsKey,
-			Secret: *awsSecret,
-		},
-	}
+	storage := storage.NewS3("memoir-uploads", *awsKey, *awsSecret)
 
 	svc := &services.Services{
-		Config: cfg,
-		Logger: logger,
-		DB:     db,
+		Logger:  logger,
+		Storage: storage,
+		DB:      db,
 	}
 
-	location, err := svc.UploadMix(args[0], *tracklist)
+	key, err := svc.UploadMix(args[0], *tracklist)
 	if err != nil {
-		logger.Fatalf("err: %v\n", err)
+		logger.Fatalf("error uploading mix: %v\n", err)
 	}
 
-	logger.Printf("uploaded mix file to %s\n", location)
+	logger.Printf("uploaded mix file: %s\n", key)
 }
