@@ -76,8 +76,8 @@ func (s *Services) ImportTracklist(name string, date time.Time, tracks [][]strin
 			Name:   data[0],
 			Artist: data[1],
 			BPM:    data[2],
-			Genre:  data[3],
-			Key:    data[4],
+			Key:    data[3],
+			Genre:  data[4],
 		}
 
 		track, err := s.ImportTrack(tx, trackImport)
