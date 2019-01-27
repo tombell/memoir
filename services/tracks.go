@@ -33,16 +33,16 @@ type Track struct {
 }
 
 // NewTrack returns a nrw track with fields mapped from a database record.
-func NewTrack(track *database.TrackRecord) *Track {
+func NewTrack(record *database.TrackRecord) *Track {
 	return &Track{
-		ID:      track.ID,
-		Artist:  track.Artist,
-		Name:    track.Name,
-		Genre:   track.Genre,
-		BPM:     track.BPM,
-		Key:     track.Key,
-		Created: track.Created,
-		Updated: track.Updated,
+		ID:      record.ID,
+		Artist:  record.Artist,
+		Name:    record.Name,
+		Genre:   record.Genre,
+		BPM:     record.BPM,
+		Key:     record.Key,
+		Created: record.Created,
+		Updated: record.Updated,
 	}
 }
 
