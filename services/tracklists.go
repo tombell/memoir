@@ -121,11 +121,8 @@ func (s *Services) ExportTracklist(name string, w io.Writer) error {
 		return fmt.Errorf("tracklist named %q doesn't exist", name)
 	}
 
-	fmt.Printf("%+v\n", tracklist)
-
 	for _, track := range tracklist.Tracks {
-		str := fmt.Sprintf("%s - %s", track.Artist, track.Name)
-		fmt.Println(str)
+		str := fmt.Sprintf("%s - %s\n", track.Artist, track.Name)
 		w.Write([]byte(str))
 	}
 
