@@ -68,7 +68,7 @@ func main() {
 
 	logger := log.New(os.Stderr, "", 0)
 
-	logger.Printf("importing tracklist %q...\n", *tracklist)
+	logger.Printf("importing tracklist %s...\n", *tracklist)
 
 	records, err := parseSeratoExport(args[0])
 	if err != nil {
@@ -96,7 +96,7 @@ func main() {
 		logger.Fatalf("error importing tracklist: %v\n", err)
 	}
 
-	logger.Printf("imported tracklist %q\n", tracklist.Name)
+	logger.Printf("imported tracklist %s\n", tracklist.Name)
 }
 
 func parseSeratoExport(filepath string) ([][]string, error) {

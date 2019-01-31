@@ -68,7 +68,7 @@ func main() {
 
 	logger := log.New(os.Stderr, "", 0)
 
-	logger.Printf("uploading mix %q...\n", *tracklist)
+	logger.Printf("uploading mix %s...\n", *tracklist)
 
 	db, err := database.Open(*dsn)
 	if err != nil {

@@ -65,11 +65,11 @@ func main() {
 		DB:     db,
 	}
 
-	logger.Printf("deleting tracklist %q...\n", *tracklist)
+	logger.Printf("deleting tracklist %s...\n", *tracklist)
 
 	if err := svc.RemoveTracklist(*tracklist); err != nil {
 		logger.Fatalf("error deleting tracklist: %v\n", err)
 	}
 
-	logger.Printf("deleted tracklist %q\n", *tracklist)
+	logger.Printf("deleted tracklist %s\n", *tracklist)
 }
