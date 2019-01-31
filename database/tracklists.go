@@ -2,6 +2,7 @@ package database
 
 import (
 	"database/sql"
+	"fmt"
 	"time"
 
 	"github.com/pkg/errors"
@@ -157,6 +158,10 @@ func (db *Database) FindTracklistWithTracks(name string) (*TracklistRecord, erro
 
 	if err := rows.Err(); err != nil {
 		return nil, errors.Wrap(err, "rows next failed")
+	}
+
+	if tracklist.Name == "" {
+		return nil, fmt.Errorf("could not find tracklist: %q", name)
 	}
 
 	return &tracklist, nil
