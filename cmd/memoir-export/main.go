@@ -69,14 +69,7 @@ func main() {
 		DB:     db,
 	}
 
-	tl, err := svc.ExportTracklist(*tracklist)
-	if err != nil {
+	if err := svc.ExportTracklist(*tracklist, os.Stdout); err != nil {
 		logger.Fatalf("error exporting tracklist: %v\n", err)
-	}
-
-	logger.Printf("%s (%s)\n", tl.Name, tl.Date.Format(dateTimeFormat))
-
-	for idx, track := range tl.Tracks {
-		logger.Printf("%3d: %s - %s\n", idx+1, track.Artist, track.Name)
 	}
 }

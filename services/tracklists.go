@@ -2,6 +2,7 @@ package services
 
 import (
 	"fmt"
+	"io"
 	"time"
 
 	"github.com/gofrs/uuid"
@@ -111,16 +112,24 @@ func (s *Services) ImportTracklist(name string, date time.Time, tracks [][]strin
 // ExportTracklist exports a tracklist with the given name to the specific
 // format.
 // TODO: add options for file format, track format?
-func (s *Services) ExportTracklist(name string) (*Tracklist, error) {
+func (s *Services) ExportTracklist(name string, w io.Writer) error {
 	tracklist, err := s.DB.FindTracklistWithTracks(name)
 	if err != nil {
-		return nil, errors.Wrap(err, "find tracklist with tracks failed")
+		return errors.Wrap(err, "find tracklist with tracks failed")
 	}
 	if tracklist == nil {
-		return nil, fmt.Errorf("tracklist named %q doesn't exist", name)
+		return fmt.Errorf("tracklist named %q doesn't exist", name)
 	}
 
-	return NewTracklist(tracklist), nil
+	fmt.Printf("%+v\n", tracklist)
+
+	for _, track := range tracklist.Tracks {
+		str := fmt.Sprintf("%s - %s", track.Artist, track.Name)
+		fmt.Println(str)
+		w.Write([]byte(str))
+	}
+
+	return nil
 }
 
 // RemoveTracklist removes a tracklist with the given name from the database.
