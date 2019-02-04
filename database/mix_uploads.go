@@ -9,12 +9,12 @@ import (
 
 // MixUploadRecord represents a single mix upload row in the database.
 type MixUploadRecord struct {
-	ID          string
-	TracklistID string
-	Filename    string
-	Location    string
-	Created     time.Time
-	Updated     time.Time
+	ID          string    `db:"id"`
+	TracklistID string    `db:"tracklist_id"`
+	Filename    string    `db:"filename"`
+	Location    string    `db:"location"`
+	Created     time.Time `db:"created"`
+	Updated     time.Time `db:"updated"`
 }
 
 // InsertMixUpload inserts a new mix upload into the database.

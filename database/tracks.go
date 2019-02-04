@@ -10,14 +10,14 @@ import (
 
 // TrackRecord represents a single track row in the database.
 type TrackRecord struct {
-	ID      string
-	Artist  string
-	Name    string
-	Genre   string
-	BPM     int
-	Key     string
-	Created time.Time
-	Updated time.Time
+	ID      string    `db:"id"`
+	Artist  string    `db:"artist"`
+	Name    string    `db:"name"`
+	Genre   string    `db:"genre"`
+	BPM     int       `db:"bpm"`
+	Key     string    `db:"key"`
+	Created time.Time `db:"created"`
+	Updated time.Time `db:"updated"`
 }
 
 // InsertTrack inserts a new track into the database.

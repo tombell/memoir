@@ -11,11 +11,11 @@ import (
 
 // TracklistRecord represents a single tracklist row in the database.
 type TracklistRecord struct {
-	ID      string
-	Name    string
-	Date    time.Time
-	Created time.Time
-	Updated time.Time
+	ID      string    `db:"id"`
+	Name    string    `db:"name"`
+	Date    time.Time `db:"date"`
+	Created time.Time `db:"created"`
+	Updated time.Time `db:"updated"`
 
 	Tracks []*TrackRecord
 }
