@@ -3,6 +3,8 @@ package database
 import (
 	"database/sql"
 
+	"github.com/jmoiron/sqlx"
+
 	// Import the Postgres driver for database/sql.
 	_ "github.com/lib/pq"
 
@@ -11,7 +13,7 @@ import (
 
 // Database contains a connection to the database.
 type Database struct {
-	conn *sql.DB
+	conn *sqlx.DB
 }
 
 // Close closes an open connection to the database.
@@ -31,7 +33,7 @@ func (db *Database) Begin() (*sql.Tx, error) {
 // Open opens a new connection to the database. Pings the database to check the
 // connection is good.
 func Open(dsn string) (*Database, error) {
-	conn, err := sql.Open("postgres", dsn)
+	conn, err := sqlx.Connect("postgres", dsn)
 	if err != nil {
 		return nil, errors.Wrap(err, "db open failed")
 	}
