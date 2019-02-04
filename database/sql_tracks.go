@@ -41,17 +41,4 @@ const (
 		WHERE artist = $1
 		AND name = $2
 		LIMIT 1`
-
-	sqlGetTracksByGenre = `
-		SELECT
-			id,
-			artist,
-			name,
-			genre,
-			bpm,
-			key,
-			created,
-			updated
-		FROM tracks
-		WHERE genre = $1`
 )

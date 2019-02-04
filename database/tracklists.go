@@ -32,6 +32,12 @@ func (db *Database) InsertTracklist(tx *sqlx.Tx, tracklist *TracklistRecord) err
 	return errors.Wrap(err, "tx exec failed")
 }
 
+// RemoveTracklist removes a tracklist with the given ID from the database.
+func (db *Database) RemoveTracklist(tx *sqlx.Tx, id string) error {
+	_, err := tx.Exec(sqlRemoveTracklist, id)
+	return errors.Wrap(err, "tx exec failed")
+}
+
 // GetTracklist returns a single tracklist with the given ID from the database.
 // Returns nil if the tracklist doesn't exist.
 func (db *Database) GetTracklist(id string) (*TracklistRecord, error) {
@@ -156,10 +162,4 @@ func (db *Database) FindTracklistWithTracks(name string) (*TracklistRecord, erro
 	}
 
 	return &tracklist, nil
-}
-
-// RemoveTracklist removes a tracklist with the given ID from the database.
-func (db *Database) RemoveTracklist(tx *sqlx.Tx, id string) error {
-	_, err := tx.Exec(sqlRemoveTracklist, id)
-	return errors.Wrap(err, "tx exec failed")
 }
