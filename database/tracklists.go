@@ -37,12 +37,7 @@ func (db *Database) InsertTracklist(tx *sqlx.Tx, tracklist *TracklistRecord) err
 func (db *Database) GetTracklist(id string) (*TracklistRecord, error) {
 	var tracklist TracklistRecord
 
-	err := db.conn.QueryRow(sqlGetTracklistByID, id).Scan(
-		&tracklist.ID,
-		&tracklist.Name,
-		&tracklist.Date,
-		&tracklist.Created,
-		&tracklist.Updated)
+	err := db.conn.QueryRowx(sqlGetTracklistByID, id).StructScan(&tracklist)
 
 	switch {
 	case err == sql.ErrNoRows:
@@ -58,7 +53,7 @@ func (db *Database) GetTracklist(id string) (*TracklistRecord, error) {
 // database. Populates the tracklist with all the tracks for the tracklist.
 // Returns nil if the tracklist doesn't exist.
 func (db *Database) GetTracklistWithTracks(id string) (*TracklistRecord, error) {
-	rows, err := db.conn.Query(sqlGetTracklistWithTracksByID, id)
+	rows, err := db.conn.Queryx(sqlGetTracklistWithTracksByID, id)
 	if err != nil {
 		return nil, errors.Wrap(err, "db query failed")
 	}
@@ -103,12 +98,7 @@ func (db *Database) GetTracklistWithTracks(id string) (*TracklistRecord, error) 
 func (db *Database) FindTracklist(name string) (*TracklistRecord, error) {
 	var tracklist TracklistRecord
 
-	err := db.conn.QueryRow(sqlGetTracklistByName, name).Scan(
-		&tracklist.ID,
-		&tracklist.Name,
-		&tracklist.Date,
-		&tracklist.Created,
-		&tracklist.Updated)
+	err := db.conn.QueryRowx(sqlGetTracklistByName, name).StructScan(&tracklist)
 
 	switch {
 	case err == sql.ErrNoRows:
@@ -124,7 +114,7 @@ func (db *Database) FindTracklist(name string) (*TracklistRecord, error) {
 // Populates the tracklist with all the tracks for the tracklist. Returns nil if
 // no matching tracklist is found.
 func (db *Database) FindTracklistWithTracks(name string) (*TracklistRecord, error) {
-	rows, err := db.conn.Query(sqlGetTracklistWithTracksByName, name)
+	rows, err := db.conn.Queryx(sqlGetTracklistWithTracksByName, name)
 	if err != nil {
 		return nil, errors.Wrap(err, "db query failed")
 	}

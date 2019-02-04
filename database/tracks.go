@@ -40,15 +40,7 @@ func (db *Database) InsertTrack(tx *sqlx.Tx, track *TrackRecord) error {
 func (db *Database) GetTrack(id string) (*TrackRecord, error) {
 	var track TrackRecord
 
-	err := db.conn.QueryRow(sqlGetTrackByID, id).Scan(
-		&track.ID,
-		&track.Artist,
-		&track.Name,
-		&track.Genre,
-		&track.BPM,
-		&track.Key,
-		&track.Created,
-		&track.Updated)
+	err := db.conn.QueryRowx(sqlGetTrackByID, id).StructScan(&track)
 
 	switch {
 	case err == sql.ErrNoRows:
@@ -65,15 +57,7 @@ func (db *Database) GetTrack(id string) (*TrackRecord, error) {
 func (db *Database) FindTrack(artist, name string) (*TrackRecord, error) {
 	var track TrackRecord
 
-	err := db.conn.QueryRow(sqlGetTrackByArtistAndName, artist, name).Scan(
-		&track.ID,
-		&track.Artist,
-		&track.Name,
-		&track.Genre,
-		&track.BPM,
-		&track.Key,
-		&track.Created,
-		&track.Updated)
+	err := db.conn.QueryRowx(sqlGetTrackByArtistAndName, artist, name).StructScan(&track)
 
 	switch {
 	case err == sql.ErrNoRows:
@@ -88,7 +72,7 @@ func (db *Database) FindTrack(artist, name string) (*TrackRecord, error) {
 // FindTracksByGenre finds all tracks with the given genre in the database.
 // Returns an empty slice if no matching tracks are found.
 func (db *Database) FindTracksByGenre(genre string) ([]*TrackRecord, error) {
-	rows, err := db.conn.Query(sqlGetTracksByGenre, genre)
+	rows, err := db.conn.Queryx(sqlGetTracksByGenre, genre)
 	if err != nil {
 		return nil, errors.Wrap(err, "db query failed")
 	}
