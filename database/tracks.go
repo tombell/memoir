@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"time"
 
+	"github.com/jmoiron/sqlx"
 	"github.com/pkg/errors"
 )
 
@@ -20,7 +21,7 @@ type TrackRecord struct {
 }
 
 // InsertTrack inserts a new track into the database.
-func (db *Database) InsertTrack(tx *sql.Tx, track *TrackRecord) error {
+func (db *Database) InsertTrack(tx *sqlx.Tx, track *TrackRecord) error {
 	_, err := tx.Exec(sqlInsertTrack,
 		track.ID,
 		track.Artist,

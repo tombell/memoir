@@ -1,8 +1,6 @@
 package database
 
 import (
-	"database/sql"
-
 	"github.com/jmoiron/sqlx"
 
 	// Import the Postgres driver for database/sql.
@@ -26,8 +24,8 @@ func (db *Database) Close() error {
 }
 
 // Begin begins a new transaction using the database connection.
-func (db *Database) Begin() (*sql.Tx, error) {
-	return db.conn.Begin()
+func (db *Database) Begin() (*sqlx.Tx, error) {
+	return db.conn.Beginx()
 }
 
 // Open opens a new connection to the database. Pings the database to check the

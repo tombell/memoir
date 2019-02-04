@@ -1,11 +1,11 @@
 package services
 
 import (
-	"database/sql"
 	"strconv"
 	"time"
 
 	"github.com/gofrs/uuid"
+	"github.com/jmoiron/sqlx"
 	"github.com/pkg/errors"
 
 	"github.com/tombell/memoir/database"
@@ -48,7 +48,7 @@ func NewTrack(record *database.TrackRecord) *Track {
 
 // ImportTrack imports the new track if it doesn't already exist in the
 // database.
-func (s *Services) ImportTrack(tx *sql.Tx, trackImport *TrackImport) (*Track, error) {
+func (s *Services) ImportTrack(tx *sqlx.Tx, trackImport *TrackImport) (*Track, error) {
 	track, err := s.DB.FindTrack(trackImport.Artist, trackImport.Name)
 	if err != nil {
 		tx.Rollback()

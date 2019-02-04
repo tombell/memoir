@@ -1,8 +1,7 @@
 package database
 
 import (
-	"database/sql"
-
+	"github.com/jmoiron/sqlx"
 	"github.com/pkg/errors"
 )
 
@@ -17,7 +16,7 @@ type TracklistTrackRecord struct {
 
 // InsertTracklistToTrack inserts a new tracklist to track mapping into the
 // database.
-func (db *Database) InsertTracklistToTrack(tx *sql.Tx, tracklistTrack *TracklistTrackRecord) error {
+func (db *Database) InsertTracklistToTrack(tx *sqlx.Tx, tracklistTrack *TracklistTrackRecord) error {
 	_, err := tx.Exec(sqlInsertTracklistTrack,
 		tracklistTrack.ID,
 		tracklistTrack.TracklistID,

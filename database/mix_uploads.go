@@ -1,9 +1,9 @@
 package database
 
 import (
-	"database/sql"
 	"time"
 
+	"github.com/jmoiron/sqlx"
 	"github.com/pkg/errors"
 )
 
@@ -18,7 +18,7 @@ type MixUploadRecord struct {
 }
 
 // InsertMixUpload inserts a new mix upload into the database.
-func (db *Database) InsertMixUpload(tx *sql.Tx, mix *MixUploadRecord) error {
+func (db *Database) InsertMixUpload(tx *sqlx.Tx, mix *MixUploadRecord) error {
 	_, err := tx.Exec(sqlInsertMixUpload,
 		mix.ID,
 		mix.TracklistID,
@@ -31,7 +31,7 @@ func (db *Database) InsertMixUpload(tx *sql.Tx, mix *MixUploadRecord) error {
 }
 
 // RemoveMixUpload removes a mix upload with the given ID from the database.
-func (db *Database) RemoveMixUpload(tx *sql.Tx, id string) error {
+func (db *Database) RemoveMixUpload(tx *sqlx.Tx, id string) error {
 	_, err := tx.Exec(sqlRemoveMixUpload, id)
 	return errors.Wrap(err, "tx exec failed")
 }
