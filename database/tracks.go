@@ -2,23 +2,10 @@ package database
 
 import (
 	"database/sql"
-	"time"
 
 	"github.com/jmoiron/sqlx"
 	"github.com/pkg/errors"
 )
-
-// TrackRecord represents a single track row in the database.
-type TrackRecord struct {
-	ID      string    `db:"id"`
-	Artist  string    `db:"artist"`
-	Name    string    `db:"name"`
-	Genre   string    `db:"genre"`
-	BPM     int       `db:"bpm"`
-	Key     string    `db:"key"`
-	Created time.Time `db:"created"`
-	Updated time.Time `db:"updated"`
-}
 
 // InsertTrack inserts a new track into the database.
 func (db *Database) InsertTrack(tx *sqlx.Tx, track *TrackRecord) error {

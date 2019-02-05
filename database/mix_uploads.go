@@ -1,21 +1,9 @@
 package database
 
 import (
-	"time"
-
 	"github.com/jmoiron/sqlx"
 	"github.com/pkg/errors"
 )
-
-// MixUploadRecord represents a single mix upload row in the database.
-type MixUploadRecord struct {
-	ID          string    `db:"id"`
-	TracklistID string    `db:"tracklist_id"`
-	Filename    string    `db:"filename"`
-	Location    string    `db:"location"`
-	Created     time.Time `db:"created"`
-	Updated     time.Time `db:"updated"`
-}
 
 // InsertMixUpload inserts a new mix upload into the database.
 func (db *Database) InsertMixUpload(tx *sqlx.Tx, mix *MixUploadRecord) error {

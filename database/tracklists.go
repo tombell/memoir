@@ -3,22 +3,10 @@ package database
 import (
 	"database/sql"
 	"fmt"
-	"time"
 
 	"github.com/jmoiron/sqlx"
 	"github.com/pkg/errors"
 )
-
-// TracklistRecord represents a single tracklist row in the database.
-type TracklistRecord struct {
-	ID      string    `db:"id"`
-	Name    string    `db:"name"`
-	Date    time.Time `db:"date"`
-	Created time.Time `db:"created"`
-	Updated time.Time `db:"updated"`
-
-	Tracks []*TrackRecord
-}
 
 // InsertTracklist inserts a new tracklist into the database.
 func (db *Database) InsertTracklist(tx *sqlx.Tx, tracklist *TracklistRecord) error {
