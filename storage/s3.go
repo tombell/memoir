@@ -13,7 +13,6 @@ import (
 )
 
 const (
-	defaultS3Bucket = "memoir-uploads"
 	defaultS3Region = "us-east-1"
 )
 
@@ -38,7 +37,7 @@ func NewS3(bucket, key, secret string) *S3 {
 // Exists checks if the object with the given key exists in the S3 bucket.
 func (s *S3) Exists(key string) (bool, error) {
 	input := &s3.GetObjectInput{
-		Bucket: aws.String(defaultS3Bucket),
+		Bucket: aws.String(s.bucket),
 		Key:    aws.String(key),
 		Range:  aws.String("bytes=0-1"),
 	}
@@ -67,7 +66,7 @@ func (s *S3) Put(key string, r io.ReadSeeker) error {
 	contentType := http.DetectContentType(buf[:])
 
 	input := &s3.PutObjectInput{
-		Bucket:      aws.String(defaultS3Bucket),
+		Bucket:      aws.String(s.bucket),
 		Key:         aws.String(key),
 		ContentType: aws.String(contentType),
 		Body:        r,
