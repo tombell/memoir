@@ -111,7 +111,6 @@ func (s *Services) ImportTracklist(name string, date time.Time, tracks [][]strin
 
 // ExportTracklist exports a tracklist with the given name to the specific
 // format.
-// TODO: add options for file format, track format?
 func (s *Services) ExportTracklist(name string, w io.Writer) error {
 	tracklist, err := s.DB.FindTracklistWithTracks(name)
 	if err != nil {
