@@ -9,5 +9,5 @@ require (
 	github.com/stretchr/testify v1.3.0 // indirect
 	github.com/tombell/trek v0.0.4
 	golang.org/x/net v0.0.0-20190125091013-d26f9f9a57f3 // indirect
-	golang.org/x/text v0.3.0 // indirect
+	google.golang.org/appengine v1.4.0 // indirect
 )
