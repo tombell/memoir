@@ -15,7 +15,7 @@ import (
 	"github.com/tombell/memoir/services"
 )
 
-const helpText = `usage: memoir-import [args] <exported csv file>
+const helpText = `usage: memoir-tracklist-import [args] <exported csv file>
 
   --db         connection string for connecting to the database
   --tracklist  name for the tracklist being imported
@@ -55,7 +55,7 @@ func main() {
 	flag.Parse()
 
 	if *version {
-		fmt.Fprintf(os.Stdout, "memoir-import %s (%s)\n", Version, Commit)
+		fmt.Fprintf(os.Stdout, "memoir-tracklist-import %s (%s)\n", Version, Commit)
 		os.Exit(0)
 	}
 

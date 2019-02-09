@@ -10,7 +10,7 @@ PLATFORMS:=darwin linux windows
 BINARIES:=memoir         \
           memoir-tracklist-delete \
           memoir-tracklist-export \
-          memoir-import  \
+          memoir-tracklist-import \
           memoir-migrate \
           memoir-upload  \
 
