@@ -7,12 +7,12 @@ TESTFLAGS=-cover
 
 PLATFORMS:=darwin linux windows
 
-BINARIES:=memoir         \
+BINARIES:=memoir                  \
           memoir-tracklist-delete \
           memoir-tracklist-export \
           memoir-tracklist-import \
-          memoir-migrate \
-          memoir-upload  \
+          memoir-migrate          \
+          memoir-upload           \
 
 all: dev
 
