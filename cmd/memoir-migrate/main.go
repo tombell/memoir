@@ -67,48 +67,44 @@ func main() {
 
 	logger := log.New(os.Stderr, "", 0)
 
-	applyCmd := flag.NewFlagSet("apply", flag.ExitOnError)
-	applyCmd.Usage = usage(applyHelpText)
-	applyDsn := applyCmd.String("db", "", "")
-
-	rollbackCmd := flag.NewFlagSet("rollback", flag.ExitOnError)
-	rollbackCmd.Usage = usage(rollbackHelpText)
-	rollbackDsn := rollbackCmd.String("db", "", "")
-
 	switch os.Args[1] {
 	case "apply":
-		if err := applyCmd.Parse(os.Args[2:]); err != nil {
+		cmd := flag.NewFlagSet("apply", flag.ExitOnError)
+		cmd.Usage = usage(applyHelpText)
+		dsn := cmd.String("db", "", "")
+
+		if err := cmd.Parse(os.Args[2:]); err != nil {
 			logger.Fatalf("error: %v\n", err)
 		}
 
-		if *applyDsn == "" {
-			applyCmd.Usage()
+		if *dsn == "" {
+			cmd.Usage()
+		}
+
+		if cmd.Parsed() {
+			if err := trek.Apply(logger, "postgres", *dsn, "migrations"); err != nil {
+				logger.Fatalf("error migrating database: %v\n", err)
+			}
 		}
 	case "rollback":
-		if err := rollbackCmd.Parse(os.Args[2:]); err != nil {
+		cmd := flag.NewFlagSet("rollback", flag.ExitOnError)
+		cmd.Usage = usage(rollbackHelpText)
+		dsn := cmd.String("db", "", "")
+
+		if err := cmd.Parse(os.Args[2:]); err != nil {
 			logger.Fatalf("error: %v\n", err)
 		}
 
-		if *rollbackDsn == "" {
-			rollbackCmd.Usage()
+		if *dsn == "" {
+			cmd.Usage()
+		}
+
+		if cmd.Parsed() {
+			if err := trek.Rollback(logger, "postgres", *dsn, "migrations"); err != nil {
+				logger.Fatalf("error rolling back database: %v\n", err)
+			}
 		}
 	default:
 		logger.Fatalf("error: %q is not a valid command\n", os.Args[1])
-	}
-
-	if applyCmd.Parsed() {
-		if err := trek.Apply(logger, "postgres", *applyDsn, "migrations"); err != nil {
-			logger.Fatalf("error migrating database: %v\n", err)
-		}
-
-		return
-	}
-
-	if rollbackCmd.Parsed() {
-		if err := trek.Rollback(logger, "postgres", *rollbackDsn, "migrations"); err != nil {
-			logger.Fatalf("error rolling back database: %v\n", err)
-		}
-
-		return
 	}
 }
