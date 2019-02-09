@@ -10,7 +10,7 @@ import (
 	"github.com/tombell/memoir/services"
 )
 
-const helpText = `usage: memoir-delete [args]
+const helpText = `usage: memoir-tracklist-delete [args]
 
   --db         connection string for connecting to the database
   --tracklist  name of the tracklist to delete
@@ -46,7 +46,7 @@ func main() {
 	flag.Parse()
 
 	if *version {
-		fmt.Fprintf(os.Stdout, "memoir-delete %s (%s)\n", Version, Commit)
+		fmt.Fprintf(os.Stdout, "memoir-tracklist-delete %s (%s)\n", Version, Commit)
 		os.Exit(0)
 	}
 

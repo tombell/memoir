@@ -8,7 +8,7 @@ TESTFLAGS=-cover
 PLATFORMS:=darwin linux windows
 
 BINARIES:=memoir         \
-          memoir-delete  \
+          memoir-tracklist-delete  \
           memoir-export  \
           memoir-import  \
           memoir-migrate \
