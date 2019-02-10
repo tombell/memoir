@@ -11,14 +11,13 @@ import (
 
 	"github.com/gofrs/uuid"
 	"github.com/pkg/errors"
-
-	"github.com/tombell/memoir/database"
+	"github.com/tombell/memoir/datastore"
 )
 
 // UploadMix uploads the file at the given path to the configured storage
 // backend, and associates with an existing tracklist.
 func (s *Services) UploadMix(file, tracklistName string) (string, error) {
-	tracklist, err := s.DB.FindTracklist(tracklistName)
+	tracklist, err := s.DataStore.FindTracklistByName(tracklistName)
 	if err != nil {
 		return "", errors.Wrap(err, "find tracklist failed")
 	}
@@ -26,7 +25,7 @@ func (s *Services) UploadMix(file, tracklistName string) (string, error) {
 		return "", fmt.Errorf("tracklist named %q doesn't exist", tracklistName)
 	}
 
-	tx, err := s.DB.Begin()
+	tx, err := s.DataStore.Beginx()
 	if err != nil {
 		return "", errors.Wrap(err, "db begin failed")
 	}
@@ -50,7 +49,7 @@ func (s *Services) UploadMix(file, tracklistName string) (string, error) {
 
 	id, _ := uuid.NewV4()
 
-	upload := &database.MixUploadRecord{
+	upload := &datastore.MixUpload{
 		ID:          id.String(),
 		TracklistID: tracklist.ID,
 		Filename:    filename,
@@ -59,7 +58,7 @@ func (s *Services) UploadMix(file, tracklistName string) (string, error) {
 		Updated:     time.Now().UTC(),
 	}
 
-	if err := s.DB.InsertMixUpload(tx, upload); err != nil {
+	if err := s.DataStore.AddMixUpload(tx, upload); err != nil {
 		tx.Rollback()
 		return "", errors.Wrap(err, "insert mix_upload failed")
 	}

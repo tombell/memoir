@@ -6,7 +6,7 @@ import (
 	"log"
 	"os"
 
-	"github.com/tombell/memoir/database"
+	"github.com/tombell/memoir/datastore"
 	"github.com/tombell/memoir/services"
 )
 
@@ -54,15 +54,15 @@ func main() {
 
 	logger := log.New(os.Stderr, "", 0)
 
-	db, err := database.Open(*dsn)
+	store, err := datastore.New(*dsn)
 	if err != nil {
 		logger.Fatalf("err: %v\n", err)
 	}
-	defer db.Close()
+	defer store.Close()
 
 	svc := services.Services{
-		Logger: logger,
-		DB:     db,
+		Logger:    logger,
+		DataStore: store,
 	}
 
 	logger.Printf("deleting tracklist %s...\n", *tracklist)

@@ -11,7 +11,7 @@ import (
 	"os"
 	"time"
 
-	"github.com/tombell/memoir/database"
+	"github.com/tombell/memoir/datastore"
 	"github.com/tombell/memoir/services"
 )
 
@@ -80,15 +80,15 @@ func main() {
 		logger.Fatalf("error importing tracklist: %v\n", err)
 	}
 
-	db, err := database.Open(*dsn)
+	store, err := datastore.New(*dsn)
 	if err != nil {
 		logger.Fatalf("error importing tracklist: %v\n", err)
 	}
-	defer db.Close()
+	defer store.Close()
 
 	svc := services.Services{
-		Logger: logger,
-		DB:     db,
+		Logger:    logger,
+		DataStore: store,
 	}
 
 	tracklist, err := svc.ImportTracklist(*tracklist, date, records[1:])

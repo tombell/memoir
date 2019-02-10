@@ -8,7 +8,7 @@ import (
 	"github.com/jmoiron/sqlx"
 	"github.com/pkg/errors"
 
-	"github.com/tombell/memoir/database"
+	"github.com/tombell/memoir/datastore"
 )
 
 // TrackImport contains data about a track to import from a Serato CSV export.
@@ -33,7 +33,7 @@ type Track struct {
 }
 
 // NewTrack returns a nrw track with fields mapped from a database record.
-func NewTrack(record *database.TrackRecord) *Track {
+func NewTrack(record *datastore.Track) *Track {
 	return &Track{
 		ID:      record.ID,
 		Artist:  record.Artist,
@@ -49,7 +49,7 @@ func NewTrack(record *database.TrackRecord) *Track {
 // ImportTrack imports the new track if it doesn't already exist in the
 // database.
 func (s *Services) ImportTrack(tx *sqlx.Tx, trackImport *TrackImport) (*Track, error) {
-	track, err := s.DB.FindTrack(trackImport.Artist, trackImport.Name)
+	track, err := s.DataStore.FindTrackByArtistAndName(trackImport.Artist, trackImport.Name)
 	if err != nil {
 		tx.Rollback()
 		return nil, errors.Wrap(err, "find track failed")
@@ -59,7 +59,7 @@ func (s *Services) ImportTrack(tx *sqlx.Tx, trackImport *TrackImport) (*Track, e
 		id, _ := uuid.NewV4()
 		bpm, _ := strconv.Atoi(trackImport.BPM)
 
-		track = &database.TrackRecord{
+		track = &datastore.Track{
 			ID:      id.String(),
 			Name:    trackImport.Name,
 			Artist:  trackImport.Artist,
@@ -70,7 +70,7 @@ func (s *Services) ImportTrack(tx *sqlx.Tx, trackImport *TrackImport) (*Track, e
 			Updated: time.Now().UTC(),
 		}
 
-		if err := s.DB.InsertTrack(tx, track); err != nil {
+		if err := s.DataStore.AddTrack(tx, track); err != nil {
 			tx.Rollback()
 			return nil, errors.Wrap(err, "insert track failed")
 		}

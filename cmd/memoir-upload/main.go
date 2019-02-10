@@ -6,7 +6,7 @@ import (
 	"log"
 	"os"
 
-	"github.com/tombell/memoir/database"
+	"github.com/tombell/memoir/datastore"
 	"github.com/tombell/memoir/services"
 	"github.com/tombell/memoir/storage"
 )
@@ -70,18 +70,18 @@ func main() {
 
 	logger.Printf("uploading mix %s...\n", *tracklist)
 
-	db, err := database.Open(*dsn)
+	store, err := datastore.New(*dsn)
 	if err != nil {
 		logger.Fatalf("error: %v\n", err)
 	}
-	defer db.Close()
+	defer store.Close()
 
 	storage := storage.NewS3("memoir-uploads", *awsKey, *awsSecret)
 
 	svc := &services.Services{
-		Logger:  logger,
-		Storage: storage,
-		DB:      db,
+		Logger:    logger,
+		Storage:   storage,
+		DataStore: store,
 	}
 
 	key, err := svc.UploadMix(args[0], *tracklist)

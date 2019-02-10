@@ -8,7 +8,7 @@ import (
 	"github.com/gofrs/uuid"
 	"github.com/pkg/errors"
 
-	"github.com/tombell/memoir/database"
+	"github.com/tombell/memoir/datastore"
 )
 
 // Tracklist contains data about a specific tracklist.
@@ -24,7 +24,7 @@ type Tracklist struct {
 
 // NewTracklist returns a new tracklist with fields mapped from a database
 // record.
-func NewTracklist(record *database.TracklistRecord) *Tracklist {
+func NewTracklist(record *datastore.Tracklist) *Tracklist {
 	tracklist := &Tracklist{
 		ID:      record.ID,
 		Name:    record.Name,
@@ -43,7 +43,7 @@ func NewTracklist(record *database.TracklistRecord) *Tracklist {
 // ImportTracklist imports a new tracklist into the database, including the
 // tracklist, and any new tracks that have not been imported before.
 func (s *Services) ImportTracklist(name string, date time.Time, tracks [][]string) (*Tracklist, error) {
-	tracklist, err := s.DB.FindTracklist(name)
+	tracklist, err := s.DataStore.FindTracklistByName(name)
 	if err != nil {
 		return nil, errors.Wrap(err, "find tracklist failed")
 	}
@@ -53,7 +53,7 @@ func (s *Services) ImportTracklist(name string, date time.Time, tracks [][]strin
 
 	id, _ := uuid.NewV4()
 
-	tracklist = &database.TracklistRecord{
+	tracklist = &datastore.Tracklist{
 		ID:      id.String(),
 		Name:    name,
 		Date:    date,
@@ -61,12 +61,12 @@ func (s *Services) ImportTracklist(name string, date time.Time, tracks [][]strin
 		Updated: time.Now().UTC(),
 	}
 
-	tx, err := s.DB.Begin()
+	tx, err := s.DataStore.Beginx()
 	if err != nil {
 		return nil, errors.Wrap(err, "db begin failed")
 	}
 
-	if err := s.DB.InsertTracklist(tx, tracklist); err != nil {
+	if err := s.DataStore.AddTracklist(tx, tracklist); err != nil {
 		tx.Rollback()
 		return nil, errors.Wrap(err, "insert tracklist failed")
 	}
@@ -87,14 +87,14 @@ func (s *Services) ImportTracklist(name string, date time.Time, tracks [][]strin
 
 		id, _ := uuid.NewV4()
 
-		tracklistTrack := &database.TracklistTrackRecord{
+		tracklistTrack := &datastore.TracklistTrack{
 			ID:          id.String(),
 			TracklistID: tracklist.ID,
 			TrackID:     track.ID,
 			TrackNumber: idx + 1,
 		}
 
-		if err := s.DB.InsertTracklistToTrack(tx, tracklistTrack); err != nil {
+		if err := s.DataStore.AddTracklistTrack(tx, tracklistTrack); err != nil {
 			tx.Rollback()
 			return nil, errors.Wrap(err, "insert tracklist_track failed")
 		}
@@ -111,7 +111,7 @@ func (s *Services) ImportTracklist(name string, date time.Time, tracks [][]strin
 // ExportTracklist exports a tracklist with the given name to the specific
 // format.
 func (s *Services) ExportTracklist(name string, w io.Writer) error {
-	tracklist, err := s.DB.FindTracklistWithTracks(name)
+	tracklist, err := s.DataStore.FindTracklistWithTracksByName(name)
 	if err != nil {
 		return errors.Wrap(err, "find tracklist with tracks failed")
 	}
@@ -129,7 +129,7 @@ func (s *Services) ExportTracklist(name string, w io.Writer) error {
 
 // RemoveTracklist removes a tracklist with the given name from the database.
 func (s *Services) RemoveTracklist(name string) error {
-	tracklist, err := s.DB.FindTracklist(name)
+	tracklist, err := s.DataStore.FindTracklistByName(name)
 	if err != nil {
 		return errors.Wrap(err, "find tracklist failed")
 	}
@@ -137,12 +137,12 @@ func (s *Services) RemoveTracklist(name string) error {
 		return fmt.Errorf("tracklist named %q doesn't exist", name)
 	}
 
-	tx, err := s.DB.Begin()
+	tx, err := s.DataStore.Beginx()
 	if err != nil {
 		return errors.Wrap(err, "db begin failed")
 	}
 
-	if err := s.DB.RemoveTracklist(tx, tracklist.ID); err != nil {
+	if err := s.DataStore.RemoveTracklist(tx, tracklist.ID); err != nil {
 		tx.Rollback()
 		return errors.Wrap(err, "remove tracklist failed")
 	}
