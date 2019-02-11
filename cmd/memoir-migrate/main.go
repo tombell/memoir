@@ -39,6 +39,8 @@ Special options:
 Special options:
   --help  show this message, then exit
 `
+
+	migrationsPath = `datastore/migrations`
 )
 
 var (
@@ -82,7 +84,7 @@ func main() {
 		}
 
 		if cmd.Parsed() {
-			if err := trek.Apply(logger, "postgres", *dsn, "migrations"); err != nil {
+			if err := trek.Apply(logger, "postgres", *dsn, migrationsPath); err != nil {
 				logger.Fatalf("error migrating database: %v\n", err)
 			}
 		}
@@ -100,7 +102,7 @@ func main() {
 		}
 
 		if cmd.Parsed() {
-			if err := trek.Rollback(logger, "postgres", *dsn, "migrations"); err != nil {
+			if err := trek.Rollback(logger, "postgres", *dsn, migrationsPath); err != nil {
 				logger.Fatalf("error rolling back database: %v\n", err)
 			}
 		}
