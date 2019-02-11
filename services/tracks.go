@@ -32,7 +32,7 @@ type Track struct {
 	Updated time.Time
 }
 
-// NewTrack returns a nrw track with fields mapped from a database record.
+// NewTrack returns a new track with fields mapped from a database record.
 func NewTrack(record *datastore.Track) *Track {
 	return &Track{
 		ID:      record.ID,
