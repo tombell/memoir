@@ -91,7 +91,7 @@ type Tracklist struct {
 	Tracks []*Track
 }
 
-// AddTracklist ...
+// AddTracklist adds a new tracklist into the database.
 func (ds *DataStore) AddTracklist(tx *sqlx.Tx, tracklist *Tracklist) error {
 	_, err := tx.Exec(sqlAddTracklist,
 		tracklist.ID,
@@ -103,14 +103,14 @@ func (ds *DataStore) AddTracklist(tx *sqlx.Tx, tracklist *Tracklist) error {
 	return errors.Wrap(err, "tx exec failed")
 }
 
-// RemoveTracklist ...
+// RemoveTracklist removes a tracklist from the database.
 func (ds *DataStore) RemoveTracklist(tx *sqlx.Tx, id string) error {
 	_, err := tx.Exec(sqlRemoveTracklist, id)
 
 	return errors.Wrap(err, "tx exec failed")
 }
 
-// GetTracklist ...
+// GetTracklist selects a tracklist from the database with the given ID.
 func (ds *DataStore) GetTracklist(id string) (*Tracklist, error) {
 	var tracklist Tracklist
 
@@ -126,7 +126,8 @@ func (ds *DataStore) GetTracklist(id string) (*Tracklist, error) {
 	}
 }
 
-// GetTracklistWithTracks ...
+// GetTracklistWithTracks selects a tracklist, and the tracks in the tracklist
+// from the database with the given ID.
 func (ds *DataStore) GetTracklistWithTracks(id string) (*Tracklist, error) {
 	rows, err := ds.Queryx(sqlGetTracklistWithTracksByID, id)
 	if err != nil {
@@ -168,7 +169,7 @@ func (ds *DataStore) GetTracklistWithTracks(id string) (*Tracklist, error) {
 	return &tracklist, nil
 }
 
-// FindTracklistByName ...
+// FindTracklistByName finds a tracklist from the database with the given name.
 func (ds *DataStore) FindTracklistByName(name string) (*Tracklist, error) {
 	var tracklist Tracklist
 
@@ -184,7 +185,8 @@ func (ds *DataStore) FindTracklistByName(name string) (*Tracklist, error) {
 	}
 }
 
-// FindTracklistWithTracksByName ...
+// FindTracklistWithTracksByName find a tracklist, and the tracks from the
+// database with the given name.
 func (ds *DataStore) FindTracklistWithTracksByName(name string) (*Tracklist, error) {
 	rows, err := ds.Queryx(sqlFindTracklistWithTracksByName, name)
 	if err != nil {

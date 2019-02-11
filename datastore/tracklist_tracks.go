@@ -15,8 +15,7 @@ const (
 		) VALUES ($1, $2, $3, $4)`
 )
 
-// TracklistTrack represents a single tracklist_track row in the database. Used
-// for mapping a track to a tracklist.
+// TracklistTrack represents a single tracklist_track row in the database.
 type TracklistTrack struct {
 	ID          string
 	TracklistID string
@@ -24,7 +23,7 @@ type TracklistTrack struct {
 	TrackNumber int
 }
 
-// AddTracklistTrack ...
+// AddTracklistTrack adds a new tracklist to track mapping into the database.
 func (ds *DataStore) AddTracklistTrack(tx *sqlx.Tx, tracklistTrack *TracklistTrack) error {
 	_, err := tx.Exec(sqlAddTracklistTrack,
 		tracklistTrack.ID,

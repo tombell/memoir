@@ -51,7 +51,7 @@ const (
 		LIMIT 1`
 )
 
-// Track ...
+// Track represents a single track row in the database.
 type Track struct {
 	ID      string
 	Artist  string
@@ -63,7 +63,7 @@ type Track struct {
 	Updated time.Time
 }
 
-// AddTrack ...
+// AddTrack adds a new track into the database.
 func (ds *DataStore) AddTrack(tx *sqlx.Tx, track *Track) error {
 	_, err := tx.Exec(sqlAddTrack,
 		track.ID,
@@ -78,7 +78,7 @@ func (ds *DataStore) AddTrack(tx *sqlx.Tx, track *Track) error {
 	return errors.Wrap(err, "tx exec failed")
 }
 
-// GetTrack ...
+// GetTrack selects a track from the database with the given ID.
 func (ds *DataStore) GetTrack(id string) (*Track, error) {
 	var track Track
 
@@ -94,7 +94,8 @@ func (ds *DataStore) GetTrack(id string) (*Track, error) {
 	}
 }
 
-// FindTrackByArtistAndName ...
+// FindTrackByArtistAndName finds a track from the database with the given
+// artist and name.
 func (ds *DataStore) FindTrackByArtistAndName(artist, name string) (*Track, error) {
 	var track Track
 

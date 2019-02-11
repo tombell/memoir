@@ -33,7 +33,7 @@ type MixUpload struct {
 	Updated     time.Time
 }
 
-// AddMixUpload ...
+// AddMixUpload adds a new mix upload into the database.
 func (ds *DataStore) AddMixUpload(tx *sqlx.Tx, mix *MixUpload) error {
 	_, err := tx.Exec(sqlAddMixUpload,
 		mix.ID,
@@ -46,7 +46,7 @@ func (ds *DataStore) AddMixUpload(tx *sqlx.Tx, mix *MixUpload) error {
 	return errors.Wrap(err, "tx exec failed")
 }
 
-// RemoveMixUpload ...
+// RemoveMixUpload removes a mix upload from the database.
 func (ds *DataStore) RemoveMixUpload(tx *sqlx.Tx, id string) error {
 	_, err := tx.Exec(sqlRemoveMixUpload, id)
 
