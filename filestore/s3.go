@@ -1,4 +1,4 @@
-package storage
+package filestore
 
 import (
 	"io"
@@ -16,8 +16,7 @@ const (
 	defaultS3Region = "us-east-1"
 )
 
-// S3 is a storage backend implementing the ObjectStorage interface, using S3 is
-// a storage layer.
+// S3 ...
 type S3 struct {
 	svc    *s3.S3
 	bucket string

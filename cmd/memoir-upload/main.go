@@ -7,8 +7,8 @@ import (
 	"os"
 
 	"github.com/tombell/memoir/datastore"
+	"github.com/tombell/memoir/filestore"
 	"github.com/tombell/memoir/services"
-	"github.com/tombell/memoir/storage"
 )
 
 const helpText = `usage: memoir-upload [args] <path to mix mp3>
@@ -70,18 +70,18 @@ func main() {
 
 	logger.Printf("uploading mix %s...\n", *tracklist)
 
-	store, err := datastore.New(*dsn)
+	ds, err := datastore.New(*dsn)
 	if err != nil {
 		logger.Fatalf("error: %v\n", err)
 	}
-	defer store.Close()
+	defer ds.Close()
 
-	storage := storage.NewS3("memoir-uploads", *awsKey, *awsSecret)
+	fs := filestore.NewS3("memoir-uploads", *awsKey, *awsSecret)
 
 	svc := &services.Services{
 		Logger:    logger,
-		Storage:   storage,
-		DataStore: store,
+		DataStore: ds,
+		FileStore: fs,
 	}
 
 	key, err := svc.UploadMix(args[0], *tracklist)

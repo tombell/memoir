@@ -63,14 +63,14 @@ func (s *Services) UploadMix(file, tracklistName string) (string, error) {
 		return "", errors.Wrap(err, "insert mix_upload failed")
 	}
 
-	exists, err := s.Storage.Exists(key)
+	exists, err := s.FileStore.Exists(key)
 	if err != nil {
 		tx.Rollback()
 		return "", errors.Wrap(err, "check upload exists failed")
 	}
 
 	if !exists {
-		if err := s.Storage.Put(key, r); err != nil {
+		if err := s.FileStore.Put(key, r); err != nil {
 			tx.Rollback()
 			return "", errors.Wrap(err, "uploading failed")
 		}

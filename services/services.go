@@ -4,7 +4,7 @@ import (
 	"log"
 
 	"github.com/tombell/memoir/datastore"
-	"github.com/tombell/memoir/storage"
+	"github.com/tombell/memoir/filestore"
 )
 
 // Config contains any configuration data for the service functions.
@@ -15,5 +15,5 @@ type Services struct {
 	Config    *Config
 	Logger    *log.Logger
 	DataStore *datastore.DataStore
-	Storage   storage.ObjectStorage
+	FileStore filestore.FileStore
 }
