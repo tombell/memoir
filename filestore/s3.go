@@ -16,7 +16,8 @@ const (
 	defaultS3Region = "us-east-1"
 )
 
-// S3 ...
+// S3 is a file store implementing the FileStore interface, using S3 as the
+// storage backend.
 type S3 struct {
 	svc    *s3.S3
 	bucket string
