@@ -1,7 +1,7 @@
 VERSION?=dev
 COMMIT=$(shell git rev-parse HEAD | cut -c -8)
 
-LDFLAGS=-ldflags "-X main.Version=${VERSION} -X main.Commit=${COMMIT}"
+LDFLAGS=-ldflags "-X github.com/tombell/memoir.Version=${VERSION} -X github.com/tombell/memoir.Commit=${COMMIT}"
 MODFLAGS=-mod=vendor
 TESTFLAGS=-cover
 

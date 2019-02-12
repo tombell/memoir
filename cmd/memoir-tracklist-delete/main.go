@@ -6,6 +6,7 @@ import (
 	"log"
 	"os"
 
+	"github.com/tombell/memoir"
 	"github.com/tombell/memoir/datastore"
 	"github.com/tombell/memoir/services"
 )
@@ -46,7 +47,7 @@ func main() {
 	flag.Parse()
 
 	if *version {
-		fmt.Fprintf(os.Stdout, "memoir-tracklist-delete %s (%s)\n", Version, Commit)
+		fmt.Fprintf(os.Stdout, "memoir-tracklist-delete %s (%s)\n", memoir.Version, memoir.Commit)
 		os.Exit(0)
 	}
 

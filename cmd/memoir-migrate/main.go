@@ -10,6 +10,8 @@ import (
 	_ "github.com/lib/pq"
 
 	"github.com/tombell/trek"
+
+	"github.com/tombell/memoir"
 )
 
 const (
@@ -59,7 +61,7 @@ func main() {
 	flag.Parse()
 
 	if *version {
-		fmt.Fprintf(os.Stdout, "memoir-migrate %s (%s)\n", Version, Commit)
+		fmt.Fprintf(os.Stdout, "memoir-migrate %s (%s)\n", memoir.Version, memoir.Commit)
 		os.Exit(0)
 	}
 

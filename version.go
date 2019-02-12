@@ -1,4 +1,4 @@
-package main
+package memoir
 
 // The values of these variables are injected at compile time from the VERSION
 // environment variable and latest Git commit.

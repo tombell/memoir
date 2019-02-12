@@ -4,6 +4,8 @@ import (
 	"flag"
 	"fmt"
 	"os"
+
+	"github.com/tombell/memoir"
 )
 
 const helpText = `usage: memoir [args]
@@ -27,7 +29,7 @@ func main() {
 	flag.Parse()
 
 	if *version {
-		fmt.Fprintf(os.Stdout, "memoir %s (%s)\n", Version, Commit)
+		fmt.Fprintf(os.Stdout, "memoir %s (%s)\n", memoir.Version, memoir.Commit)
 		os.Exit(0)
 	}
 }
