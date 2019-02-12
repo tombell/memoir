@@ -61,7 +61,7 @@ func (s *Services) ImportTracklist(name string, date time.Time, tracks [][]strin
 		Updated: time.Now().UTC(),
 	}
 
-	tx, err := s.DataStore.Beginx()
+	tx, err := s.DataStore.Begin()
 	if err != nil {
 		return nil, errors.Wrap(err, "db begin failed")
 	}
@@ -137,7 +137,7 @@ func (s *Services) RemoveTracklist(name string) error {
 		return fmt.Errorf("tracklist named %q doesn't exist", name)
 	}
 
-	tx, err := s.DataStore.Beginx()
+	tx, err := s.DataStore.Begin()
 	if err != nil {
 		return errors.Wrap(err, "db begin failed")
 	}

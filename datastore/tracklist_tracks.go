@@ -1,7 +1,8 @@
 package datastore
 
 import (
-	"github.com/jmoiron/sqlx"
+	"database/sql"
+
 	"github.com/pkg/errors"
 )
 
@@ -24,7 +25,7 @@ type TracklistTrack struct {
 }
 
 // AddTracklistTrack adds a new tracklist to track mapping into the database.
-func (ds *DataStore) AddTracklistTrack(tx *sqlx.Tx, tracklistTrack *TracklistTrack) error {
+func (ds *DataStore) AddTracklistTrack(tx *sql.Tx, tracklistTrack *TracklistTrack) error {
 	_, err := tx.Exec(sqlAddTracklistTrack,
 		tracklistTrack.ID,
 		tracklistTrack.TracklistID,

@@ -26,7 +26,7 @@ func (s *Services) UploadMix(file, tracklistName string) (string, error) {
 		return "", fmt.Errorf("tracklist named %q doesn't exist", tracklistName)
 	}
 
-	tx, err := s.DataStore.Beginx()
+	tx, err := s.DataStore.Begin()
 	if err != nil {
 		return "", errors.Wrap(err, "db begin failed")
 	}

@@ -1,9 +1,9 @@
 package datastore
 
 import (
+	"database/sql"
 	"time"
 
-	"github.com/jmoiron/sqlx"
 	"github.com/pkg/errors"
 )
 
@@ -34,7 +34,7 @@ type MixUpload struct {
 }
 
 // AddMixUpload adds a new mix upload into the database.
-func (ds *DataStore) AddMixUpload(tx *sqlx.Tx, mix *MixUpload) error {
+func (ds *DataStore) AddMixUpload(tx *sql.Tx, mix *MixUpload) error {
 	_, err := tx.Exec(sqlAddMixUpload,
 		mix.ID,
 		mix.TracklistID,
@@ -47,7 +47,7 @@ func (ds *DataStore) AddMixUpload(tx *sqlx.Tx, mix *MixUpload) error {
 }
 
 // RemoveMixUpload removes a mix upload from the database.
-func (ds *DataStore) RemoveMixUpload(tx *sqlx.Tx, id string) error {
+func (ds *DataStore) RemoveMixUpload(tx *sql.Tx, id string) error {
 	_, err := tx.Exec(sqlRemoveMixUpload, id)
 
 	return errors.Wrap(err, "tx exec failed")

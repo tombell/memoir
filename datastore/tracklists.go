@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/jmoiron/sqlx"
 	"github.com/pkg/errors"
 )
 
@@ -92,7 +91,7 @@ type Tracklist struct {
 }
 
 // AddTracklist adds a new tracklist into the database.
-func (ds *DataStore) AddTracklist(tx *sqlx.Tx, tracklist *Tracklist) error {
+func (ds *DataStore) AddTracklist(tx *sql.Tx, tracklist *Tracklist) error {
 	_, err := tx.Exec(sqlAddTracklist,
 		tracklist.ID,
 		tracklist.Name,
@@ -104,7 +103,7 @@ func (ds *DataStore) AddTracklist(tx *sqlx.Tx, tracklist *Tracklist) error {
 }
 
 // RemoveTracklist removes a tracklist from the database.
-func (ds *DataStore) RemoveTracklist(tx *sqlx.Tx, id string) error {
+func (ds *DataStore) RemoveTracklist(tx *sql.Tx, id string) error {
 	_, err := tx.Exec(sqlRemoveTracklist, id)
 
 	return errors.Wrap(err, "tx exec failed")
