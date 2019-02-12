@@ -7,7 +7,7 @@ import (
 	"os"
 
 	"github.com/tombell/memoir/datastore"
-	"github.com/tombell/memoir/filestore"
+	"github.com/tombell/memoir/filestore/s3"
 	"github.com/tombell/memoir/services"
 )
 
@@ -76,7 +76,7 @@ func main() {
 	}
 	defer ds.Close()
 
-	fs := filestore.NewS3("memoir-uploads", *awsKey, *awsSecret)
+	fs := s3.New("memoir-uploads", *awsKey, *awsSecret)
 
 	svc := &services.Services{
 		Logger:    logger,

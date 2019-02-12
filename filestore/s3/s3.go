@@ -1,4 +1,4 @@
-package filestore
+package s3
 
 import (
 	"io"
@@ -23,8 +23,8 @@ type S3 struct {
 	bucket string
 }
 
-// NewS3 returns an initialised S3 storage layer.
-func NewS3(bucket, key, secret string) *S3 {
+// New returns an initialised S3 storage layer.
+func New(bucket, key, secret string) *S3 {
 	creds := credentials.NewStaticCredentials(key, secret, "")
 	cfg := aws.NewConfig().WithCredentials(creds).WithRegion(defaultS3Region)
 
