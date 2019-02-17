@@ -8,9 +8,19 @@ import (
 	"github.com/gofrs/uuid"
 )
 
+type middleware func(http.HandlerFunc) http.HandlerFunc
+
 type contextKey string
 
 const requestIDKey contextKey = "requestid"
+
+func use(h http.HandlerFunc, middlewares ...middleware) http.HandlerFunc {
+	for _, m := range middlewares {
+		h = m(h)
+	}
+
+	return h
+}
 
 func (s *Server) json(h http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
