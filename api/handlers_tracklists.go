@@ -13,14 +13,14 @@ func (s *Server) handleGetTracklists() http.HandlerFunc {
 
 		tracklists, err := s.services.GetTracklists()
 		if err != nil {
-			s.logger.Printf("%s get tracklists failed: %s\n", rid, err)
+			s.logger.Printf("rid=%s error=%s\n", rid, err)
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
 
 		resp, err := json.Marshal(tracklists)
 		if err != nil {
-			s.logger.Printf("%s json marshal failed: %s\n", rid, err)
+			s.logger.Printf("rid=%s error=%s\n", rid, err)
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
@@ -37,14 +37,14 @@ func (s *Server) handleGetTracklist() http.HandlerFunc {
 
 		tracklist, err := s.services.GetTracklist(id)
 		if err != nil {
-			s.logger.Printf("%s get tracklist failed: %s\n", rid, err)
+			s.logger.Printf("rid=%s error=%s\n", rid, err)
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
 
 		resp, err := json.Marshal(tracklist)
 		if err != nil {
-			s.logger.Printf("%s json marshal failed: %s\n", rid, err)
+			s.logger.Printf("rid=%s error=%s\n", rid, err)
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
