@@ -40,11 +40,11 @@ func NewTracklist(record *datastore.Tracklist) *Tracklist {
 	return tracklist
 }
 
-// RecentTracklists gets the latest 10 tracklists.
-func (s *Services) RecentTracklists() ([]*Tracklist, error) {
-	tracklists, err := s.DataStore.FindMostRecentTracklists()
+// GetTracklists ...
+func (s *Services) GetTracklists() ([]*Tracklist, error) {
+	tracklists, err := s.DataStore.GetTracklists()
 	if err != nil {
-		return nil, errors.Wrap(err, "find most recent tracklists failed")
+		return nil, errors.Wrap(err, "get tracklists failed")
 	}
 
 	var models []*Tracklist
@@ -54,6 +54,16 @@ func (s *Services) RecentTracklists() ([]*Tracklist, error) {
 	}
 
 	return models, nil
+}
+
+// GetTracklist ...
+func (s *Services) GetTracklist(id string) (*Tracklist, error) {
+	tracklist, err := s.DataStore.GetTracklistWithTracks(id)
+	if err != nil {
+		return nil, errors.Wrap(err, "get tracklist with tracks failed")
+	}
+
+	return NewTracklist(tracklist), nil
 }
 
 // ImportTracklist imports a new tracklist into the database, including the
