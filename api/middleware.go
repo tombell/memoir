@@ -42,11 +42,7 @@ func (s *Server) instruments(h http.HandlerFunc) http.HandlerFunc {
 		addr := r.RemoteAddr
 
 		s.logger.Printf("at=start rid=%s method=%s path=%s ip=%s\n", rid, method, path, addr)
-
 		h(w, r)
-
-		dur := time.Since(start)
-
-		s.logger.Printf("at=end rid=%s method=%s path=%s ip=%s time=%s\n", rid, method, path, addr, dur)
+		s.logger.Printf("at=end rid=%s method=%s path=%s ip=%s time=%s\n", rid, method, path, addr, time.Since(start))
 	}
 }
