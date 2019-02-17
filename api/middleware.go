@@ -3,6 +3,7 @@ package api
 import (
 	"context"
 	"net/http"
+	"time"
 
 	"github.com/gofrs/uuid"
 )
@@ -28,5 +29,24 @@ func (s *Server) requestID(h http.HandlerFunc) http.HandlerFunc {
 		r = r.WithContext(ctx)
 
 		h(w, r)
+	}
+}
+
+func (s *Server) instruments(h http.HandlerFunc) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		rid := getRequestID(r)
+
+		start := time.Now().UTC()
+		method := r.Method
+		path := r.URL.Path
+		addr := r.RemoteAddr
+
+		s.logger.Printf("at=start rid=%s method=%s path=%s ip=%s\n", rid, method, path, addr)
+
+		h(w, r)
+
+		dur := time.Since(start)
+
+		s.logger.Printf("at=end rid=%s method=%s path=%s ip=%s time=%s\n", rid, method, path, addr, dur)
 	}
 }
