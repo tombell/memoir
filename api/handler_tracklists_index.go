@@ -13,9 +13,12 @@ func (s *Server) handleTracklistsIndex() http.HandlerFunc {
 			return
 		}
 
-		if err := json.NewEncoder(w).Encode(tracklists); err != nil {
+		resp, err := json.Marshal(tracklists)
+		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
+
+		w.Write(resp)
 	}
 }
