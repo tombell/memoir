@@ -77,6 +77,17 @@ const (
 		JOIN tracks t ON t.id = tt.track_id
 		WHERE tl.name = $1
 		ORDER BY tt.track_number ASC`
+
+	sqlFindMostRecentTracklists = `
+		SELECT
+			id,
+			name,
+			date,
+			created,
+			updated
+		FROM tracklists
+		ORDER BY date DESC
+		LIMIT 10`
 )
 
 // Tracklist represents a single tracklist row in the database.
@@ -229,4 +240,31 @@ func (ds *DataStore) FindTracklistWithTracksByName(name string) (*Tracklist, err
 	}
 
 	return &tracklist, nil
+}
+
+// FindMostRecentTracklists finds the 10 most recent tracklists.
+func (ds *DataStore) FindMostRecentTracklists() ([]*Tracklist, error) {
+	rows, err := ds.Queryx(sqlFindMostRecentTracklists)
+	if err != nil {
+		return nil, errors.Wrap(err, "db query failed")
+	}
+	defer rows.Close()
+
+	var tracklists []*Tracklist
+
+	for rows.Next() {
+		var tracklist Tracklist
+
+		if err := rows.StructScan(&tracklist); err != nil {
+			return nil, errors.Wrap(err, "rows scan failed")
+		}
+
+		tracklists = append(tracklists, &tracklist)
+	}
+
+	if err := rows.Err(); err != nil {
+		return nil, errors.Wrap(err, "rows next failed")
+	}
+
+	return tracklists, nil
 }
