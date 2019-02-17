@@ -13,9 +13,10 @@ import (
 
 // Tracklist contains data about a specific tracklist.
 type Tracklist struct {
-	ID      string    `json:"id"`
-	Name    string    `json:"name"`
-	Date    time.Time `json:"date"`
+	ID   string    `json:"id"`
+	Name string    `json:"name"`
+	Date time.Time `json:"date"`
+
 	Created time.Time `json:"-"`
 	Updated time.Time `json:"-"`
 
