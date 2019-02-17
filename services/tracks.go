@@ -22,14 +22,14 @@ type TrackImport struct {
 
 // Track contains data about a specific track.
 type Track struct {
-	ID      string
-	Artist  string
-	Name    string
-	Genre   string
-	BPM     int
-	Key     string
-	Created time.Time
-	Updated time.Time
+	ID      string    `json:"id"`
+	Artist  string    `json:"artist"`
+	Name    string    `json:"name"`
+	Genre   string    `json:"genre"`
+	BPM     int       `json:"bpm"`
+	Key     string    `json:"key"`
+	Created time.Time `json:"-"`
+	Updated time.Time `json:"-"`
 }
 
 // NewTrack returns a new track with fields mapped from a database record.
