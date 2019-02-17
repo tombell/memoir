@@ -5,6 +5,7 @@ require (
 	github.com/gofrs/uuid v3.2.0+incompatible
 	github.com/jmoiron/sqlx v1.2.0
 	github.com/lib/pq v1.0.0
+	github.com/matryer/way v0.0.0-20180416093233-9632d0c407b0
 	github.com/pkg/errors v0.8.1
 	github.com/stretchr/testify v1.3.0 // indirect
 	github.com/tombell/trek v0.0.4
