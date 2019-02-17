@@ -19,7 +19,7 @@ type Tracklist struct {
 	Created time.Time `json:"created"`
 	Updated time.Time `json:"updated"`
 
-	Tracks []*Track `json:"tracks",omitempty`
+	Tracks []*Track `json:"tracks,omitempty"`
 }
 
 // NewTracklist returns a new tracklist with fields mapped from a database
