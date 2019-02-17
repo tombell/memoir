@@ -13,13 +13,13 @@ import (
 
 // Tracklist contains data about a specific tracklist.
 type Tracklist struct {
-	ID      string
-	Name    string
-	Date    time.Time
-	Created time.Time
-	Updated time.Time
+	ID      string    `json:"id"`
+	Name    string    `json:"name"`
+	Date    time.Time `json:"date"`
+	Created time.Time `json:"created"`
+	Updated time.Time `json:"updated"`
 
-	Tracks []*Track
+	Tracks []*Track `json:"tracks",omitempty`
 }
 
 // NewTracklist returns a new tracklist with fields mapped from a database
@@ -38,6 +38,22 @@ func NewTracklist(record *datastore.Tracklist) *Tracklist {
 	}
 
 	return tracklist
+}
+
+// RecentTracklists gets the latest 10 tracklists.
+func (s *Services) RecentTracklists() ([]*Tracklist, error) {
+	tracklists, err := s.DataStore.FindMostRecentTracklists()
+	if err != nil {
+		return nil, errors.Wrap(err, "find most recent tracklists failed")
+	}
+
+	var models []*Tracklist
+
+	for _, tracklist := range tracklists {
+		models = append(models, NewTracklist(tracklist))
+	}
+
+	return models, nil
 }
 
 // ImportTracklist imports a new tracklist into the database, including the
