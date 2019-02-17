@@ -9,7 +9,7 @@ import (
 
 func (s *Server) handleGetTracklists() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		rid := getRequestID()
+		rid := getRequestID(r)
 
 		tracklists, err := s.services.GetTracklists()
 		if err != nil {
@@ -31,7 +31,7 @@ func (s *Server) handleGetTracklists() http.HandlerFunc {
 
 func (s *Server) handleGetTracklist() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		rid := getRequestID()
+		rid := getRequestID(r)
 
 		id := way.Param(r.Context(), "id")
 
