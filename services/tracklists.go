@@ -16,8 +16,8 @@ type Tracklist struct {
 	ID      string    `json:"id"`
 	Name    string    `json:"name"`
 	Date    time.Time `json:"date"`
-	Created time.Time `json:"created"`
-	Updated time.Time `json:"updated"`
+	Created time.Time `json:"-"`
+	Updated time.Time `json:"-"`
 
 	Tracks []*Track `json:"tracks,omitempty"`
 }
