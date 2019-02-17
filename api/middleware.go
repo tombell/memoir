@@ -25,7 +25,7 @@ func (s *Server) requestID(h http.HandlerFunc) http.HandlerFunc {
 		w.Header().Add("X-Request-ID", id.String())
 
 		ctx := context.WithValue(r.Context(), requestIDKey, id.String())
-		r.WithContext(ctx)
+		r = r.WithContext(ctx)
 
 		h(w, r)
 	}
