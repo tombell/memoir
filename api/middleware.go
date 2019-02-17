@@ -45,8 +45,8 @@ func (s *Server) instruments(h http.HandlerFunc) http.HandlerFunc {
 		path := r.URL.Path
 		addr := r.RemoteAddr
 
-		s.logger.Printf("at=start rid=%s method=%s path=%s ip=%s\n", rid, method, path, addr)
+		s.logger.Printf("rid=%s method=%s path=%s ip=%s\n", rid, method, path, addr)
 		h(w, r)
-		s.logger.Printf("at=end rid=%s method=%s path=%s ip=%s time=%s\n", rid, method, path, addr, time.Since(start))
+		s.logger.Printf("rid=%s method=%s path=%s ip=%s elapsed=%s\n", rid, method, path, addr, time.Since(start))
 	}
 }
