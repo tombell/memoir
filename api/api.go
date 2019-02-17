@@ -38,7 +38,3 @@ func NewServer(cfg *Config) *Server {
 		services: cfg.Services,
 	}
 }
-
-func getRequestID(r *http.Request) string {
-	return r.Context().Value(requestIDKey).(string)
-}

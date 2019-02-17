@@ -32,6 +32,10 @@ func (s *Server) requestID(h http.HandlerFunc) http.HandlerFunc {
 	}
 }
 
+func getRequestID(r *http.Request) string {
+	return r.Context().Value(requestIDKey).(string)
+}
+
 func (s *Server) instruments(h http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		rid := getRequestID(r)
