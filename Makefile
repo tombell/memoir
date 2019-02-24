@@ -21,6 +21,7 @@ dev:
 		echo building dist/$$target; \
 		go build ${MODFLAGS} ${LDFLAGS} -o dist/$$target ./cmd/$$target || exit 1; \
 	done
+	@echo
 
 dist: $(PLATFORMS)
 
@@ -29,19 +30,20 @@ $(PLATFORMS):
 		echo building dist/$$target-$@-amd64; \
 		GOOS=$@ GOARCH=amd64 go build ${MODFLAGS} ${LDFLAGS} -o dist/$$target-$@-amd64 ./cmd/$$target || exit 1; \
 	done
+	@echo
 
 $(BINARIES):
 	@echo building dist/$@
 	@go build ${MODFLAGS} ${LDFLAGS} -o dist/$@ ./cmd/$@
 
 clean:
-	rm -fr dist/
+	@rm -fr dist/
 
 test:
-	go test ${MODFLAGS} ${TESTFLAGS} ./...
+	@go test ${MODFLAGS} ${TESTFLAGS} ./...
 
 create-migration:
-	echo "-- UP\n\n-- DOWN" > 'migrations/$(shell date "+%Y%m%d%H%M%S")_$(NAME).sql'
+	@echo "-- UP\n\n-- DOWN" > 'migrations/$(shell date "+%Y%m%d%H%M%S")_$(NAME).sql'
 
 .PHONY: all              \
         dev              \
