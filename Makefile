@@ -27,7 +27,7 @@ dist: $(PLATFORMS)
 $(PLATFORMS):
 	@for target in $(BINARIES); do \
 		echo building dist/$$target-$@-amd64; \
-		GOOS=$@ GOARCH=amd64 go build ${MODFLAGS} ${LDFLAGS} -o dist/$$target-$@-amd64 ./cmd/$$target || exit 1 \
+		GOOS=$@ GOARCH=amd64 go build ${MODFLAGS} ${LDFLAGS} -o dist/$$target-$@-amd64 ./cmd/$$target || exit 1; \
 	done
 
 $(BINARIES):
