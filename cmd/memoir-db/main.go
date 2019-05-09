@@ -15,7 +15,7 @@ import (
 )
 
 const (
-	helpText = `usage: memoir-migrate <command> [args]
+	helpText = `usage: memoir-db <command> [args]
 
 Commands:
   apply     apply migrations not currently applied to the database
@@ -26,7 +26,7 @@ Special options:
   --version  show the version number, then exit
 `
 
-	applyHelpText = `usage: memoir-migrate apply [args]
+	applyHelpText = `usage: memoir-db apply [args]
 
   --db  connection string for connecting to the database
 
@@ -34,7 +34,7 @@ Special options:
   --help  show this message, then exit
 `
 
-	rollbackHelpText = `usage: memoir-migrate rollback [args]
+	rollbackHelpText = `usage: memoir-db rollback [args]
 
   --db  connection string for connecting to the database
 
@@ -61,7 +61,7 @@ func main() {
 	flag.Parse()
 
 	if *version {
-		fmt.Fprintf(os.Stdout, "memoir-migrate %s (%s)\n", memoir.Version, memoir.Commit)
+		fmt.Fprintf(os.Stdout, "memoir-db %s (%s)\n", memoir.Version, memoir.Commit)
 		os.Exit(0)
 	}
 
