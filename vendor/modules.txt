@@ -33,6 +33,8 @@ github.com/aws/aws-sdk-go/private/protocol/query
 github.com/aws/aws-sdk-go/private/protocol/xml/xmlutil
 github.com/aws/aws-sdk-go/internal/sdkuri
 github.com/aws/aws-sdk-go/private/protocol/query/queryutil
+# github.com/cheynewallace/tabby v1.1.0
+github.com/cheynewallace/tabby
 # github.com/gofrs/uuid v3.2.0+incompatible
 github.com/gofrs/uuid
 # github.com/jmespath/go-jmespath v0.0.0-20180206201540-c2b33e8439af
@@ -47,5 +49,15 @@ github.com/lib/pq/oid
 github.com/matryer/way
 # github.com/pkg/errors v0.8.1
 github.com/pkg/errors
+# github.com/tombell/tonality v0.0.0-20190512180540-c0feb91ee329
+github.com/tombell/tonality
 # github.com/tombell/trek v0.0.4
 github.com/tombell/trek
+# golang.org/x/text v0.3.0
+golang.org/x/text/encoding/unicode
+golang.org/x/text/transform
+golang.org/x/text/encoding
+golang.org/x/text/encoding/internal
+golang.org/x/text/encoding/internal/identifier
+golang.org/x/text/internal/utf8internal
+golang.org/x/text/runes

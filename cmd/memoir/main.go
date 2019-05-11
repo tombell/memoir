@@ -12,7 +12,7 @@ import (
 	"github.com/tombell/memoir/services"
 )
 
-const helpText = `usage: memoir [args]
+const helpText = `usage: memoir [<args>]
 
   --db  connection string for connecting to the database
 

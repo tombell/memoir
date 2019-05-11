@@ -9,9 +9,7 @@ PLATFORMS:=darwin linux windows
 
 BINARIES:=memoir                  \
           memoir-db               \
-          memoir-tracklist-delete \
-          memoir-tracklist-export \
-          memoir-tracklist-import \
+          memoir-tracklists       \
           memoir-upload           \
 
 all: dev
@@ -21,7 +19,6 @@ dev:
 		echo building dist/$$target; \
 		go build ${MODFLAGS} ${LDFLAGS} -o dist/$$target ./cmd/$$target || exit 1; \
 	done
-	@echo
 
 dist: $(PLATFORMS)
 
@@ -30,7 +27,6 @@ $(PLATFORMS):
 		echo building dist/$$target-$@-amd64; \
 		GOOS=$@ GOARCH=amd64 go build ${MODFLAGS} ${LDFLAGS} -o dist/$$target-$@-amd64 ./cmd/$$target || exit 1; \
 	done
-	@echo
 
 $(BINARIES):
 	@echo building dist/$@

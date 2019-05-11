@@ -9,14 +9,14 @@ import (
 )
 
 const (
-	applyHelpText = `usage: memoir-db apply [args]
+	applyHelpText = `usage: memoir-db apply [<args>]
 
   --db  connection string for connecting to the database
 
 Special options:
   --help  show this message, then exit
 `
-	rollbackHelpText = `usage: memoir-db rollback [args]
+	rollbackHelpText = `usage: memoir-db rollback [<args>]
 
   --db  connection string for connecting to the database
 

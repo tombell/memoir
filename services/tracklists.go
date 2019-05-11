@@ -7,6 +7,7 @@ import (
 
 	"github.com/gofrs/uuid"
 	"github.com/pkg/errors"
+	"github.com/tombell/tonality"
 
 	"github.com/tombell/memoir/datastore"
 )
@@ -67,6 +68,16 @@ func (s *Services) GetTracklist(id string) (*Tracklist, error) {
 	return NewTracklist(tracklist), nil
 }
 
+// GetTracklistByName ...
+func (s *Services) GetTracklistByName(name string) (*Tracklist, error) {
+	tracklist, err := s.DataStore.FindTracklistWithTracksByName(name)
+	if err != nil {
+		return nil, errors.Wrap(err, "find tracklists with tracks by name failed")
+	}
+
+	return NewTracklist(tracklist), nil
+}
+
 // ImportTracklist imports a new tracklist into the database, including the
 // tracklist, and any new tracks that have not been imported before.
 func (s *Services) ImportTracklist(name string, date time.Time, tracks [][]string) (*Tracklist, error) {
@@ -99,11 +110,16 @@ func (s *Services) ImportTracklist(name string, date time.Time, tracks [][]strin
 	}
 
 	for idx, data := range tracks {
+		normalizedKey, err := tonality.ConvertKeyToNotation(data[3], tonality.CamelotKeys)
+		if err != nil {
+			return nil, errors.Wrap(err, "normalizing key to camelot key notation failed")
+		}
+
 		trackImport := &TrackImport{
 			Name:   data[0],
 			Artist: data[1],
 			BPM:    data[2],
-			Key:    data[3],
+			Key:    normalizedKey,
 			Genre:  data[4],
 		}
 

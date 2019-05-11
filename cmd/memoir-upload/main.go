@@ -12,7 +12,7 @@ import (
 	"github.com/tombell/memoir/services"
 )
 
-const helpText = `usage: memoir-upload [args] <path to mix mp3>
+const helpText = `usage: memoir-upload [<args>] <path to mix mp3>
 
   --db         connection string for connecting to the database
   --tracklist  name of the tracklist to associate the uploaded mix with

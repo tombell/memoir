@@ -13,7 +13,7 @@ import (
 )
 
 const (
-	helpText = `usage: memoir-db <command> [args]
+	helpText = `usage: memoir-db <command> [<args>]
 
 Commands:
   apply     apply migrations not currently applied to the database
