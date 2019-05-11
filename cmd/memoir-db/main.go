@@ -9,8 +9,6 @@ import (
 	// Import the Postgres driver for database/sql.
 	_ "github.com/lib/pq"
 
-	"github.com/tombell/trek"
-
 	"github.com/tombell/memoir"
 )
 
@@ -24,22 +22,6 @@ Commands:
 Special options:
   --help     show this message, then exit
   --version  show the version number, then exit
-`
-
-	applyHelpText = `usage: memoir-db apply [args]
-
-  --db  connection string for connecting to the database
-
-Special options:
-  --help  show this message, then exit
-`
-
-	rollbackHelpText = `usage: memoir-db rollback [args]
-
-  --db  connection string for connecting to the database
-
-Special options:
-  --help  show this message, then exit
 `
 
 	migrationsPath = `datastore/migrations`
@@ -73,40 +55,12 @@ func main() {
 
 	switch os.Args[1] {
 	case "apply":
-		cmd := flag.NewFlagSet("apply", flag.ExitOnError)
-		cmd.Usage = usage(applyHelpText)
-		dsn := cmd.String("db", "", "")
-
-		if err := cmd.Parse(os.Args[2:]); err != nil {
-			logger.Fatalf("error: %v\n", err)
-		}
-
-		if *dsn == "" {
-			cmd.Usage()
-		}
-
-		if cmd.Parsed() {
-			if err := trek.Apply(logger, "postgres", *dsn, migrationsPath); err != nil {
-				logger.Fatalf("error migrating database: %v\n", err)
-			}
+		if err := apply(logger); err != nil {
+			logger.Fatalf("error while applying migrations: %v\n", err)
 		}
 	case "rollback":
-		cmd := flag.NewFlagSet("rollback", flag.ExitOnError)
-		cmd.Usage = usage(rollbackHelpText)
-		dsn := cmd.String("db", "", "")
-
-		if err := cmd.Parse(os.Args[2:]); err != nil {
-			logger.Fatalf("error: %v\n", err)
-		}
-
-		if *dsn == "" {
-			cmd.Usage()
-		}
-
-		if cmd.Parsed() {
-			if err := trek.Rollback(logger, "postgres", *dsn, migrationsPath); err != nil {
-				logger.Fatalf("error rolling back database: %v\n", err)
-			}
+		if err := rollback(logger); err != nil {
+			logger.Fatalf("error while rolling back migrations: %v\n", err)
 		}
 	default:
 		logger.Fatalf("error: %q is not a valid command\n", os.Args[1])
