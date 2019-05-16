@@ -15,17 +15,17 @@ Coming soon.
 Memoir is made up of a number of binaries, used for managing the database,
 tracklists, and the API server.
 
-## memoir
+### memoir
 
 This is the API server, which is used by the web based front end built as a
 single-page application.
 
-## memoir-db
+### memoir-db
 
 This is used to manage the back end database, applying/rolling back migrations,
 and dumping/restoring backups.
 
-## memoir-tracklists
+### memoir-tracklists
 
 This is used to manage tracklists in the database, importing/exporting, and
 deleting tracklists.
