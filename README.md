@@ -2,6 +2,14 @@
 
 The command-line tools and API server for Memoir.
 
+## Installation
+
+Coming soon.
+
+## Usage
+
+Coming soon.
+
 ## Binaries
 
 Memoir is made up of a number of binaries, used for managing the database,
