@@ -21,18 +21,24 @@ type Tracklist struct {
 	Created time.Time `json:"-"`
 	Updated time.Time `json:"-"`
 
-	Tracks []*Track `json:"tracks,omitempty"`
+	TrackCount int      `json:"tracksCount"`
+	Tracks     []*Track `json:"tracks,omitempty"`
 }
 
 // NewTracklist returns a new tracklist with fields mapped from a database
 // record.
 func NewTracklist(record *datastore.Tracklist) *Tracklist {
 	tracklist := &Tracklist{
-		ID:      record.ID,
-		Name:    record.Name,
-		Date:    record.Date,
-		Created: record.Created,
-		Updated: record.Updated,
+		ID:         record.ID,
+		Name:       record.Name,
+		Date:       record.Date,
+		Created:    record.Created,
+		Updated:    record.Updated,
+		TrackCount: record.TrackCount,
+	}
+
+	if len(record.Tracks) > 0 {
+		tracklist.TrackCount = len(record.Tracks)
 	}
 
 	for _, track := range record.Tracks {

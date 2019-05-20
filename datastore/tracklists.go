@@ -24,13 +24,12 @@ const (
 
 	sqlGetTracklists = `
 		SELECT
-			id,
-			name,
-			date,
-			created,
-			updated
-		FROM tracklists
-		ORDER BY date DESC`
+			tl.*,
+			count(tl.id) as track_count
+		FROM tracklists tl
+		LEFT JOIN tracklist_tracks tt ON tt.tracklist_id = tl.id
+		GROUP BY tl.id
+		ORDER BY tl.date DESC`
 
 	sqlGetTracklistByID = `
 		SELECT
@@ -97,7 +96,8 @@ type Tracklist struct {
 	Created time.Time
 	Updated time.Time
 
-	Tracks []*Track
+	TrackCount int
+	Tracks     []*Track
 }
 
 // AddTracklist adds a new tracklist into the database.
