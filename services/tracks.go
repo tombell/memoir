@@ -22,12 +22,12 @@ type TrackImport struct {
 
 // Track contains data about a specific track.
 type Track struct {
-	ID     string `json:"id"`
-	Artist string `json:"artist"`
-	Name   string `json:"name"`
-	Genre  string `json:"genre"`
-	BPM    int    `json:"bpm"`
-	Key    string `json:"key"`
+	ID     string  `json:"id"`
+	Artist string  `json:"artist"`
+	Name   string  `json:"name"`
+	Genre  string  `json:"genre"`
+	BPM    float64 `json:"bpm"`
+	Key    string  `json:"key"`
 
 	Created time.Time `json:"-"`
 	Updated time.Time `json:"-"`
@@ -58,7 +58,7 @@ func (s *Services) ImportTrack(tx *sql.Tx, trackImport *TrackImport) (*Track, er
 
 	if track == nil {
 		id, _ := uuid.NewV4()
-		bpm, _ := strconv.Atoi(trackImport.BPM)
+		bpm, _ := strconv.ParseFloat(trackImport.BPM, 64)
 
 		track = &datastore.Track{
 			ID:      id.String(),
