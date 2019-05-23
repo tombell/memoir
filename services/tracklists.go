@@ -84,6 +84,22 @@ func (s *Services) GetTracklistByName(name string) (*Tracklist, error) {
 	return NewTracklist(tracklist), nil
 }
 
+// GetTracklistsByTrack ...
+func (s *Services) GetTracklistsByTrack(id string) ([]*Tracklist, error) {
+	tracklists, err := s.DataStore.FindTracklistsByTrackID(id)
+	if err != nil {
+		return nil, errors.Wrap(err, "find tracklists by track id failed")
+	}
+
+	var models []*Tracklist
+
+	for _, tracklist := range tracklists {
+		models = append(models, NewTracklist(tracklist))
+	}
+
+	return models, nil
+}
+
 // ImportTracklist imports a new tracklist into the database, including the
 // tracklist, and any new tracks that have not been imported before.
 func (s *Services) ImportTracklist(name string, date time.Time, tracks [][]string) (*Tracklist, error) {

@@ -86,6 +86,14 @@ const (
 		JOIN tracks t ON t.id = tt.track_id
 		WHERE tl.name = $1
 		ORDER BY tt.track_number ASC`
+
+	sqlFindTracklistsByTrackID = `
+		SELECT
+			tl.*
+		FROM tracklists tl
+		JOIN tracklist_tracks tt ON tt.tracklist_id = tl.id
+		WHERE tt.track_id = $1
+		ORDER BY tl.date DESC`
 )
 
 // Tracklist represents a single tracklist row in the database.
@@ -266,4 +274,31 @@ func (ds *DataStore) FindTracklistWithTracksByName(name string) (*Tracklist, err
 	}
 
 	return &tracklist, nil
+}
+
+// FindTracklistsByTrackID ...
+func (ds *DataStore) FindTracklistsByTrackID(id string) ([]*Tracklist, error) {
+	rows, err := ds.Queryx(sqlFindTracklistsByTrackID, id)
+	if err != nil {
+		return nil, errors.Wrap(err, "db query failed")
+	}
+	defer rows.Close()
+
+	var tracklists []*Tracklist
+
+	for rows.Next() {
+		var tracklist Tracklist
+
+		if err := rows.StructScan(&tracklist); err != nil {
+			return nil, errors.Wrap(err, "rows scan failed")
+		}
+
+		tracklists = append(tracklists, &tracklist)
+	}
+
+	if err := rows.Err(); err != nil {
+		return nil, errors.Wrap(err, "rows next failed")
+	}
+
+	return tracklists, nil
 }
