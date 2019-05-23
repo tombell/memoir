@@ -5,7 +5,7 @@ CREATE TABLE tracks (
   artist  VARCHAR (256) NOT NULL,
   name    VARCHAR (256) NOT NULL,
   genre   VARCHAR (128) NOT NULL,
-  bpm     INTEGER NOT NULL,
+  bpm     DECIMAL NOT NULL,
   key     VARCHAR (8) NOT NULL,
   created TIMESTAMP NOT NULL,
   updated TIMESTAMP NOT NULL
