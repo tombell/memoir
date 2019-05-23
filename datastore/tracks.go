@@ -56,7 +56,7 @@ type Track struct {
 	Artist  string
 	Name    string
 	Genre   string
-	BPM     int
+	BPM     float64
 	Key     string
 	Created time.Time
 	Updated time.Time
