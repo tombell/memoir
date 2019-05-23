@@ -12,7 +12,7 @@ import (
 	"github.com/tombell/memoir/internal/decode"
 )
 
-const dateTimeFormat = "02/01/2006"
+const dateTimeFormat = "2006-01-02"
 
 func parseSeratoExport(filepath string) ([][]string, error) {
 	in, err := ioutil.ReadFile(filepath)

@@ -33,6 +33,13 @@ Special options:
 
   --db         connection string for connecting to the database
   --tracklist  name for the tracklist being imported
+  --date       date for the tracklist being imported
+
+Serato
+  --serato     tracklist is an exported file from Serato
+
+Rekordbox DJ
+  --rekordbox  tracklist is en exported file from Rekordbox DJ
 
 Special options:
   --help  show this message, then exit
@@ -153,12 +160,19 @@ func importTracklist(logger *log.Logger) error {
 	cmd.Usage = usage(importHelpText)
 	dsn := cmd.String("db", "", "")
 	tracklist := cmd.String("tracklist", "", "")
+	date := cmd.String("date", "", "")
+	isSerato := cmd.Bool("serato", false, "")
+	isRekordbox := cmd.Bool("rekordbox", false, "")
 
 	if err := cmd.Parse(os.Args[2:]); err != nil {
 		return err
 	}
 
-	if *dsn == "" || *tracklist == "" {
+	if *dsn == "" || *tracklist == "" || *date == "" {
+		cmd.Usage()
+	}
+
+	if (!*isSerato && !*isRekordbox) || (*isSerato && *isRekordbox) {
 		cmd.Usage()
 	}
 
@@ -171,14 +185,23 @@ func importTracklist(logger *log.Logger) error {
 		cmd.Usage()
 	}
 
-	records, err := parseSeratoExport(args[0])
+	parsedDate, err := time.Parse(dateTimeFormat, *date)
 	if err != nil {
 		return err
 	}
 
-	date, err := time.Parse(dateTimeFormat, records[0][0])
-	if err != nil {
-		return err
+	var records [][]string
+
+	if *isSerato {
+		if records, err = parseSeratoExport(args[0]); err != nil {
+			return err
+		}
+	}
+
+	if *isRekordbox {
+		if records, err = parseRekordboxExport(args[0]); err != nil {
+			return err
+		}
 	}
 
 	store, err := datastore.New(*dsn)
@@ -192,7 +215,7 @@ func importTracklist(logger *log.Logger) error {
 		DataStore: store,
 	}
 
-	if _, err := svc.ImportTracklist(*tracklist, date, records[1:]); err != nil {
+	if _, err := svc.ImportTracklist(*tracklist, parsedDate, records[1:]); err != nil {
 		return err
 	}
 
