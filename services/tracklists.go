@@ -70,6 +70,9 @@ func (s *Services) GetTracklist(id string) (*Tracklist, error) {
 	if err != nil {
 		return nil, errors.Wrap(err, "get tracklist with tracks failed")
 	}
+	if tracklist == nil {
+		return nil, nil
+	}
 
 	return NewTracklist(tracklist), nil
 }

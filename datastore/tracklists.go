@@ -210,6 +210,11 @@ func (ds *DataStore) GetTracklistWithTracks(id string) (*Tracklist, error) {
 		return nil, errors.Wrap(err, "rows next failed")
 	}
 
+	// TODO: is there a nicer way to check zero row results?
+	if tracklist.ID == "" {
+		return nil, nil
+	}
+
 	return &tracklist, nil
 }
 

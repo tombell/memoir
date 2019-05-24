@@ -41,6 +41,11 @@ func (s *Server) handleGetTracklist() http.HandlerFunc {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
+		if tracklist == nil {
+			s.logger.Printf("rid=%s error=tracklist not found", rid)
+			http.Error(w, "tracklist not found", http.StatusNotFound)
+			return
+		}
 
 		resp, err := json.Marshal(tracklist)
 		if err != nil {
