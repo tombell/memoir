@@ -27,7 +27,7 @@ const (
 			tl.*,
 			count(tl.id) as track_count
 		FROM tracklists tl
-		LEFT JOIN tracklist_tracks tt ON tt.tracklist_id = tl.id
+		JOIN tracklist_tracks tt ON tt.tracklist_id = tl.id
 		GROUP BY tl.id
 		ORDER BY tl.date DESC`
 
@@ -88,8 +88,11 @@ const (
 		ORDER BY tt.track_number ASC`
 
 	sqlFindTracklistsByTrackID = `
-		SELECT
-			tl.*
+		SELECT tl.*, (
+			SELECT count(id)
+			FROM tracklist_tracks
+			WHERE tracklist_tracks.tracklist_id = tl.id
+		) as track_count
 		FROM tracklists tl
 		JOIN tracklist_tracks tt ON tt.tracklist_id = tl.id
 		WHERE tt.track_id = $1
