@@ -27,9 +27,10 @@ type S3 struct {
 func New(bucket, key, secret string) *S3 {
 	creds := credentials.NewStaticCredentials(key, secret, "")
 	cfg := aws.NewConfig().WithCredentials(creds).WithRegion(defaultS3Region)
+	sess, _ := session.NewSession(cfg)
 
 	return &S3{
-		svc:    s3.New(session.New(cfg)),
+		svc:    s3.New(sess),
 		bucket: bucket,
 	}
 }
