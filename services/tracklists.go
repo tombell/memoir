@@ -3,6 +3,7 @@ package services
 import (
 	"fmt"
 	"io"
+	"math"
 	"time"
 
 	"github.com/gofrs/uuid"
@@ -46,6 +47,24 @@ func NewTracklist(record *datastore.Tracklist) *Tracklist {
 	}
 
 	return tracklist
+}
+
+// PagedTracklists ...
+type PagedTracklists struct {
+	Tracklists []*Tracklist `json:"tracklists"`
+	HasMore    bool         `json:"hasMore"`
+}
+
+// NewPagedTracklists ...
+func NewPagedTracklists(tracklists []*Tracklist, page, perPage int) *PagedTracklists {
+	total := len(tracklists)
+	pages := math.Ceil(float64(total) / float64(perPage))
+	offset := (page - 1) * perPage
+
+	return &PagedTracklists{
+		Tracklists: tracklists[offset : offset+perPage],
+		HasMore:    page < int(pages),
+	}
 }
 
 // GetTracklists ...
