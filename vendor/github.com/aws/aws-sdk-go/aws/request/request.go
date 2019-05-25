@@ -588,12 +588,13 @@ func shouldRetryCancel(err error) bool {
 		return err.Temporary()
 	case nil:
 		// `awserr.Error.OrigErr()` can be nil, meaning there was an error but
-		// because we don't know the cause, it is marked as retriable. See
+		// because we don't know the cause, it is marked as retryable. See
 		// TestRequest4xxUnretryable for an example.
 		return true
 	default:
 		switch err.Error() {
-		case "net/http: request canceled while waiting for connection":
+		case "net/http: request canceled",
+			"net/http: request canceled while waiting for connection":
 			// known 1.5 error case when an http request is cancelled
 			return false
 		}
