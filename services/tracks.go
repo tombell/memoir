@@ -31,6 +31,8 @@ type Track struct {
 
 	Created time.Time `json:"-"`
 	Updated time.Time `json:"-"`
+
+	Played int `json:"played,omitempty"`
 }
 
 // NewTrack returns a new track with fields mapped from a database record.
@@ -44,6 +46,7 @@ func NewTrack(record *datastore.Track) *Track {
 		Key:     record.Key,
 		Created: record.Created,
 		Updated: record.Updated,
+		Played:  record.Played,
 	}
 }
 
@@ -78,4 +81,20 @@ func (s *Services) ImportTrack(tx *sql.Tx, trackImport *TrackImport) (*Track, er
 	}
 
 	return NewTrack(track), nil
+}
+
+// GetMostPlayedTracks ...
+func (s *Services) GetMostPlayedTracks(limit int) ([]*Track, error) {
+	tracks, err := s.DataStore.FindMostPlayedTracks(limit)
+	if err != nil {
+		return nil, errors.Wrap(err, "find most played tracks failed")
+	}
+
+	var models []*Track
+
+	for _, track := range tracks {
+		models = append(models, NewTrack(track))
+	}
+
+	return models, nil
 }

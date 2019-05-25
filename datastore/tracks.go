@@ -48,6 +48,16 @@ const (
 		WHERE artist = $1
 		AND name = $2
 		LIMIT 1`
+
+	sqlFindMostPlayedTracks = `
+		SELECT
+			t.*,
+			count(t.id) as played
+		FROM tracks t
+		JOIN tracklist_tracks tt ON tt.track_id = t.id
+		GROUP BY t.id
+		ORDER BY played DESC
+		LIMIT $1`
 )
 
 // Track represents a single track row in the database.
@@ -60,6 +70,8 @@ type Track struct {
 	Key     string
 	Created time.Time
 	Updated time.Time
+
+	Played int
 }
 
 // AddTrack adds a new track into the database.
@@ -108,4 +120,32 @@ func (ds *DataStore) FindTrackByArtistAndName(artist, name string) (*Track, erro
 	default:
 		return &track, nil
 	}
+}
+
+// FindMostPlayedTracks finds the tracks that are most played, limiting it to
+// the given count.
+func (ds *DataStore) FindMostPlayedTracks(limit int) ([]*Track, error) {
+	rows, err := ds.Queryx(sqlFindMostPlayedTracks, limit)
+	if err != nil {
+		return nil, errors.Wrap(err, "db query failed")
+	}
+	defer rows.Close()
+
+	var tracks []*Track
+
+	for rows.Next() {
+		var track Track
+
+		if err := rows.StructScan(&track); err != nil {
+			return nil, errors.Wrap(err, "rows struct scan failed")
+		}
+
+		tracks = append(tracks, &track)
+	}
+
+	if err := rows.Err(); err != nil {
+		return nil, errors.Wrap(err, "rows next failed")
+	}
+
+	return tracks, nil
 }
