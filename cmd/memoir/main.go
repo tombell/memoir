@@ -48,6 +48,8 @@ func main() {
 
 	logger := log.New(os.Stderr, "[memoir] ", log.LstdFlags)
 
+	validateFlags()
+
 	ds, err := datastore.New(*dsn)
 	if err != nil {
 		logger.Fatalf("error: %v\n", err)
