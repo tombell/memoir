@@ -60,9 +60,14 @@ func NewPagedTracklists(tracklists []*Tracklist, page, perPage int) *PagedTrackl
 	total := len(tracklists)
 	pages := math.Ceil(float64(total) / float64(perPage))
 	offset := (page - 1) * perPage
+	count := offset + perPage
+
+	if count > total {
+		count = total
+	}
 
 	return &PagedTracklists{
-		Tracklists: tracklists[offset : offset+perPage],
+		Tracklists: tracklists[offset:count],
 		HasMore:    page < int(pages),
 	}
 }

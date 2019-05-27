@@ -9,6 +9,8 @@ import (
 	"github.com/tombell/memoir/services"
 )
 
+const perPageTracklists = 10
+
 // Config ...
 type Config struct {
 	Logger   *log.Logger

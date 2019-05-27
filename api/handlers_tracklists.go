@@ -3,14 +3,11 @@ package api
 import (
 	"encoding/json"
 	"net/http"
-	"strconv"
 
 	"github.com/matryer/way"
 
 	"github.com/tombell/memoir/services"
 )
-
-const perPage = 10
 
 func (s *Server) handleGetTracklists() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
@@ -18,14 +15,7 @@ func (s *Server) handleGetTracklists() http.HandlerFunc {
 
 		// TODO: clean up query params parsing.
 
-		params := r.URL.Query()
-		page := params.Get("page")
-
-		if page == "" {
-			page = "1"
-		}
-
-		npage, err := strconv.Atoi(page)
+		page, err := pageQueryParam(r)
 		if err != nil {
 			s.logger.Printf("rid=%s error=%s\n", rid, err)
 			http.Error(w, err.Error(), http.StatusBadRequest)
@@ -39,7 +29,7 @@ func (s *Server) handleGetTracklists() http.HandlerFunc {
 			return
 		}
 
-		paged := services.NewPagedTracklists(tracklists, npage, perPage)
+		paged := services.NewPagedTracklists(tracklists, page, perPageTracklists)
 
 		resp, err := json.Marshal(paged)
 		if err != nil {
