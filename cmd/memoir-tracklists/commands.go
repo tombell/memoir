@@ -215,7 +215,7 @@ func importTracklist(logger *log.Logger) error {
 		DataStore: store,
 	}
 
-	if _, err := svc.ImportTracklist(*tracklist, parsedDate, records[1:]); err != nil {
+	if _, err := svc.ImportTracklist(*tracklist, parsedDate, records); err != nil {
 		return err
 	}
 

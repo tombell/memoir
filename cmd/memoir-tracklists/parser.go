@@ -36,7 +36,7 @@ func parseSeratoExport(filepath string) ([][]string, error) {
 		records = append(records, record)
 	}
 
-	return records[1:], nil
+	return records[2:], nil
 }
 
 func parseRekordboxExport(filepath string) ([][]string, error) {
