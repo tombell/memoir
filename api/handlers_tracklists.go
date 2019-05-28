@@ -4,8 +4,6 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"github.com/matryer/way"
-
 	"github.com/tombell/memoir/services"
 )
 
@@ -46,7 +44,12 @@ func (s *Server) handleGetTracklist() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		rid := getRequestID(r)
 
-		id := way.Param(r.Context(), "id")
+		id, err := idRouteParam(r)
+		if err != nil {
+			s.logger.Printf("rid=%s error=%s\n", rid, err)
+			http.Error(w, err.Error(), http.StatusNotFound)
+			return
+		}
 
 		tracklist, err := s.services.GetTracklist(id)
 		if err != nil {

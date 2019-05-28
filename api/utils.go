@@ -3,6 +3,9 @@ package api
 import (
 	"net/http"
 	"strconv"
+
+	"github.com/gofrs/uuid"
+	"github.com/matryer/way"
 )
 
 func pageQueryParam(r *http.Request) (int, error) {
@@ -14,4 +17,14 @@ func pageQueryParam(r *http.Request) (int, error) {
 	}
 
 	return strconv.Atoi(page)
+}
+
+func idRouteParam(r *http.Request) (string, error) {
+	id := way.Param(r.Context(), "id")
+
+	if _, err := uuid.FromString(id); err != nil {
+		return "", err
+	}
+
+	return id, nil
 }
