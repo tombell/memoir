@@ -31,3 +31,8 @@ This is used to manage tracklists in the database, importing/exporting, and
 deleting tracklists.
 
 Importing CSV exports from Serato, or KUVO txt exports from Rekordbox DJ.
+
+### memoir-upload
+
+This is used to upload an MP3 mix to S3, and associate it with an existing
+tracklist.
