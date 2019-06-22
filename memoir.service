@@ -1,0 +1,16 @@
+[Unit]
+Description=memoir
+After=network.target
+Requires=network.target
+
+[Service]
+Type=simple
+User=memoir
+Group=memoir
+EnvironmentFile=/app/memoir/memoir.env
+Restart=always
+RestartSec=5s
+ExecStart=/app/memoir/memoir --db ${MEMOIR_DB}
+
+[Install]
+WantedBy=multi-user.target
