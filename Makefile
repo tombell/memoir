@@ -33,13 +33,16 @@ $(BINARIES):
 	@go build ${MODFLAGS} ${LDFLAGS} -o dist/$@ ./cmd/$@
 
 clean:
-	@rm -fr dist/
+	@rm -fr dist /tmp/memoir.tar.gz
 
 test:
 	@go test ${MODFLAGS} ${TESTFLAGS} ./...
 
 create-migration:
 	@echo "-- UP\n\n-- DOWN" > 'migrations/$(shell date "+%Y%m%d%H%M%S")_$(NAME).sql'
+
+archive:
+	bsdtar -zcf /tmp/memoir.tar.gz -s ,^dist/memoir-linux-amd64,dist/memoir, dist/memoir-linux-amd64 memoir.service memoir.env
 
 .PHONY: all              \
         dev              \
@@ -49,3 +52,4 @@ create-migration:
         clean            \
         test             \
         create-migration \
+        archive          \
