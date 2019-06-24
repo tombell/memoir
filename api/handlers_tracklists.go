@@ -11,8 +11,6 @@ func (s *Server) handleGetTracklists() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		rid := getRequestID(r)
 
-		// TODO: clean up query params parsing.
-
 		page, err := pageQueryParam(r)
 		if err != nil {
 			s.logger.Printf("rid=%s error=%s\n", rid, err)
