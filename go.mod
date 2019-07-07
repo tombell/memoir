@@ -1,7 +1,7 @@
 module github.com/tombell/memoir
 
 require (
-	github.com/aws/aws-sdk-go v1.20.12
+	github.com/aws/aws-sdk-go v1.20.15
 	github.com/cheynewallace/tabby v1.1.0
 	github.com/go-sql-driver/mysql v1.4.1 // indirect
 	github.com/gofrs/uuid v3.2.0+incompatible
@@ -12,10 +12,10 @@ require (
 	github.com/stretchr/objx v0.2.0 // indirect
 	github.com/tombell/tonality v0.0.0-20190512180540-c0feb91ee329
 	github.com/tombell/trek v0.0.4
-	golang.org/x/crypto v0.0.0-20190621222207-cc06ce4a13d4 // indirect
+	golang.org/x/crypto v0.0.0-20190701094942-4def268fd1a4 // indirect
 	golang.org/x/net v0.0.0-20190628185345-da137c7871d7 // indirect
 	golang.org/x/sys v0.0.0-20190626221950-04f50cda93cb // indirect
 	golang.org/x/text v0.3.2
-	golang.org/x/tools v0.0.0-20190628222527-fb37f6ba8261 // indirect
+	golang.org/x/tools v0.0.0-20190706070813-72ffa07ba3db // indirect
 	google.golang.org/appengine v1.6.1 // indirect
 )
