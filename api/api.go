@@ -29,7 +29,12 @@ type Server struct {
 func (s *Server) Start(addr string) error {
 	s.routes()
 
-	return http.ListenAndServe(addr, s.router)
+	srv := &http.Server{
+		Addr:    addr,
+		Handler: s.router,
+	}
+
+	return srv.ListenAndServe()
 }
 
 // NewServer ...
