@@ -4,7 +4,7 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/matryer/way"
+	"github.com/tombell/journey"
 
 	"github.com/tombell/memoir/services"
 )
@@ -20,7 +20,7 @@ type Config struct {
 // Server ...
 type Server struct {
 	logger *log.Logger
-	router *way.Router
+	router *journey.Router
 
 	services *services.Services
 }
@@ -36,7 +36,7 @@ func (s *Server) Start(addr string) error {
 func NewServer(cfg *Config) *Server {
 	return &Server{
 		logger:   cfg.Logger,
-		router:   way.NewRouter(),
+		router:   journey.NewRouter(),
 		services: cfg.Services,
 	}
 }

@@ -1,4 +1,4 @@
-# github.com/aws/aws-sdk-go v1.19.41
+# github.com/aws/aws-sdk-go v1.22.0
 github.com/aws/aws-sdk-go/aws
 github.com/aws/aws-sdk-go/aws/awserr
 github.com/aws/aws-sdk-go/aws/credentials
@@ -27,6 +27,7 @@ github.com/aws/aws-sdk-go/private/protocol/restxml
 github.com/aws/aws-sdk-go/private/protocol/xml/xmlutil
 github.com/aws/aws-sdk-go/internal/sdkrand
 github.com/aws/aws-sdk-go/service/sts
+github.com/aws/aws-sdk-go/service/sts/stsiface
 github.com/aws/aws-sdk-go/aws/credentials/ec2rolecreds
 github.com/aws/aws-sdk-go/aws/credentials/endpointcreds
 github.com/aws/aws-sdk-go/aws/ec2metadata
@@ -43,14 +44,14 @@ github.com/jmespath/go-jmespath
 # github.com/jmoiron/sqlx v1.2.0
 github.com/jmoiron/sqlx
 github.com/jmoiron/sqlx/reflectx
-# github.com/lib/pq v1.1.1
+# github.com/lib/pq v1.2.0
 github.com/lib/pq
 github.com/lib/pq/oid
 github.com/lib/pq/scram
-# github.com/matryer/way v0.0.0-20180416093233-9632d0c407b0
-github.com/matryer/way
 # github.com/pkg/errors v0.8.1
 github.com/pkg/errors
+# github.com/tombell/journey v0.0.1
+github.com/tombell/journey
 # github.com/tombell/tonality v0.0.0-20190512180540-c0feb91ee329
 github.com/tombell/tonality
 # github.com/tombell/trek v0.0.4
