@@ -39,7 +39,7 @@ test:
 	@go test ${MODFLAGS} ${TESTFLAGS} ./...
 
 create-migration:
-	@echo "-- UP\n\n-- DOWN" > 'migrations/$(shell date "+%Y%m%d%H%M%S")_$(NAME).sql'
+	@echo "-- UP\n\n-- DOWN" > 'datastore/migrations/$(shell date "+%Y%m%d%H%M%S")_$(NAME).sql'
 
 archive:
 	bsdtar -zcf /tmp/memoir.tar.gz -s ,^dist/memoir-linux-amd64,dist/memoir, dist/memoir-linux-amd64 Caddyfile memoir.service memoir.env
