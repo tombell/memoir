@@ -1,7 +1,7 @@
 -- UP
 
 ALTER TABLE tracklists
-ADD artwork VARCHAR(256) AFTER name;
+ADD artwork VARCHAR(256);
 
 -- DOWN
 
