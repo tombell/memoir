@@ -15,6 +15,8 @@ import (
 	"github.com/tombell/memoir/datastore"
 )
 
+const bucketMixUploads = "memoir-uploads"
+
 // UploadMix uploads the file at the given path to the configured storage
 // backend, and associates with an existing tracklist.
 func (s *Services) UploadMix(file, tracklistName string) (string, error) {
@@ -64,14 +66,14 @@ func (s *Services) UploadMix(file, tracklistName string) (string, error) {
 		return "", errors.Wrap(err, "insert mix_upload failed")
 	}
 
-	exists, err := s.FileStore.Exists(key)
+	exists, err := s.FileStore.Exists(bucketMixUploads, key)
 	if err != nil {
 		tx.Rollback()
 		return "", errors.Wrap(err, "check upload exists failed")
 	}
 
 	if !exists {
-		if err := s.FileStore.Put(key, r); err != nil {
+		if err := s.FileStore.Put(bucketMixUploads, key, r); err != nil {
 			tx.Rollback()
 			return "", errors.Wrap(err, "uploading failed")
 		}

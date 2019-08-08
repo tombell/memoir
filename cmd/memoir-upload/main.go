@@ -77,7 +77,7 @@ func main() {
 	}
 	defer ds.Close()
 
-	fs := s3.New("memoir-uploads", *awsKey, *awsSecret)
+	fs := s3.New(*awsKey, *awsSecret)
 
 	svc := &services.Services{
 		Logger:    logger,

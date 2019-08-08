@@ -19,26 +19,22 @@ const (
 // S3 is a file store implementing the FileStore interface, using S3 as the
 // storage backend.
 type S3 struct {
-	svc    *s3.S3
-	bucket string
+	svc *s3.S3
 }
 
 // New returns an initialised S3 storage layer.
-func New(bucket, key, secret string) *S3 {
+func New(key, secret string) *S3 {
 	creds := credentials.NewStaticCredentials(key, secret, "")
 	cfg := aws.NewConfig().WithCredentials(creds).WithRegion(defaultS3Region)
 	sess, _ := session.NewSession(cfg)
 
-	return &S3{
-		svc:    s3.New(sess),
-		bucket: bucket,
-	}
+	return &S3{s3.New(sess)}
 }
 
 // Exists checks if the object with the given key exists in the S3 bucket.
-func (s *S3) Exists(key string) (bool, error) {
+func (s *S3) Exists(bucket, key string) (bool, error) {
 	input := &s3.GetObjectInput{
-		Bucket: aws.String(s.bucket),
+		Bucket: aws.String(bucket),
 		Key:    aws.String(key),
 		Range:  aws.String("bytes=0-1"),
 	}
@@ -57,7 +53,7 @@ func (s *S3) Exists(key string) (bool, error) {
 }
 
 // Put uploads an object with the given key to the S3 bucket.
-func (s *S3) Put(key string, r io.ReadSeeker) error {
+func (s *S3) Put(bucket, key string, r io.ReadSeeker) error {
 	var buf [512]byte
 
 	if _, err := r.Read(buf[:]); err != nil {
@@ -67,7 +63,7 @@ func (s *S3) Put(key string, r io.ReadSeeker) error {
 	contentType := http.DetectContentType(buf[:])
 
 	input := &s3.PutObjectInput{
-		Bucket:      aws.String(s.bucket),
+		Bucket:      aws.String(bucket),
 		Key:         aws.String(key),
 		ContentType: aws.String(contentType),
 		Body:        r,
