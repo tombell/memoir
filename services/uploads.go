@@ -15,7 +15,10 @@ import (
 	"github.com/tombell/memoir/datastore"
 )
 
-const bucketMixUploads = "memoir-uploads"
+const (
+	bucketArtworkUploads = "memoir-artwork"
+	bucketMixUploads     = "memoir-uploads"
+)
 
 // UploadMix uploads the file at the given path to the configured storage
 // backend, and associates with an existing tracklist.
@@ -77,6 +80,64 @@ func (s *Services) UploadMix(file, tracklistName string) (string, error) {
 			tx.Rollback()
 			return "", errors.Wrap(err, "uploading failed")
 		}
+	}
+
+	if err := tx.Commit(); err != nil {
+		tx.Rollback()
+		return "", errors.Wrap(err, "tx commit failed")
+	}
+
+	return key, nil
+}
+
+// UploadArtwork ...
+func (s *Services) UploadArtwork(file, tracklistName string) (string, error) {
+	tracklist, err := s.DataStore.FindTracklistByName(tracklistName)
+	if err != nil {
+		return "", errors.Wrap(err, "find tracklist failed")
+	}
+	if tracklist == nil {
+		return "", fmt.Errorf("tracklist named %q doesn't exist", tracklistName)
+	}
+
+	tx, err := s.DataStore.Begin()
+	if err != nil {
+		return "", errors.Wrap(err, "db begin failed")
+	}
+
+	data, err := ioutil.ReadFile(file)
+	if err != nil {
+		tx.Rollback()
+		return "", errors.Wrap(err, "read file failed")
+	}
+
+	filename := filepath.Base(file)
+	ext := filepath.Ext(filename)
+
+	r := bytes.NewReader(data)
+
+	key, err := s.generateObjectKey(r, ext)
+	if err != nil {
+		tx.Rollback()
+		return "", errors.Wrap(err, "generate filename failed")
+	}
+
+	exists, err := s.FileStore.Exists(bucketMixUploads, key)
+	if err != nil {
+		tx.Rollback()
+		return "", errors.Wrap(err, "check upload exists failed")
+	}
+
+	if !exists {
+		if err := s.FileStore.Put(bucketArtworkUploads, key, r); err != nil {
+			tx.Rollback()
+			return "", errors.Wrap(err, "uploading failed")
+		}
+	}
+
+	if err := s.DataStore.AddArtworkToTracklist(tx, tracklist.ID, key); err != nil {
+		tx.Rollback()
+		return "", errors.Wrap(err, "add artwork to tracklist failed")
 	}
 
 	if err := tx.Commit(); err != nil {
