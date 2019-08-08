@@ -22,6 +22,11 @@ const (
 		DELETE FROM tracklists
 		WHERE id = $1`
 
+	sqlAddArtworkToTracklist = `
+		UPDATE tracklists
+		SET artwork = $1
+		WHERE id = $2`
+
 	sqlGetTracklists = `
 		SELECT
 			tl.*,
@@ -103,6 +108,7 @@ const (
 type Tracklist struct {
 	ID      string
 	Name    string
+	Artwork string
 	Date    time.Time
 	Created time.Time
 	Updated time.Time
@@ -126,6 +132,14 @@ func (ds *DataStore) AddTracklist(tx *sql.Tx, tracklist *Tracklist) error {
 // RemoveTracklist removes a tracklist from the database.
 func (ds *DataStore) RemoveTracklist(tx *sql.Tx, id string) error {
 	_, err := tx.Exec(sqlRemoveTracklist, id)
+
+	return errors.Wrap(err, "tx exec failed")
+}
+
+// AddArtworkToTracklist adds an artwork file key to the tracklist in the
+// database.
+func (ds *DataStore) AddArtworkToTracklist(tx *sql.Tx, id, artwork string) error {
+	_, err := tx.Exec(sqlAddArtworkToTracklist, artwork, id)
 
 	return errors.Wrap(err, "tx exec failed")
 }
