@@ -108,7 +108,7 @@ const (
 type Tracklist struct {
 	ID      string
 	Name    string
-	Artwork string
+	Artwork *string
 	Date    time.Time
 	Created time.Time
 	Updated time.Time
