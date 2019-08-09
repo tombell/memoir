@@ -108,7 +108,7 @@ const (
 type Tracklist struct {
 	ID      string
 	Name    string
-	Artwork *string
+	Artwork string
 	Date    time.Time
 	Created time.Time
 	Updated time.Time
@@ -207,6 +207,7 @@ func (ds *DataStore) GetTracklistWithTracks(id string) (*Tracklist, error) {
 			&tracklist.Date,
 			&tracklist.Created,
 			&tracklist.Updated,
+			&tracklist.Artwork,
 			&track.ID,
 			&track.Artist,
 			&track.Name,
@@ -271,6 +272,7 @@ func (ds *DataStore) FindTracklistWithTracksByName(name string) (*Tracklist, err
 			&tracklist.Date,
 			&tracklist.Created,
 			&tracklist.Updated,
+			&tracklist.Artwork,
 			&track.ID,
 			&track.Artist,
 			&track.Name,
