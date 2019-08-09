@@ -1,7 +1,7 @@
 module github.com/tombell/memoir
 
 require (
-	github.com/aws/aws-sdk-go v1.22.0
+	github.com/aws/aws-sdk-go v1.22.3
 	github.com/cheynewallace/tabby v1.1.0
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/go-sql-driver/mysql v1.4.1 // indirect
