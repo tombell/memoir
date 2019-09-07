@@ -18,3 +18,5 @@ require (
 	golang.org/x/text v0.3.2
 	google.golang.org/appengine v1.6.1 // indirect
 )
+
+go 1.13
