@@ -1,6 +1,7 @@
 package datastore
 
 import (
+	"fmt"
 	"regexp"
 	"strings"
 
@@ -8,7 +9,6 @@ import (
 	_ "github.com/lib/pq"
 
 	"github.com/jmoiron/sqlx"
-	"github.com/pkg/errors"
 )
 
 // DataStore contains an active database handle.
@@ -22,11 +22,11 @@ func New(dsn string) (*DataStore, error) {
 
 	db, err := sqlx.Connect("postgres", dsn)
 	if err != nil {
-		return nil, errors.Wrap(err, "db open failed")
+		return nil, fmt.Errorf("db open failed: %w", err)
 	}
 
 	if err := db.Ping(); err != nil {
-		return nil, errors.Wrap(err, "db ping failed")
+		return nil, fmt.Errorf("db ping failed: %w", err)
 	}
 
 	return &DataStore{DB: db}, nil
