@@ -1,6 +1,7 @@
 package s3
 
 import (
+	"fmt"
 	"io"
 	"net/http"
 
@@ -9,7 +10,6 @@ import (
 	"github.com/aws/aws-sdk-go/aws/credentials"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/s3"
-	"github.com/pkg/errors"
 )
 
 const (
@@ -46,7 +46,7 @@ func (s *S3) Exists(bucket, key string) (bool, error) {
 			}
 		}
 
-		return false, errors.Wrap(err, "get object failed")
+		return false, fmt.Errorf("get object failed: %w", err)
 	}
 
 	return true, nil
@@ -57,7 +57,7 @@ func (s *S3) Put(bucket, key string, r io.ReadSeeker) error {
 	var buf [512]byte
 
 	if _, err := r.Read(buf[:]); err != nil {
-		return errors.Wrap(err, "read failed")
+		return fmt.Errorf("read failed: %w", err)
 	}
 
 	contentType := http.DetectContentType(buf[:])
@@ -70,7 +70,7 @@ func (s *S3) Put(bucket, key string, r io.ReadSeeker) error {
 	}
 
 	if _, err := s.svc.PutObject(input); err != nil {
-		return errors.Wrap(err, "s3 put object failed")
+		return fmt.Errorf("s3 put object failed: %w", err)
 	}
 
 	return nil
