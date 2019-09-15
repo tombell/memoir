@@ -4,8 +4,6 @@ import (
 	"database/sql"
 	"fmt"
 	"time"
-
-	"github.com/pkg/errors"
 )
 
 const (
@@ -126,29 +124,37 @@ func (ds *DataStore) AddTracklist(tx *sql.Tx, tracklist *Tracklist) error {
 		tracklist.Created,
 		tracklist.Updated)
 
-	return errors.Wrap(err, "tx exec failed")
+	if err != nil {
+		return fmt.Errorf("tx exec failed: %w", err)
+	}
+
+	return nil
 }
 
 // RemoveTracklist removes a tracklist from the database.
 func (ds *DataStore) RemoveTracklist(tx *sql.Tx, id string) error {
-	_, err := tx.Exec(sqlRemoveTracklist, id)
+	if _, err := tx.Exec(sqlRemoveTracklist, id); err != nil {
+		return fmt.Errorf("tx exec failed: %w", err)
+	}
 
-	return errors.Wrap(err, "tx exec failed")
+	return nil
 }
 
 // AddArtworkToTracklist adds an artwork file key to the tracklist in the
 // database.
 func (ds *DataStore) AddArtworkToTracklist(tx *sql.Tx, id, artwork string) error {
-	_, err := tx.Exec(sqlAddArtworkToTracklist, artwork, id)
+	if _, err := tx.Exec(sqlAddArtworkToTracklist, artwork, id); err != nil {
+		return fmt.Errorf("tx exec failed: %w", err)
+	}
 
-	return errors.Wrap(err, "tx exec failed")
+	return nil
 }
 
 // GetTracklists ...
 func (ds *DataStore) GetTracklists() ([]*Tracklist, error) {
 	rows, err := ds.Queryx(sqlGetTracklists)
 	if err != nil {
-		return nil, errors.Wrap(err, "db query failed")
+		return nil, fmt.Errorf("db query failed: %w", err)
 	}
 	defer rows.Close()
 
@@ -158,14 +164,14 @@ func (ds *DataStore) GetTracklists() ([]*Tracklist, error) {
 		var tracklist Tracklist
 
 		if err := rows.StructScan(&tracklist); err != nil {
-			return nil, errors.Wrap(err, "rows scan failed")
+			return nil, fmt.Errorf("rows scan failed: %w", err)
 		}
 
 		tracklists = append(tracklists, &tracklist)
 	}
 
 	if err := rows.Err(); err != nil {
-		return nil, errors.Wrap(err, "rows next failed")
+		return nil, fmt.Errorf("rows next failed: %w", err)
 	}
 
 	return tracklists, nil
@@ -181,7 +187,7 @@ func (ds *DataStore) GetTracklist(id string) (*Tracklist, error) {
 	case err == sql.ErrNoRows:
 		return nil, nil
 	case err != nil:
-		return nil, errors.Wrap(err, "db query row failed")
+		return nil, fmt.Errorf("db query row failed: %w", err)
 	default:
 		return &tracklist, nil
 	}
@@ -192,7 +198,7 @@ func (ds *DataStore) GetTracklist(id string) (*Tracklist, error) {
 func (ds *DataStore) GetTracklistWithTracks(id string) (*Tracklist, error) {
 	rows, err := ds.Queryx(sqlGetTracklistWithTracksByID, id)
 	if err != nil {
-		return nil, errors.Wrap(err, "db query failed")
+		return nil, fmt.Errorf("db query failed: %w", err)
 	}
 	defer rows.Close()
 
@@ -218,14 +224,14 @@ func (ds *DataStore) GetTracklistWithTracks(id string) (*Tracklist, error) {
 			&track.Updated)
 
 		if err != nil {
-			return nil, errors.Wrap(err, "rows scan failed")
+			return nil, fmt.Errorf("rows scan failed: %w", err)
 		}
 
 		tracklist.Tracks = append(tracklist.Tracks, &track)
 	}
 
 	if err := rows.Err(); err != nil {
-		return nil, errors.Wrap(err, "rows next failed")
+		return nil, fmt.Errorf("rows next failed: %w", err)
 	}
 
 	// TODO: is there a nicer way to check zero row results?
@@ -246,7 +252,7 @@ func (ds *DataStore) FindTracklistByName(name string) (*Tracklist, error) {
 	case err == sql.ErrNoRows:
 		return nil, nil
 	case err != nil:
-		return nil, errors.Wrap(err, "db query row failed")
+		return nil, fmt.Errorf("db query row failed: %w", err)
 	default:
 		return &tracklist, nil
 	}
@@ -257,7 +263,7 @@ func (ds *DataStore) FindTracklistByName(name string) (*Tracklist, error) {
 func (ds *DataStore) FindTracklistWithTracksByName(name string) (*Tracklist, error) {
 	rows, err := ds.Queryx(sqlFindTracklistWithTracksByName, name)
 	if err != nil {
-		return nil, errors.Wrap(err, "db query failed")
+		return nil, fmt.Errorf("db query failed: %w", err)
 	}
 	defer rows.Close()
 
@@ -283,14 +289,14 @@ func (ds *DataStore) FindTracklistWithTracksByName(name string) (*Tracklist, err
 			&track.Updated)
 
 		if err != nil {
-			return nil, errors.Wrap(err, "rows scan failed")
+			return nil, fmt.Errorf("rows scan failed: %w", err)
 		}
 
 		tracklist.Tracks = append(tracklist.Tracks, &track)
 	}
 
 	if err := rows.Err(); err != nil {
-		return nil, errors.Wrap(err, "rows next failed")
+		return nil, fmt.Errorf("rows next failed: %w", err)
 	}
 
 	if tracklist.Name == "" {
@@ -304,7 +310,7 @@ func (ds *DataStore) FindTracklistWithTracksByName(name string) (*Tracklist, err
 func (ds *DataStore) FindTracklistsByTrackID(id string) ([]*Tracklist, error) {
 	rows, err := ds.Queryx(sqlFindTracklistsByTrackID, id)
 	if err != nil {
-		return nil, errors.Wrap(err, "db query failed")
+		return nil, fmt.Errorf("db query failed: %w", err)
 	}
 	defer rows.Close()
 
@@ -314,14 +320,14 @@ func (ds *DataStore) FindTracklistsByTrackID(id string) ([]*Tracklist, error) {
 		var tracklist Tracklist
 
 		if err := rows.StructScan(&tracklist); err != nil {
-			return nil, errors.Wrap(err, "rows scan failed")
+			return nil, fmt.Errorf("rows scan failed: %w", err)
 		}
 
 		tracklists = append(tracklists, &tracklist)
 	}
 
 	if err := rows.Err(); err != nil {
-		return nil, errors.Wrap(err, "rows next failed")
+		return nil, fmt.Errorf("rows next failed: %w", err)
 	}
 
 	return tracklists, nil
