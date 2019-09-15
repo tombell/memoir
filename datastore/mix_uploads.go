@@ -2,9 +2,8 @@ package datastore
 
 import (
 	"database/sql"
+	"fmt"
 	"time"
-
-	"github.com/pkg/errors"
 )
 
 const (
@@ -43,12 +42,18 @@ func (ds *DataStore) AddMixUpload(tx *sql.Tx, mix *MixUpload) error {
 		mix.Created,
 		mix.Updated)
 
-	return errors.Wrap(err, "tx exec failed")
+	if err != nil {
+		return fmt.Errorf("tx exec failed: %w", err)
+	}
+
+	return nil
 }
 
 // RemoveMixUpload removes a mix upload from the database.
 func (ds *DataStore) RemoveMixUpload(tx *sql.Tx, id string) error {
-	_, err := tx.Exec(sqlRemoveMixUpload, id)
+	if _, err := tx.Exec(sqlRemoveMixUpload, id); err != nil {
+		return fmt.Errorf("tx exec failed: %w", err)
+	}
 
-	return errors.Wrap(err, "tx exec failed")
+	return nil
 }
