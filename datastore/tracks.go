@@ -2,9 +2,8 @@ package datastore
 
 import (
 	"database/sql"
+	"fmt"
 	"time"
-
-	"github.com/pkg/errors"
 )
 
 const (
@@ -86,7 +85,11 @@ func (ds *DataStore) AddTrack(tx *sql.Tx, track *Track) error {
 		track.Created,
 		track.Updated)
 
-	return errors.Wrap(err, "tx exec failed")
+	if err != nil {
+		return fmt.Errorf("tx exec failed: %w", err)
+	}
+
+	return nil
 }
 
 // GetTrack selects a track from the database with the given ID.
@@ -99,7 +102,7 @@ func (ds *DataStore) GetTrack(id string) (*Track, error) {
 	case err == sql.ErrNoRows:
 		return nil, nil
 	case err != nil:
-		return nil, errors.Wrap(err, "query row failed")
+		return nil, fmt.Errorf("query row failed: %w", err)
 	default:
 		return &track, nil
 	}
@@ -116,7 +119,7 @@ func (ds *DataStore) FindTrackByArtistAndName(artist, name string) (*Track, erro
 	case err == sql.ErrNoRows:
 		return nil, nil
 	case err != nil:
-		return nil, errors.Wrap(err, "query row failed")
+		return nil, fmt.Errorf("query row failed: %w", err)
 	default:
 		return &track, nil
 	}
@@ -127,7 +130,7 @@ func (ds *DataStore) FindTrackByArtistAndName(artist, name string) (*Track, erro
 func (ds *DataStore) FindMostPlayedTracks(limit int) ([]*Track, error) {
 	rows, err := ds.Queryx(sqlFindMostPlayedTracks, limit)
 	if err != nil {
-		return nil, errors.Wrap(err, "db query failed")
+		return nil, fmt.Errorf("db query failed: %w", err)
 	}
 	defer rows.Close()
 
@@ -137,14 +140,14 @@ func (ds *DataStore) FindMostPlayedTracks(limit int) ([]*Track, error) {
 		var track Track
 
 		if err := rows.StructScan(&track); err != nil {
-			return nil, errors.Wrap(err, "rows struct scan failed")
+			return nil, fmt.Errorf("rows struct scan failed: %w", err)
 		}
 
 		tracks = append(tracks, &track)
 	}
 
 	if err := rows.Err(); err != nil {
-		return nil, errors.Wrap(err, "rows next failed")
+		return nil, fmt.Errorf("rows next failed: %w", err)
 	}
 
 	return tracks, nil
