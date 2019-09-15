@@ -2,8 +2,7 @@ package datastore
 
 import (
 	"database/sql"
-
-	"github.com/pkg/errors"
+	"fmt"
 )
 
 const (
@@ -25,12 +24,16 @@ type TracklistTrack struct {
 }
 
 // AddTracklistTrack adds a new tracklist to track mapping into the database.
-func (ds *DataStore) AddTracklistTrack(tx *sql.Tx, tracklistTrack *TracklistTrack) error {
+func (ds *DataStore) AddTracklistTrack(tx *sql.Tx, tt *TracklistTrack) error {
 	_, err := tx.Exec(sqlAddTracklistTrack,
-		tracklistTrack.ID,
-		tracklistTrack.TracklistID,
-		tracklistTrack.TrackID,
-		tracklistTrack.TrackNumber)
+		tt.ID,
+		tt.TracklistID,
+		tt.TrackID,
+		tt.TrackNumber)
 
-	return errors.Wrap(err, "tx exec failed")
+	if err != nil {
+		return fmt.Errorf("tx exec failed: %w", err)
+	}
+
+	return nil
 }
