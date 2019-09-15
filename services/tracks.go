@@ -2,11 +2,11 @@ package services
 
 import (
 	"database/sql"
+	"fmt"
 	"strconv"
 	"time"
 
 	"github.com/gofrs/uuid"
-	"github.com/pkg/errors"
 
 	"github.com/tombell/memoir/datastore"
 )
@@ -56,7 +56,7 @@ func (s *Services) ImportTrack(tx *sql.Tx, trackImport *TrackImport) (*Track, er
 	track, err := s.DataStore.FindTrackByArtistAndName(trackImport.Artist, trackImport.Name)
 	if err != nil {
 		tx.Rollback()
-		return nil, errors.Wrap(err, "find track failed")
+		return nil, fmt.Errorf("find track failed: %w", err)
 	}
 
 	if track == nil {
@@ -76,7 +76,7 @@ func (s *Services) ImportTrack(tx *sql.Tx, trackImport *TrackImport) (*Track, er
 
 		if err := s.DataStore.AddTrack(tx, track); err != nil {
 			tx.Rollback()
-			return nil, errors.Wrap(err, "insert track failed")
+			return nil, fmt.Errorf("insert track failed: %w", err)
 		}
 	}
 
@@ -87,7 +87,7 @@ func (s *Services) ImportTrack(tx *sql.Tx, trackImport *TrackImport) (*Track, er
 func (s *Services) GetMostPlayedTracks(limit int) ([]*Track, error) {
 	tracks, err := s.DataStore.FindMostPlayedTracks(limit)
 	if err != nil {
-		return nil, errors.Wrap(err, "find most played tracks failed")
+		return nil, fmt.Errorf("find most played tracks failed: %w", err)
 	}
 
 	var models []*Track
