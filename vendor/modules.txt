@@ -48,8 +48,6 @@ github.com/jmoiron/sqlx/reflectx
 github.com/lib/pq
 github.com/lib/pq/oid
 github.com/lib/pq/scram
-# github.com/pkg/errors v0.8.1
-github.com/pkg/errors
 # github.com/tombell/journey v0.0.1
 github.com/tombell/journey
 # github.com/tombell/tonality v0.0.0-20190512180540-c0feb91ee329
