@@ -7,7 +7,6 @@ import (
 	"time"
 
 	"github.com/gofrs/uuid"
-	"github.com/pkg/errors"
 	"github.com/tombell/tonality"
 
 	"github.com/tombell/memoir/datastore"
@@ -76,7 +75,7 @@ func NewPagedTracklists(tracklists []*Tracklist, page, perPage int) *PagedTrackl
 func (s *Services) GetTracklists() ([]*Tracklist, error) {
 	tracklists, err := s.DataStore.GetTracklists()
 	if err != nil {
-		return nil, errors.Wrap(err, "get tracklists failed")
+		return nil, fmt.Errorf("get tracklists failed: %w", err)
 	}
 
 	var models []*Tracklist
@@ -92,7 +91,7 @@ func (s *Services) GetTracklists() ([]*Tracklist, error) {
 func (s *Services) GetTracklist(id string) (*Tracklist, error) {
 	tracklist, err := s.DataStore.GetTracklistWithTracks(id)
 	if err != nil {
-		return nil, errors.Wrap(err, "get tracklist with tracks failed")
+		return nil, fmt.Errorf("get tracklist with tracks failed: %w", err)
 	}
 	if tracklist == nil {
 		return nil, nil
@@ -105,7 +104,7 @@ func (s *Services) GetTracklist(id string) (*Tracklist, error) {
 func (s *Services) GetTracklistByName(name string) (*Tracklist, error) {
 	tracklist, err := s.DataStore.FindTracklistWithTracksByName(name)
 	if err != nil {
-		return nil, errors.Wrap(err, "find tracklists with tracks by name failed")
+		return nil, fmt.Errorf("find tracklists with tracks by name failed: %w", err)
 	}
 
 	return NewTracklist(tracklist), nil
@@ -115,7 +114,7 @@ func (s *Services) GetTracklistByName(name string) (*Tracklist, error) {
 func (s *Services) GetTracklistsByTrack(id string) ([]*Tracklist, error) {
 	tracklists, err := s.DataStore.FindTracklistsByTrackID(id)
 	if err != nil {
-		return nil, errors.Wrap(err, "find tracklists by track id failed")
+		return nil, fmt.Errorf("find tracklists by track id failed: %w", err)
 	}
 
 	var models []*Tracklist
@@ -132,7 +131,7 @@ func (s *Services) GetTracklistsByTrack(id string) ([]*Tracklist, error) {
 func (s *Services) ImportTracklist(name string, date time.Time, tracks [][]string) (*Tracklist, error) {
 	tracklist, err := s.DataStore.FindTracklistByName(name)
 	if err != nil {
-		return nil, errors.Wrap(err, "find tracklist failed")
+		return nil, fmt.Errorf("find tracklist failed: %w", err)
 	}
 	if tracklist != nil {
 		return nil, fmt.Errorf("tracklist named %q already exists", name)
@@ -150,18 +149,18 @@ func (s *Services) ImportTracklist(name string, date time.Time, tracks [][]strin
 
 	tx, err := s.DataStore.Begin()
 	if err != nil {
-		return nil, errors.Wrap(err, "db begin failed")
+		return nil, fmt.Errorf("db begin failed: %w", err)
 	}
 
 	if err := s.DataStore.AddTracklist(tx, tracklist); err != nil {
 		tx.Rollback()
-		return nil, errors.Wrap(err, "insert tracklist failed")
+		return nil, fmt.Errorf("insert tracklist failed: %w", err)
 	}
 
 	for idx, data := range tracks {
 		normalizedKey, err := tonality.ConvertKeyToNotation(data[3], tonality.CamelotKeys)
 		if err != nil {
-			return nil, errors.Wrap(err, "normalizing key to camelot key notation failed")
+			return nil, fmt.Errorf("normalizing key to camelot key notation failed: %w", err)
 		}
 
 		trackImport := &TrackImport{
@@ -174,7 +173,7 @@ func (s *Services) ImportTracklist(name string, date time.Time, tracks [][]strin
 
 		track, err := s.ImportTrack(tx, trackImport)
 		if err != nil {
-			return nil, errors.Wrap(err, "import track failed")
+			return nil, fmt.Errorf("import track failed: %w", err)
 		}
 
 		id, _ := uuid.NewV4()
@@ -188,13 +187,13 @@ func (s *Services) ImportTracklist(name string, date time.Time, tracks [][]strin
 
 		if err := s.DataStore.AddTracklistTrack(tx, tracklistTrack); err != nil {
 			tx.Rollback()
-			return nil, errors.Wrap(err, "insert tracklist_track failed")
+			return nil, fmt.Errorf("insert tracklist_track failed: %w", err)
 		}
 	}
 
 	if err := tx.Commit(); err != nil {
 		tx.Rollback()
-		return nil, errors.Wrap(err, "tx commit failed")
+		return nil, fmt.Errorf("tx commit failed: %w", err)
 	}
 
 	return NewTracklist(tracklist), nil
@@ -205,7 +204,7 @@ func (s *Services) ImportTracklist(name string, date time.Time, tracks [][]strin
 func (s *Services) ExportTracklist(name string, w io.Writer) error {
 	tracklist, err := s.DataStore.FindTracklistWithTracksByName(name)
 	if err != nil {
-		return errors.Wrap(err, "find tracklist with tracks failed")
+		return fmt.Errorf("find tracklist with tracks failed: %w", err)
 	}
 	if tracklist == nil {
 		return fmt.Errorf("tracklist named %q doesn't exist", name)
@@ -223,7 +222,7 @@ func (s *Services) ExportTracklist(name string, w io.Writer) error {
 func (s *Services) RemoveTracklist(name string) error {
 	tracklist, err := s.DataStore.FindTracklistByName(name)
 	if err != nil {
-		return errors.Wrap(err, "find tracklist failed")
+		return fmt.Errorf("find tracklist failed: %w", err)
 	}
 	if tracklist == nil {
 		return fmt.Errorf("tracklist named %q doesn't exist", name)
@@ -231,17 +230,17 @@ func (s *Services) RemoveTracklist(name string) error {
 
 	tx, err := s.DataStore.Begin()
 	if err != nil {
-		return errors.Wrap(err, "db begin failed")
+		return fmt.Errorf("db begin failed: %w", err)
 	}
 
 	if err := s.DataStore.RemoveTracklist(tx, tracklist.ID); err != nil {
 		tx.Rollback()
-		return errors.Wrap(err, "remove tracklist failed")
+		return fmt.Errorf("remove tracklist failed: %w", err)
 	}
 
 	if err := tx.Commit(); err != nil {
 		tx.Rollback()
-		return errors.Wrap(err, "tx commit failed")
+		return fmt.Errorf("tx commit failed: %w", err)
 	}
 
 	return nil
