@@ -121,7 +121,7 @@ type TrackSearchResult struct {
 }
 
 // AddTrack adds a new track into the database.
-func (ds *Store) AddTrack(tx *sql.Tx, track *Track) error {
+func (s *Store) AddTrack(tx *sql.Tx, track *Track) error {
 	_, err := tx.Exec(sqlAddTrack,
 		track.ID,
 		track.Artist,
@@ -140,10 +140,10 @@ func (ds *Store) AddTrack(tx *sql.Tx, track *Track) error {
 }
 
 // GetTrack selects a track from the database with the given ID.
-func (ds *Store) GetTrack(id string) (*Track, error) {
+func (s *Store) GetTrack(id string) (*Track, error) {
 	var track Track
 
-	err := ds.QueryRowx(sqlGetTrackByID, id).StructScan(&track)
+	err := s.QueryRowx(sqlGetTrackByID, id).StructScan(&track)
 
 	switch {
 	case err == sql.ErrNoRows:
@@ -157,10 +157,10 @@ func (ds *Store) GetTrack(id string) (*Track, error) {
 
 // FindTrackByArtistAndName finds a track from the database with the given
 // artist and name.
-func (ds *Store) FindTrackByArtistAndName(artist, name string) (*Track, error) {
+func (s *Store) FindTrackByArtistAndName(artist, name string) (*Track, error) {
 	var track Track
 
-	err := ds.QueryRowx(sqlFindTrackByArtistAndName, artist, name).StructScan(&track)
+	err := s.QueryRowx(sqlFindTrackByArtistAndName, artist, name).StructScan(&track)
 
 	switch {
 	case err == sql.ErrNoRows:
@@ -174,8 +174,8 @@ func (ds *Store) FindTrackByArtistAndName(artist, name string) (*Track, error) {
 
 // FindMostPlayedTracks finds the tracks that are most played, limiting it to
 // the given count.
-func (ds *Store) FindMostPlayedTracks(limit int) ([]*Track, error) {
-	rows, err := ds.Queryx(sqlFindMostPlayedTracks, limit)
+func (s *Store) FindMostPlayedTracks(limit int) ([]*Track, error) {
+	rows, err := s.Queryx(sqlFindMostPlayedTracks, limit)
 	if err != nil {
 		return nil, fmt.Errorf("db query failed: %w", err)
 	}
@@ -201,8 +201,8 @@ func (ds *Store) FindMostPlayedTracks(limit int) ([]*Track, error) {
 }
 
 // FindTracksByQuery ...
-func (ds *Store) FindTracksByQuery(query string) ([]*TrackSearchResult, error) {
-	rows, err := ds.Queryx(sqlFindTracksByQuery, query)
+func (s *Store) FindTracksByQuery(query string) ([]*TrackSearchResult, error) {
+	rows, err := s.Queryx(sqlFindTracksByQuery, query)
 	if err != nil {
 		return nil, fmt.Errorf("db query failed: %w", err)
 	}

@@ -33,7 +33,7 @@ type MixUpload struct {
 }
 
 // AddMixUpload adds a new mix upload into the database.
-func (ds *Store) AddMixUpload(tx *sql.Tx, mix *MixUpload) error {
+func (s *Store) AddMixUpload(tx *sql.Tx, mix *MixUpload) error {
 	_, err := tx.Exec(sqlAddMixUpload,
 		mix.ID,
 		mix.TracklistID,
@@ -50,7 +50,7 @@ func (ds *Store) AddMixUpload(tx *sql.Tx, mix *MixUpload) error {
 }
 
 // RemoveMixUpload removes a mix upload from the database.
-func (ds *Store) RemoveMixUpload(tx *sql.Tx, id string) error {
+func (s *Store) RemoveMixUpload(tx *sql.Tx, id string) error {
 	if _, err := tx.Exec(sqlRemoveMixUpload, id); err != nil {
 		return fmt.Errorf("tx exec failed: %w", err)
 	}

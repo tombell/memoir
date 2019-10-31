@@ -116,7 +116,7 @@ type Tracklist struct {
 }
 
 // AddTracklist adds a new tracklist into the database.
-func (ds *Store) AddTracklist(tx *sql.Tx, tracklist *Tracklist) error {
+func (s *Store) AddTracklist(tx *sql.Tx, tracklist *Tracklist) error {
 	_, err := tx.Exec(sqlAddTracklist,
 		tracklist.ID,
 		tracklist.Name,
@@ -132,7 +132,7 @@ func (ds *Store) AddTracklist(tx *sql.Tx, tracklist *Tracklist) error {
 }
 
 // RemoveTracklist removes a tracklist from the database.
-func (ds *Store) RemoveTracklist(tx *sql.Tx, id string) error {
+func (s *Store) RemoveTracklist(tx *sql.Tx, id string) error {
 	if _, err := tx.Exec(sqlRemoveTracklist, id); err != nil {
 		return fmt.Errorf("tx exec failed: %w", err)
 	}
@@ -142,7 +142,7 @@ func (ds *Store) RemoveTracklist(tx *sql.Tx, id string) error {
 
 // AddArtworkToTracklist adds an artwork file key to the tracklist in the
 // database.
-func (ds *Store) AddArtworkToTracklist(tx *sql.Tx, id, artwork string) error {
+func (s *Store) AddArtworkToTracklist(tx *sql.Tx, id, artwork string) error {
 	if _, err := tx.Exec(sqlAddArtworkToTracklist, artwork, id); err != nil {
 		return fmt.Errorf("tx exec failed: %w", err)
 	}
@@ -151,8 +151,8 @@ func (ds *Store) AddArtworkToTracklist(tx *sql.Tx, id, artwork string) error {
 }
 
 // GetTracklists ...
-func (ds *Store) GetTracklists() ([]*Tracklist, error) {
-	rows, err := ds.Queryx(sqlGetTracklists)
+func (s *Store) GetTracklists() ([]*Tracklist, error) {
+	rows, err := s.Queryx(sqlGetTracklists)
 	if err != nil {
 		return nil, fmt.Errorf("db query failed: %w", err)
 	}
@@ -178,10 +178,10 @@ func (ds *Store) GetTracklists() ([]*Tracklist, error) {
 }
 
 // GetTracklist selects a tracklist from the database with the given ID.
-func (ds *Store) GetTracklist(id string) (*Tracklist, error) {
+func (s *Store) GetTracklist(id string) (*Tracklist, error) {
 	var tracklist Tracklist
 
-	err := ds.QueryRowx(sqlGetTracklistByID, id).StructScan(&tracklist)
+	err := s.QueryRowx(sqlGetTracklistByID, id).StructScan(&tracklist)
 
 	switch {
 	case err == sql.ErrNoRows:
@@ -195,8 +195,8 @@ func (ds *Store) GetTracklist(id string) (*Tracklist, error) {
 
 // GetTracklistWithTracks selects a tracklist, and the tracks in the tracklist
 // from the database with the given ID.
-func (ds *Store) GetTracklistWithTracks(id string) (*Tracklist, error) {
-	rows, err := ds.Queryx(sqlGetTracklistWithTracksByID, id)
+func (s *Store) GetTracklistWithTracks(id string) (*Tracklist, error) {
+	rows, err := s.Queryx(sqlGetTracklistWithTracksByID, id)
 	if err != nil {
 		return nil, fmt.Errorf("db query failed: %w", err)
 	}
@@ -243,10 +243,10 @@ func (ds *Store) GetTracklistWithTracks(id string) (*Tracklist, error) {
 }
 
 // FindTracklistByName finds a tracklist from the database with the given name.
-func (ds *Store) FindTracklistByName(name string) (*Tracklist, error) {
+func (s *Store) FindTracklistByName(name string) (*Tracklist, error) {
 	var tracklist Tracklist
 
-	err := ds.QueryRowx(sqlFindTracklistByName, name).StructScan(&tracklist)
+	err := s.QueryRowx(sqlFindTracklistByName, name).StructScan(&tracklist)
 
 	switch {
 	case err == sql.ErrNoRows:
@@ -260,8 +260,8 @@ func (ds *Store) FindTracklistByName(name string) (*Tracklist, error) {
 
 // FindTracklistWithTracksByName find a tracklist, and the tracks from the
 // database with the given name.
-func (ds *Store) FindTracklistWithTracksByName(name string) (*Tracklist, error) {
-	rows, err := ds.Queryx(sqlFindTracklistWithTracksByName, name)
+func (s *Store) FindTracklistWithTracksByName(name string) (*Tracklist, error) {
+	rows, err := s.Queryx(sqlFindTracklistWithTracksByName, name)
 	if err != nil {
 		return nil, fmt.Errorf("db query failed: %w", err)
 	}
@@ -307,8 +307,8 @@ func (ds *Store) FindTracklistWithTracksByName(name string) (*Tracklist, error) 
 }
 
 // FindTracklistsByTrackID ...
-func (ds *Store) FindTracklistsByTrackID(id string) ([]*Tracklist, error) {
-	rows, err := ds.Queryx(sqlFindTracklistsByTrackID, id)
+func (s *Store) FindTracklistsByTrackID(id string) ([]*Tracklist, error) {
+	rows, err := s.Queryx(sqlFindTracklistsByTrackID, id)
 	if err != nil {
 		return nil, fmt.Errorf("db query failed: %w", err)
 	}
