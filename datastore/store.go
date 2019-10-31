@@ -11,15 +11,25 @@ import (
 	"github.com/jmoiron/sqlx"
 )
 
+var (
+	matchFirstCapRegexp = regexp.MustCompile("(.)([A-Z][a-z]+)")
+	matchAllCapRegexp   = regexp.MustCompile("([a-z0-9])([A-Z])")
+)
+
 // Store is a structure for interacting with a database, it contains a handle to
 // the underlying database.
 type Store struct {
 	*sqlx.DB
 }
 
-// New returns a new DataStore with a backing database handle.
+// New returns an initialised Store, that has connected to a database, and
+// verified with a ping.
 func New(dsn string) (*Store, error) {
-	sqlx.NameMapper = toSnakeCase
+	sqlx.NameMapper = func(s string) string {
+		snake := matchFirstCapRegexp.ReplaceAllString(s, "${1}_${2}")
+		snake = matchAllCapRegexp.ReplaceAllString(snake, "${1}_${2}")
+		return strings.ToLower(snake)
+	}
 
 	db, err := sqlx.Connect("postgres", dsn)
 	if err != nil {
@@ -31,6 +41,11 @@ func New(dsn string) (*Store, error) {
 	}
 
 	return &Store{DB: db}, nil
+}
+
+// Close closes the connection to the database.
+func (s *Store) Close() error {
+	return s.DB.Close()
 }
 
 func toSnakeCase(str string) string {

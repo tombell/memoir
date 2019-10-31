@@ -1,10 +1,14 @@
 package main
 
 import (
+	"context"
 	"flag"
 	"fmt"
 	"log"
+	"net/http"
 	"os"
+	"os/signal"
+	"time"
 
 	"github.com/tombell/memoir"
 	"github.com/tombell/memoir/api"
@@ -64,11 +68,30 @@ func main() {
 		},
 	}
 
-	server := api.NewServer(cfg)
+	s := api.NewServer(cfg)
 
 	logger.Println("starting memoir api server...")
 
-	if err := server.Start(":8080"); err != nil {
-		logger.Fatalf("error: %v\n", err)
+	go func() {
+		if err := s.Start(":8080"); err != nil {
+			if err == http.ErrServerClosed {
+				logger.Println("api server shutdown finished")
+				return
+			}
+
+			logger.Fatalf("error starting api server: %v", err)
+		}
+	}()
+
+	c := make(chan os.Signal, 1)
+	signal.Notify(c, os.Interrupt)
+	<-c
+
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	if err := s.Shutdown(ctx); err != nil {
+		logger.Fatalf("error shutting down api server: %v", err)
 	}
+
 }
