@@ -33,6 +33,9 @@ type Track struct {
 	Updated time.Time `json:"-"`
 
 	Played int `json:"played,omitempty"`
+
+	ArtistHighlighted string `json:"artist_highlighted,omitempty"`
+	NameHighlighted   string `json:"name_highlighted,omitempty"`
 }
 
 // NewTrack returns a new track with fields mapped from a database record.
@@ -47,6 +50,21 @@ func NewTrack(record *datastore.Track) *Track {
 		Created: record.Created,
 		Updated: record.Updated,
 		Played:  record.Played,
+	}
+}
+
+func NewTrackFromSearchResult(record *datastore.TrackSearchResult) *Track {
+	return &Track{
+		ID:                record.ID,
+		Artist:            record.Artist,
+		Name:              record.Name,
+		Genre:             record.Genre,
+		BPM:               record.BPM,
+		Key:               record.Key,
+		Created:           record.Created,
+		Updated:           record.Updated,
+		ArtistHighlighted: record.ArtistHighlighted,
+		NameHighlighted:   record.NameHighlighted,
 	}
 }
 
@@ -94,6 +112,22 @@ func (s *Services) GetMostPlayedTracks(limit int) ([]*Track, error) {
 
 	for _, track := range tracks {
 		models = append(models, NewTrack(track))
+	}
+
+	return models, nil
+}
+
+// SearchTracks ...
+func (s *Services) SearchTracks(query string) ([]*Track, error) {
+	tracks, err := s.DataStore.FindTracksByQuery(query)
+	if err != nil {
+		return nil, fmt.Errorf("find tracks by query failed: %w", err)
+	}
+
+	var models []*Track
+
+	for _, track := range tracks {
+		models = append(models, NewTrackFromSearchResult(track))
 	}
 
 	return models, nil
