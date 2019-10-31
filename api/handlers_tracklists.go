@@ -13,14 +13,14 @@ func (s *Server) handleGetTracklists() http.HandlerFunc {
 
 		page, err := pageQueryParam(r)
 		if err != nil {
-			s.logger.Printf("rid=%s error=%s\n", rid, err)
+			s.services.Logger.Printf("rid=%s error=%s\n", rid, err)
 			http.Error(w, err.Error(), http.StatusBadRequest)
 			return
 		}
 
 		tracklists, err := s.services.GetTracklists()
 		if err != nil {
-			s.logger.Printf("rid=%s error=%s\n", rid, err)
+			s.services.Logger.Printf("rid=%s error=%s\n", rid, err)
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
@@ -29,7 +29,7 @@ func (s *Server) handleGetTracklists() http.HandlerFunc {
 
 		resp, err := json.Marshal(paged)
 		if err != nil {
-			s.logger.Printf("rid=%s error=%s\n", rid, err)
+			s.services.Logger.Printf("rid=%s error=%s\n", rid, err)
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
@@ -44,26 +44,26 @@ func (s *Server) handleGetTracklist() http.HandlerFunc {
 
 		id, err := idRouteParam(r)
 		if err != nil {
-			s.logger.Printf("rid=%s error=%s\n", rid, err)
+			s.services.Logger.Printf("rid=%s error=%s\n", rid, err)
 			http.Error(w, err.Error(), http.StatusNotFound)
 			return
 		}
 
 		tracklist, err := s.services.GetTracklist(id)
 		if err != nil {
-			s.logger.Printf("rid=%s error=%s\n", rid, err)
+			s.services.Logger.Printf("rid=%s error=%s\n", rid, err)
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
 		if tracklist == nil {
-			s.logger.Printf("rid=%s error=tracklist not found", rid)
+			s.services.Logger.Printf("rid=%s error=tracklist not found", rid)
 			http.Error(w, "tracklist not found", http.StatusNotFound)
 			return
 		}
 
 		resp, err := json.Marshal(tracklist)
 		if err != nil {
-			s.logger.Printf("rid=%s error=%s\n", rid, err)
+			s.services.Logger.Printf("rid=%s error=%s\n", rid, err)
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}

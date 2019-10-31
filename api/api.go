@@ -2,7 +2,6 @@ package api
 
 import (
 	"context"
-	"log"
 	"net/http"
 	"time"
 
@@ -13,31 +12,33 @@ import (
 
 const perPageTracklists = 10
 
-// Config ...
-type Config struct {
-	Logger   *log.Logger
-	Services *services.Services
-}
-
 // Server ...
 type Server struct {
-	logger *log.Logger
-	router *way.Router
-	server *http.Server
-
 	services *services.Services
+	router   *way.Router
+	server   *http.Server
+}
+
+// New ...
+func New(services *services.Services) *Server {
+	return &Server{
+		services: services,
+		router:   way.NewRouter(),
+	}
 }
 
 // Start ...
-func (s *Server) Start(addr string) error {
+func (s *Server) Start() error {
 	s.routes()
 
 	s.server = &http.Server{
-		Addr:         addr,
+		Addr:         s.services.Config.Address,
 		Handler:      s.router,
 		ReadTimeout:  5 * time.Second,
 		WriteTimeout: 10 * time.Second,
 	}
+
+	s.services.Logger.Printf("starting api server (%s) ...", s.services.Config.Address)
 
 	return s.server.ListenAndServe()
 }
@@ -48,14 +49,7 @@ func (s *Server) Shutdown(ctx context.Context) error {
 		return nil
 	}
 
-	return s.server.Shutdown(ctx)
-}
+	s.services.Logger.Println("shutting down api server...")
 
-// NewServer ...
-func NewServer(cfg *Config) *Server {
-	return &Server{
-		logger:   cfg.Logger,
-		router:   way.NewRouter(),
-		services: cfg.Services,
-	}
+	return s.server.Shutdown(ctx)
 }

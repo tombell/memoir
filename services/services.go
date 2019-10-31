@@ -3,17 +3,15 @@ package services
 import (
 	"log"
 
+	"github.com/tombell/memoir/config"
 	"github.com/tombell/memoir/datastore"
 	"github.com/tombell/memoir/filestore"
 )
 
-// Config contains any configuration data for the service functions.
-type Config struct{}
-
-// Services contains shared functionality required by service functions.
+// Services contains shared dependencies required by service methods.
 type Services struct {
-	Config    *Config
-	Logger    *log.Logger
+	Config    *config.Config
 	DataStore *datastore.Store
 	FileStore filestore.Store
+	Logger    *log.Logger
 }
