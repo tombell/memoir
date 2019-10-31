@@ -64,6 +64,38 @@ const (
 		GROUP BY t.id
 		ORDER BY played DESC
 		LIMIT $1`
+
+	sqlFindTracksByQuery = `
+		SELECT
+			id,
+			artist,
+			ts_headline(artist, q) as artist_highlighted,
+			name,
+			ts_headline(name, q) as name_highlighted,
+			genre,
+			bpm,
+			key,
+			created,
+			updated
+		FROM (
+			SELECT
+				id,
+				artist,
+				name,
+				genre,
+				bpm,
+				key,
+				created,
+				updated,
+				ts_rank(tsv, q) as rank,
+				q
+			FROM
+				tracks,
+				plainto_tsquery($1) q
+			WHERE tsv @@ q
+			ORDER BY rank DESC
+		) as searched_tracks
+		ORDER BY rank DESC`
 )
 
 // Track represents a single track row in the database.
@@ -78,6 +110,14 @@ type Track struct {
 	Updated time.Time
 
 	Played int
+}
+
+// TrackSearchResult ...
+type TrackSearchResult struct {
+	Track
+
+	ArtistHighlighted string
+	NameHighlighted   string
 }
 
 // AddTrack adds a new track into the database.
@@ -145,6 +185,33 @@ func (ds *DataStore) FindMostPlayedTracks(limit int) ([]*Track, error) {
 
 	for rows.Next() {
 		var track Track
+
+		if err := rows.StructScan(&track); err != nil {
+			return nil, fmt.Errorf("rows struct scan failed: %w", err)
+		}
+
+		tracks = append(tracks, &track)
+	}
+
+	if err := rows.Err(); err != nil {
+		return nil, fmt.Errorf("rows next failed: %w", err)
+	}
+
+	return tracks, nil
+}
+
+// FindTracksByQuery ...
+func (ds *DataStore) FindTracksByQuery(query string) ([]*TrackSearchResult, error) {
+	rows, err := ds.Queryx(sqlFindTracksByQuery, query)
+	if err != nil {
+		return nil, fmt.Errorf("db query failed: %w", err)
+	}
+	defer rows.Close()
+
+	var tracks []*TrackSearchResult
+
+	for rows.Next() {
+		var track TrackSearchResult
 
 		if err := rows.StructScan(&track); err != nil {
 			return nil, fmt.Errorf("rows struct scan failed: %w", err)
