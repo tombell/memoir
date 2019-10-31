@@ -5,7 +5,7 @@ import (
 	"strconv"
 
 	"github.com/gofrs/uuid"
-	"github.com/tombell/journey"
+	"github.com/matryer/way"
 )
 
 func pageQueryParam(r *http.Request) (int, error) {
@@ -20,7 +20,7 @@ func pageQueryParam(r *http.Request) (int, error) {
 }
 
 func idRouteParam(r *http.Request) (string, error) {
-	id := journey.Param(r, "id")
+	id := way.Param(r.Context(), "id")
 
 	if _, err := uuid.FromString(id); err != nil {
 		return "", err
