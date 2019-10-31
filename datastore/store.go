@@ -11,13 +11,14 @@ import (
 	"github.com/jmoiron/sqlx"
 )
 
-// DataStore contains an active database handle.
-type DataStore struct {
+// Store is a structure for interacting with a database, it contains a handle to
+// the underlying database.
+type Store struct {
 	*sqlx.DB
 }
 
 // New returns a new DataStore with a backing database handle.
-func New(dsn string) (*DataStore, error) {
+func New(dsn string) (*Store, error) {
 	sqlx.NameMapper = toSnakeCase
 
 	db, err := sqlx.Connect("postgres", dsn)
@@ -29,7 +30,7 @@ func New(dsn string) (*DataStore, error) {
 		return nil, fmt.Errorf("db ping failed: %w", err)
 	}
 
-	return &DataStore{DB: db}, nil
+	return &Store{DB: db}, nil
 }
 
 func toSnakeCase(str string) string {

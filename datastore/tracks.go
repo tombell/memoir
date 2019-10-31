@@ -121,7 +121,7 @@ type TrackSearchResult struct {
 }
 
 // AddTrack adds a new track into the database.
-func (ds *DataStore) AddTrack(tx *sql.Tx, track *Track) error {
+func (ds *Store) AddTrack(tx *sql.Tx, track *Track) error {
 	_, err := tx.Exec(sqlAddTrack,
 		track.ID,
 		track.Artist,
@@ -140,7 +140,7 @@ func (ds *DataStore) AddTrack(tx *sql.Tx, track *Track) error {
 }
 
 // GetTrack selects a track from the database with the given ID.
-func (ds *DataStore) GetTrack(id string) (*Track, error) {
+func (ds *Store) GetTrack(id string) (*Track, error) {
 	var track Track
 
 	err := ds.QueryRowx(sqlGetTrackByID, id).StructScan(&track)
@@ -157,7 +157,7 @@ func (ds *DataStore) GetTrack(id string) (*Track, error) {
 
 // FindTrackByArtistAndName finds a track from the database with the given
 // artist and name.
-func (ds *DataStore) FindTrackByArtistAndName(artist, name string) (*Track, error) {
+func (ds *Store) FindTrackByArtistAndName(artist, name string) (*Track, error) {
 	var track Track
 
 	err := ds.QueryRowx(sqlFindTrackByArtistAndName, artist, name).StructScan(&track)
@@ -174,7 +174,7 @@ func (ds *DataStore) FindTrackByArtistAndName(artist, name string) (*Track, erro
 
 // FindMostPlayedTracks finds the tracks that are most played, limiting it to
 // the given count.
-func (ds *DataStore) FindMostPlayedTracks(limit int) ([]*Track, error) {
+func (ds *Store) FindMostPlayedTracks(limit int) ([]*Track, error) {
 	rows, err := ds.Queryx(sqlFindMostPlayedTracks, limit)
 	if err != nil {
 		return nil, fmt.Errorf("db query failed: %w", err)
@@ -201,7 +201,7 @@ func (ds *DataStore) FindMostPlayedTracks(limit int) ([]*Track, error) {
 }
 
 // FindTracksByQuery ...
-func (ds *DataStore) FindTracksByQuery(query string) ([]*TrackSearchResult, error) {
+func (ds *Store) FindTracksByQuery(query string) ([]*TrackSearchResult, error) {
 	rows, err := ds.Queryx(sqlFindTracksByQuery, query)
 	if err != nil {
 		return nil, fmt.Errorf("db query failed: %w", err)

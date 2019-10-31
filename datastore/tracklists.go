@@ -116,7 +116,7 @@ type Tracklist struct {
 }
 
 // AddTracklist adds a new tracklist into the database.
-func (ds *DataStore) AddTracklist(tx *sql.Tx, tracklist *Tracklist) error {
+func (ds *Store) AddTracklist(tx *sql.Tx, tracklist *Tracklist) error {
 	_, err := tx.Exec(sqlAddTracklist,
 		tracklist.ID,
 		tracklist.Name,
@@ -132,7 +132,7 @@ func (ds *DataStore) AddTracklist(tx *sql.Tx, tracklist *Tracklist) error {
 }
 
 // RemoveTracklist removes a tracklist from the database.
-func (ds *DataStore) RemoveTracklist(tx *sql.Tx, id string) error {
+func (ds *Store) RemoveTracklist(tx *sql.Tx, id string) error {
 	if _, err := tx.Exec(sqlRemoveTracklist, id); err != nil {
 		return fmt.Errorf("tx exec failed: %w", err)
 	}
@@ -142,7 +142,7 @@ func (ds *DataStore) RemoveTracklist(tx *sql.Tx, id string) error {
 
 // AddArtworkToTracklist adds an artwork file key to the tracklist in the
 // database.
-func (ds *DataStore) AddArtworkToTracklist(tx *sql.Tx, id, artwork string) error {
+func (ds *Store) AddArtworkToTracklist(tx *sql.Tx, id, artwork string) error {
 	if _, err := tx.Exec(sqlAddArtworkToTracklist, artwork, id); err != nil {
 		return fmt.Errorf("tx exec failed: %w", err)
 	}
@@ -151,7 +151,7 @@ func (ds *DataStore) AddArtworkToTracklist(tx *sql.Tx, id, artwork string) error
 }
 
 // GetTracklists ...
-func (ds *DataStore) GetTracklists() ([]*Tracklist, error) {
+func (ds *Store) GetTracklists() ([]*Tracklist, error) {
 	rows, err := ds.Queryx(sqlGetTracklists)
 	if err != nil {
 		return nil, fmt.Errorf("db query failed: %w", err)
@@ -178,7 +178,7 @@ func (ds *DataStore) GetTracklists() ([]*Tracklist, error) {
 }
 
 // GetTracklist selects a tracklist from the database with the given ID.
-func (ds *DataStore) GetTracklist(id string) (*Tracklist, error) {
+func (ds *Store) GetTracklist(id string) (*Tracklist, error) {
 	var tracklist Tracklist
 
 	err := ds.QueryRowx(sqlGetTracklistByID, id).StructScan(&tracklist)
@@ -195,7 +195,7 @@ func (ds *DataStore) GetTracklist(id string) (*Tracklist, error) {
 
 // GetTracklistWithTracks selects a tracklist, and the tracks in the tracklist
 // from the database with the given ID.
-func (ds *DataStore) GetTracklistWithTracks(id string) (*Tracklist, error) {
+func (ds *Store) GetTracklistWithTracks(id string) (*Tracklist, error) {
 	rows, err := ds.Queryx(sqlGetTracklistWithTracksByID, id)
 	if err != nil {
 		return nil, fmt.Errorf("db query failed: %w", err)
@@ -243,7 +243,7 @@ func (ds *DataStore) GetTracklistWithTracks(id string) (*Tracklist, error) {
 }
 
 // FindTracklistByName finds a tracklist from the database with the given name.
-func (ds *DataStore) FindTracklistByName(name string) (*Tracklist, error) {
+func (ds *Store) FindTracklistByName(name string) (*Tracklist, error) {
 	var tracklist Tracklist
 
 	err := ds.QueryRowx(sqlFindTracklistByName, name).StructScan(&tracklist)
@@ -260,7 +260,7 @@ func (ds *DataStore) FindTracklistByName(name string) (*Tracklist, error) {
 
 // FindTracklistWithTracksByName find a tracklist, and the tracks from the
 // database with the given name.
-func (ds *DataStore) FindTracklistWithTracksByName(name string) (*Tracklist, error) {
+func (ds *Store) FindTracklistWithTracksByName(name string) (*Tracklist, error) {
 	rows, err := ds.Queryx(sqlFindTracklistWithTracksByName, name)
 	if err != nil {
 		return nil, fmt.Errorf("db query failed: %w", err)
@@ -307,7 +307,7 @@ func (ds *DataStore) FindTracklistWithTracksByName(name string) (*Tracklist, err
 }
 
 // FindTracklistsByTrackID ...
-func (ds *DataStore) FindTracklistsByTrackID(id string) ([]*Tracklist, error) {
+func (ds *Store) FindTracklistsByTrackID(id string) ([]*Tracklist, error) {
 	rows, err := ds.Queryx(sqlFindTracklistsByTrackID, id)
 	if err != nil {
 		return nil, fmt.Errorf("db query failed: %w", err)
