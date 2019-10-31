@@ -50,6 +50,8 @@ github.com/lib/pq/oid
 github.com/lib/pq/scram
 # github.com/matryer/way v0.0.0-20180416093233-9632d0c407b0
 github.com/matryer/way
+# github.com/pelletier/go-toml v1.6.0
+github.com/pelletier/go-toml
 # github.com/tombell/tonality v0.0.0-20190512180540-c0feb91ee329
 github.com/tombell/tonality
 # github.com/tombell/trek v0.0.4
