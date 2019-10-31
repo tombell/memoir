@@ -15,5 +15,5 @@ type Services struct {
 	Config    *Config
 	Logger    *log.Logger
 	DataStore *datastore.Store
-	FileStore filestore.FileStore
+	FileStore filestore.Store
 }
