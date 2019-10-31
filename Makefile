@@ -5,12 +5,14 @@ LDFLAGS=-ldflags "-X github.com/tombell/memoir.Version=${VERSION} -X github.com/
 MODFLAGS=-mod=vendor
 TESTFLAGS=-cover
 
-PLATFORMS:=darwin linux windows
+PLATFORMS:=darwin linux
 
 BINARIES:=memoir                  \
           memoir-db               \
           memoir-tracklists       \
           memoir-upload           \
+
+ARCHIVE_PATH:=/tmp/memoir.tar.gz
 
 all: dev
 
@@ -20,7 +22,7 @@ dev:
 		go build ${MODFLAGS} ${LDFLAGS} -o dist/$$target ./cmd/$$target || exit 1; \
 	done
 
-dist: $(PLATFORMS)
+prod: $(PLATFORMS)
 
 $(PLATFORMS):
 	@for target in $(BINARIES); do \
@@ -32,24 +34,28 @@ $(BINARIES):
 	@echo building dist/$@
 	@go build ${MODFLAGS} ${LDFLAGS} -o dist/$@ ./cmd/$@
 
-clean:
-	@rm -fr dist /tmp/memoir.tar.gz
-
 test:
 	@go test ${MODFLAGS} ${TESTFLAGS} ./...
+
+clean:
+	@rm -fr dist $(ARCHIVE_PATH)
+
+modules:
+	@go mod download && go mod tidy && go mod vendor
 
 create-migration:
 	@echo "-- UP\n\n-- DOWN" > 'datastore/migrations/$(shell date "+%Y%m%d%H%M%S")_$(NAME).sql'
 
 archive:
-	@bsdtar -zcf /tmp/memoir.tar.gz -s ,^dist/memoir-linux-amd64,dist/memoir, dist/memoir-linux-amd64 Caddyfile memoir.service .env
+	@bsdtar -zcf $(ARCHIVE_PATH) -s ,^dist/memoir-linux-amd64,dist/memoir, dist/memoir-linux-amd64 Caddyfile memoir.service .env
 
 .PHONY: all              \
         dev              \
-        dist             \
+        prod             \
         $(PLATFORMS)     \
         $(BINARIES)      \
-        clean            \
         test             \
+        clean            \
+        modules          \
         create-migration \
         archive          \
