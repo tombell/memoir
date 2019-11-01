@@ -54,7 +54,7 @@ github.com/matryer/way
 github.com/pelletier/go-toml
 # github.com/tombell/tonality v0.0.0-20190512180540-c0feb91ee329
 github.com/tombell/tonality
-# github.com/tombell/trek v0.0.4
+# github.com/tombell/trek v0.0.6
 github.com/tombell/trek
 # golang.org/x/text v0.3.2
 golang.org/x/text/encoding

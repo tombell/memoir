@@ -47,12 +47,14 @@ func LoadMigrations(migrationsPath string) (Migrations, error) {
 	return migrations, nil
 }
 
-// Apply applies all the migrations that have not already been applied to the
+// Migrate applies all the migrations that have not already been applied to the
 // given database.
-func (m Migrations) Apply(logger *log.Logger, driver Driver, db *sql.DB) error {
+func (m Migrations) Migrate(logger *log.Logger, driver Driver, db *sql.DB) error {
 	sort.Sort(m)
 
-	logger.Println("applying migrations:")
+	if logger != nil {
+		logger.Println("applying migrations:")
+	}
 
 	for _, migration := range m {
 		hasBeenMigrated, err := migration.HasBeenMigrated(driver, db)
@@ -61,9 +63,11 @@ func (m Migrations) Apply(logger *log.Logger, driver Driver, db *sql.DB) error {
 		}
 
 		if !hasBeenMigrated {
-			logger.Printf(" - applying %q...\n", migration.Name)
+			if logger != nil {
+				logger.Printf(" - applying %q...\n", migration.Name)
+			}
 
-			if err := migration.Apply(driver, db); err != nil {
+			if err := migration.Migrate(driver, db); err != nil {
 				return err
 			}
 		}
@@ -74,19 +78,27 @@ func (m Migrations) Apply(logger *log.Logger, driver Driver, db *sql.DB) error {
 
 // Rollback rolls back all the migrations that have been applied to the given
 // database.
-func (m Migrations) Rollback(logger *log.Logger, driver Driver, db *sql.DB) error {
+func (m Migrations) Rollback(logger *log.Logger, driver Driver, db *sql.DB, steps int) error {
 	sort.Sort(sort.Reverse(m))
 
-	logger.Println("rolling back migrations:")
+	if logger != nil {
+		logger.Println("rolling back migrations:")
+	}
 
-	for _, migration := range m {
+	if steps <= 0 {
+		steps = len(m)
+	}
+
+	for _, migration := range m[:steps] {
 		hasBeenMigrated, err := migration.HasBeenMigrated(driver, db)
 		if err != nil {
 			return err
 		}
 
 		if hasBeenMigrated {
-			logger.Printf(" - rolling back %q...\n", migration.Name)
+			if logger != nil {
+				logger.Printf(" - rolling back %q...\n", migration.Name)
+			}
 
 			if err := migration.Rollback(driver, db); err != nil {
 				return err

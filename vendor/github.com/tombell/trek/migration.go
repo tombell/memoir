@@ -49,9 +49,9 @@ func NewMigration(path string) (*Migration, error) {
 	return m, nil
 }
 
-// Apply applies the migration to the given database using the given driver
+// Migrate applies the migration to the given database using the given driver
 // implementation.
-func (m *Migration) Apply(driver Driver, db *sql.DB) error {
+func (m *Migration) Migrate(driver Driver, db *sql.DB) error {
 	tx, _ := db.Begin()
 
 	if _, err := tx.Exec(m.Contents.Up); err != nil {
