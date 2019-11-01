@@ -1,6 +1,8 @@
 package filestore
 
-import "io"
+import (
+	"io"
+)
 
 // Store is an interface for uploading objects (files) to a storage backend.
 type Store interface {

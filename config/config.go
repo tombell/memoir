@@ -1,6 +1,8 @@
 package config
 
-import "github.com/pelletier/go-toml"
+import (
+	"github.com/pelletier/go-toml"
+)
 
 // Config holds configuration data required by an application, loaded from a
 // configuration file.
