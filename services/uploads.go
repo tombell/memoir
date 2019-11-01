@@ -74,10 +74,12 @@ func (s *Services) UploadMix(file, tracklistName string) (string, error) {
 		return "", fmt.Errorf("check upload exists failed: %w", err)
 	}
 
+	r.Seek(0, io.SeekStart)
+
 	if !exists {
 		if err := s.FileStore.Put(bucketMixUploads, key, r); err != nil {
 			tx.Rollback()
-			return "", fmt.Errorf("uploading failed: %w", err)
+			return "", fmt.Errorf("filestore put failed: %w", err)
 		}
 	}
 
@@ -130,7 +132,7 @@ func (s *Services) UploadArtwork(file, tracklistName string) (string, error) {
 	if !exists {
 		if err := s.FileStore.Put(bucketArtworkUploads, key, r); err != nil {
 			tx.Rollback()
-			return "", fmt.Errorf("uploading failed: %w", err)
+			return "", fmt.Errorf("filestore put failed: %w", err)
 		}
 	}
 
