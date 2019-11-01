@@ -7,10 +7,9 @@ Requires=network.target
 Type=simple
 User=memoir
 Group=memoir
-EnvironmentFile=/app/memoir/.env
 Restart=always
 RestartSec=5s
-ExecStart=/app/memoir/memoir --db ${MEMOIR_DB}
+ExecStart=/app/memoir/memoir --config .env.toml
 
 [Install]
 WantedBy=multi-user.target
