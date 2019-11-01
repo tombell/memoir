@@ -112,7 +112,8 @@ type Track struct {
 	Played int
 }
 
-// TrackSearchResult ...
+// TrackSearchResult represents a track search result matching on the artist or
+// name.
 type TrackSearchResult struct {
 	Track
 
@@ -200,7 +201,8 @@ func (s *Store) FindMostPlayedTracks(limit int) ([]*Track, error) {
 	return tracks, nil
 }
 
-// FindTracksByQuery ...
+// FindTracksByQuery finds the tracks that have artists or names matching the
+// given query.
 func (s *Store) FindTracksByQuery(query string) ([]*TrackSearchResult, error) {
 	rows, err := s.Queryx(sqlFindTracksByQuery, query)
 	if err != nil {

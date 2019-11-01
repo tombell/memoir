@@ -150,7 +150,7 @@ func (s *Store) AddArtworkToTracklist(tx *sql.Tx, id, artwork string) error {
 	return nil
 }
 
-// GetTracklists ...
+// GetTracklists gets all tracklists.
 func (s *Store) GetTracklists() ([]*Tracklist, error) {
 	rows, err := s.Queryx(sqlGetTracklists)
 	if err != nil {
@@ -306,7 +306,7 @@ func (s *Store) FindTracklistWithTracksByName(name string) (*Tracklist, error) {
 	return &tracklist, nil
 }
 
-// FindTracklistsByTrackID ...
+// FindTracklistsByTrackID finds all tracklists that contain the givne track.
 func (s *Store) FindTracklistsByTrackID(id string) ([]*Tracklist, error) {
 	rows, err := s.Queryx(sqlFindTracklistsByTrackID, id)
 	if err != nil {
