@@ -91,7 +91,8 @@ func (s *Services) UploadMix(file, tracklistName string) (string, error) {
 	return key, nil
 }
 
-// UploadArtwork ...
+// UploadArtwork uploads the file at the given path to the configured storage
+// backend, and associates with an existing tracklist.
 func (s *Services) UploadArtwork(file, tracklistName string) (string, error) {
 	tracklist, err := s.DataStore.FindTracklistByName(tracklistName)
 	if err != nil {
