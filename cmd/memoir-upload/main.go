@@ -19,8 +19,8 @@ const helpText = `usage: memoir-upload [<args>] <path to mix mp3>
   --tracklist  Name of the tracklist to associate the uploaded mix with
 
 Special options:
-  --help     Show this message, then exit
-  --version  Show the version number, then exit
+  --help       Show this message, then exit
+  --version    Show the version number, then exit
 `
 
 var (
