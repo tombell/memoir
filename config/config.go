@@ -8,6 +8,11 @@ type Config struct {
 	Address    string `toml:"address" default:":8080"`
 	DB         string `toml:"db"`
 	Migrations string `toml:"migrations"`
+
+	AWS struct {
+		Key    string `toml:"key"`
+		Secret string `toml:"secret"`
+	} `toml:"aws"`
 }
 
 // Load loads a given configuration file path into a new Config.
