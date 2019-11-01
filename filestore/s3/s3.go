@@ -60,6 +60,8 @@ func (s *S3) Put(bucket, key string, r io.ReadSeeker) error {
 		return fmt.Errorf("read failed: %w", err)
 	}
 
+	r.Seek(0, io.SeekStart)
+
 	contentType := http.DetectContentType(buf[:])
 
 	input := &s3.PutObjectInput{

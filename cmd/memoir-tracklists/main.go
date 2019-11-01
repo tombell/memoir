@@ -13,14 +13,15 @@ const (
 	helpText = `usage: memoir-tracklists <command> [<args>]
 
 Commands:
-  list       list all imported tracklist, most recent to oldest
-  import     import a CSV tracklist from Serato, or txt tracklist from Rekordbox
-  export     export a tracklist to a simple "artist - title" list
-  delete     delete a tracklist
+  list       List all tracklists, most recent to oldest
+  show       Show the tracks within a given tracklist
+  import     Import a tracklist from Serato, or Rekordbox
+  export     Export a tracklist to a simple "artist - title" list
+  delete     Delete a tracklist
 
 Special options:
-  --help     show this message, then exit
-  --version  show the version number, then exit
+  --help     Show this message, then exit
+  --version  Show the version number, then exit
 `
 )
 
@@ -52,23 +53,23 @@ func main() {
 
 	switch os.Args[1] {
 	case "list", "l":
-		if err := listTracklists(logger); err != nil {
+		if err := list(); err != nil {
 			logger.Fatalf("error listing tracklists: %q\n", err)
 		}
 	case "show", "s":
-		if err := showTracklist(logger); err != nil {
+		if err := show(); err != nil {
 			logger.Fatalf("error showing tracklist: %q\n", err)
 		}
 	case "import", "i":
-		if err := importTracklist(logger); err != nil {
+		if err := importTracklist(); err != nil {
 			logger.Fatalf("error importing tracklist: %q\n", err)
 		}
 	case "export", "e":
-		if err := exportTracklist(logger); err != nil {
+		if err := export(); err != nil {
 			logger.Fatalf("error exporting tracklist: %q\n", err)
 		}
 	case "delete", "d":
-		if err := deleteTracklist(logger); err != nil {
+		if err := delete(); err != nil {
 			logger.Fatalf("error deleting tracklist: %q\n", err)
 		}
 	default:

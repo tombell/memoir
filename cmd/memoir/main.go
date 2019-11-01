@@ -12,37 +12,31 @@ import (
 
 	"github.com/tombell/memoir"
 	"github.com/tombell/memoir/api"
+	"github.com/tombell/memoir/config"
 	"github.com/tombell/memoir/datastore"
 	"github.com/tombell/memoir/services"
 )
 
 const helpText = `usage: memoir [<args>]
 
-  --db  connection string for connecting to the database
+  --config   Path to .env.toml configuration file
 
 Special options:
-  --help      show this message, then exit
-  --version   show the version number, then exit
+  --help     Show this message, then exit
+  --version  Show the version number, then exit
 `
 
 var (
-	dsn     = flag.String("db", "", "")
+	cfgpath = flag.String("config", ".env.dev.toml", "")
 	version = flag.Bool("version", false, "")
 )
 
-func usage() {
-	fmt.Fprintf(os.Stderr, helpText)
-	os.Exit(2)
-}
-
-func validateFlags() {
-	if *dsn == "" {
-		flag.Usage()
-	}
-}
-
 func main() {
-	flag.Usage = usage
+	flag.Usage = func() {
+		fmt.Fprintf(os.Stderr, helpText)
+		os.Exit(2)
+	}
+
 	flag.Parse()
 
 	if *version {
@@ -50,30 +44,27 @@ func main() {
 		os.Exit(0)
 	}
 
-	logger := log.New(os.Stderr, "[memoir] ", log.LstdFlags)
+	logger := log.New(os.Stderr, "", log.LstdFlags)
 
-	validateFlags()
-
-	ds, err := datastore.New(*dsn)
+	cfg, err := config.Load(*cfgpath)
 	if err != nil {
-		logger.Fatalf("error: %v\n", err)
-	}
-	defer ds.Close()
-
-	cfg := &api.Config{
-		Logger: logger,
-		Services: &services.Services{
-			Logger:    logger,
-			DataStore: ds,
-		},
+		logger.Fatalf("error loading config: %v", err)
 	}
 
-	s := api.NewServer(cfg)
+	store, err := datastore.New(cfg.DB)
+	if err != nil {
+		logger.Fatalf("error connecting to database: %v", err)
+	}
+	defer store.Close()
 
-	logger.Println("starting memoir api server...")
+	s := api.New(&services.Services{
+		Logger:    logger,
+		Config:    cfg,
+		DataStore: store,
+	})
 
 	go func() {
-		if err := s.Start(":8080"); err != nil {
+		if err := s.Start(); err != nil {
 			if err == http.ErrServerClosed {
 				logger.Println("api server shutdown finished")
 				return

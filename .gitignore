@@ -15,5 +15,5 @@
 dist/
 
 # Environment configuration files
-.env*
-!.env.example
+.env.toml
+.env.*.toml
