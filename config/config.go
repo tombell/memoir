@@ -4,7 +4,7 @@ import (
 	"github.com/pelletier/go-toml"
 )
 
-// Config holds configuration data required by an application, loaded from a
+// Config contains configuration data required by an application, loaded from a
 // configuration file.
 type Config struct {
 	Address    string `toml:"address" default:":8080"`
