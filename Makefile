@@ -47,7 +47,7 @@ create-migration:
 	@echo "-- UP\n\n-- DOWN" > 'datastore/migrations/$(shell date "+%Y%m%d%H%M%S")_$(NAME).sql'
 
 archive:
-	@bsdtar -zcf $(ARCHIVE_PATH) -s ,^dist/memoir-linux-amd64,dist/memoir, dist/memoir-linux-amd64 Caddyfile memoir.service .env
+	@bsdtar -zcf $(ARCHIVE_PATH) -s ,^dist/memoir-linux-amd64,dist/memoir, dist/memoir-linux-amd64 Caddyfile memoir.service .env.toml
 
 .PHONY: all              \
         dev              \
