@@ -7,6 +7,7 @@ import (
 	"os"
 
 	"github.com/tombell/memoir"
+	"github.com/tombell/memoir/config"
 	"github.com/tombell/memoir/datastore"
 	"github.com/tombell/memoir/filestore/s3"
 	"github.com/tombell/memoir/services"
@@ -14,21 +15,17 @@ import (
 
 const helpText = `usage: memoir-upload [<args>] <path to mix mp3>
 
-  --db         connection string for connecting to the database
-  --tracklist  name of the tracklist to associate the uploaded mix with
-  --aws-key    AWS access key ID
-  --aws-secret AWS secret access key
+  --config     Path to .env.toml configuration file
+  --tracklist  Name of the tracklist to associate the uploaded mix with
 
 Special options:
-  --help     show this message, then exit
-  --version  show the version number, then exit
+  --help     Show this message, then exit
+  --version  Show the version number, then exit
 `
 
 var (
-	dsn       = flag.String("db", "", "")
+	cfgpath   = flag.String("config", ".env.dev.toml", "")
 	tracklist = flag.String("tracklist", "", "")
-	awsKey    = flag.String("aws-key", "", "")
-	awsSecret = flag.String("aws-secret", "", "")
 	version   = flag.Bool("version", false, "")
 )
 
@@ -38,15 +35,7 @@ func usage() {
 }
 
 func validateFlags() {
-	if *dsn == "" {
-		flag.Usage()
-	}
-
 	if *tracklist == "" {
-		flag.Usage()
-	}
-
-	if *awsKey == "" || *awsSecret == "" {
 		flag.Usage()
 	}
 }
@@ -69,21 +58,26 @@ func main() {
 
 	logger := log.New(os.Stderr, "", 0)
 
-	logger.Printf("uploading mix %s...\n", *tracklist)
-
-	ds, err := datastore.New(*dsn)
+	cfg, err := config.Load(*cfgpath)
 	if err != nil {
-		logger.Fatalf("error: %v\n", err)
+		logger.Fatalf("error loading config: %v", err)
+	}
+
+	ds, err := datastore.New(cfg.DB)
+	if err != nil {
+		logger.Fatalf("error connecting to database: %v\n", err)
 	}
 	defer ds.Close()
 
-	fs := s3.New(*awsKey, *awsSecret)
+	fs := s3.New(cfg.AWS.Key, cfg.AWS.Secret)
 
 	svc := &services.Services{
 		Logger:    logger,
 		DataStore: ds,
 		FileStore: fs,
 	}
+
+	logger.Printf("uploading mix %s...\n", *tracklist)
 
 	key, err := svc.UploadMix(args[0], *tracklist)
 	if err != nil {

@@ -27,8 +27,8 @@ Special options:
 `
 
 var (
-	cfgpath = flag.String("config", ".env.dev.toml", "Path to .env.toml config file")
-	version = flag.Bool("version", false, "Show the version information")
+	cfgpath = flag.String("config", ".env.dev.toml", "")
+	version = flag.Bool("version", false, "")
 )
 
 func main() {
