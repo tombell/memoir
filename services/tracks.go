@@ -38,7 +38,7 @@ type Track struct {
 	NameHighlighted   string `json:"name_highlighted,omitempty"`
 }
 
-// NewTrack returns a new track with fields mapped from a database record.
+// NewTrack returns a new track with fields mapped from a track database record.
 func NewTrack(record *datastore.Track) *Track {
 	return &Track{
 		ID:      record.ID,
@@ -53,6 +53,8 @@ func NewTrack(record *datastore.Track) *Track {
 	}
 }
 
+// NewTrackFromSearchResult returns a new track with fields mapped from a track
+// search result database record.
 func NewTrackFromSearchResult(record *datastore.TrackSearchResult) *Track {
 	return &Track{
 		ID:                record.ID,
@@ -101,7 +103,8 @@ func (s *Services) ImportTrack(tx *sql.Tx, trackImport *TrackImport) (*Track, er
 	return NewTrack(track), nil
 }
 
-// GetMostPlayedTracks ...
+// GetMostPlayedTracks gets the tracks that have been included the most in
+// tracklists.
 func (s *Services) GetMostPlayedTracks(limit int) ([]*Track, error) {
 	tracks, err := s.DataStore.FindMostPlayedTracks(limit)
 	if err != nil {
@@ -117,7 +120,7 @@ func (s *Services) GetMostPlayedTracks(limit int) ([]*Track, error) {
 	return models, nil
 }
 
-// SearchTracks ...
+// SearchTracks get tracks that the query matches the track artist or name for.
 func (s *Services) SearchTracks(query string) ([]*Track, error) {
 	tracks, err := s.DataStore.FindTracksByQuery(query)
 	if err != nil {

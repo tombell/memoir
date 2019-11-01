@@ -48,13 +48,15 @@ func NewTracklist(record *datastore.Tracklist) *Tracklist {
 	return tracklist
 }
 
-// PagedTracklists ...
+// PagedTracklists represents a paginated list of tracklists, indicating if
+// another page is available.
 type PagedTracklists struct {
 	Tracklists []*Tracklist `json:"tracklists"`
 	HasMore    bool         `json:"hasMore"`
 }
 
-// NewPagedTracklists ...
+// NewPagedTracklists returns a new PagedTracklists for the given list of
+// tracklists based on the given page and per page amount.
 func NewPagedTracklists(tracklists []*Tracklist, page, perPage int) *PagedTracklists {
 	total := len(tracklists)
 	pages := math.Ceil(float64(total) / float64(perPage))
@@ -71,7 +73,7 @@ func NewPagedTracklists(tracklists []*Tracklist, page, perPage int) *PagedTrackl
 	}
 }
 
-// GetTracklists ...
+// GetTracklists gets all tracklists.
 func (s *Services) GetTracklists() ([]*Tracklist, error) {
 	tracklists, err := s.DataStore.GetTracklists()
 	if err != nil {
@@ -87,7 +89,7 @@ func (s *Services) GetTracklists() ([]*Tracklist, error) {
 	return models, nil
 }
 
-// GetTracklist ...
+// GetTracklist gets a tracklist with the given ID.
 func (s *Services) GetTracklist(id string) (*Tracklist, error) {
 	tracklist, err := s.DataStore.GetTracklistWithTracks(id)
 	if err != nil {
@@ -100,7 +102,7 @@ func (s *Services) GetTracklist(id string) (*Tracklist, error) {
 	return NewTracklist(tracklist), nil
 }
 
-// GetTracklistByName ...
+// GetTracklistByName gets a tracklist with the given name.
 func (s *Services) GetTracklistByName(name string) (*Tracklist, error) {
 	tracklist, err := s.DataStore.FindTracklistWithTracksByName(name)
 	if err != nil {
@@ -110,7 +112,7 @@ func (s *Services) GetTracklistByName(name string) (*Tracklist, error) {
 	return NewTracklist(tracklist), nil
 }
 
-// GetTracklistsByTrack ...
+// GetTracklistsByTrack gets all tracklists that contain the given track.
 func (s *Services) GetTracklistsByTrack(id string) ([]*Tracklist, error) {
 	tracklists, err := s.DataStore.FindTracklistsByTrackID(id)
 	if err != nil {
