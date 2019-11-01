@@ -9,7 +9,7 @@ User=memoir
 Group=memoir
 Restart=always
 RestartSec=5s
-ExecStart=/app/memoir/memoir --config .env.toml
+ExecStart=/app/memoir/memoir --config /app/memoir/.env.toml
 
 [Install]
 WantedBy=multi-user.target
