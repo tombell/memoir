@@ -98,7 +98,7 @@ const (
 		ORDER BY rank DESC`
 )
 
-// Track represents a single track row in the database.
+// Track contains data about a track row in the database.
 type Track struct {
 	ID      string
 	Artist  string
@@ -112,11 +112,10 @@ type Track struct {
 	Played int
 }
 
-// TrackSearchResult represents a track search result matching on the artist or
-// name.
+// TrackSearchResult contains data about track search result matching on the
+// artist or name.
 type TrackSearchResult struct {
 	Track
-
 	ArtistHighlighted string
 	NameHighlighted   string
 }
@@ -140,7 +139,7 @@ func (s *Store) AddTrack(tx *sql.Tx, track *Track) error {
 	return nil
 }
 
-// GetTrack selects a track from the database with the given ID.
+// GetTrack gets a track with the given ID from the database.
 func (s *Store) GetTrack(id string) (*Track, error) {
 	var track Track
 
@@ -156,8 +155,8 @@ func (s *Store) GetTrack(id string) (*Track, error) {
 	}
 }
 
-// FindTrackByArtistAndName finds a track from the database with the given
-// artist and name.
+// FindTrackByArtistAndName finds a track with the given artist and name in the
+// database.
 func (s *Store) FindTrackByArtistAndName(artist, name string) (*Track, error) {
 	var track Track
 
@@ -174,7 +173,7 @@ func (s *Store) FindTrackByArtistAndName(artist, name string) (*Track, error) {
 }
 
 // FindMostPlayedTracks finds the tracks that are most played, limiting it to
-// the given count.
+// the given count in the database.
 func (s *Store) FindMostPlayedTracks(limit int) ([]*Track, error) {
 	rows, err := s.Queryx(sqlFindMostPlayedTracks, limit)
 	if err != nil {
@@ -202,7 +201,7 @@ func (s *Store) FindMostPlayedTracks(limit int) ([]*Track, error) {
 }
 
 // FindTracksByQuery finds the tracks that have artists or names matching the
-// given query.
+// given query in the database.
 func (s *Store) FindTracksByQuery(query string) ([]*TrackSearchResult, error) {
 	rows, err := s.Queryx(sqlFindTracksByQuery, query)
 	if err != nil {

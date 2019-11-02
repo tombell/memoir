@@ -102,7 +102,7 @@ const (
 		ORDER BY tl.date DESC`
 )
 
-// Tracklist represents a single tracklist row in the database.
+// Tracklist contains data about a tracklist row in the database.
 type Tracklist struct {
 	ID      string
 	Name    string
@@ -140,7 +140,7 @@ func (s *Store) RemoveTracklist(tx *sql.Tx, id string) error {
 	return nil
 }
 
-// AddArtworkToTracklist adds an artwork file key to the tracklist in the
+// AddArtworkToTracklist adds an artwork file key to the given tracklist in the
 // database.
 func (s *Store) AddArtworkToTracklist(tx *sql.Tx, id, artwork string) error {
 	if _, err := tx.Exec(sqlAddArtworkToTracklist, artwork, id); err != nil {
@@ -177,7 +177,7 @@ func (s *Store) GetTracklists() ([]*Tracklist, error) {
 	return tracklists, nil
 }
 
-// GetTracklist selects a tracklist from the database with the given ID.
+// GetTracklist gets a tracklist with the given ID from the database.
 func (s *Store) GetTracklist(id string) (*Tracklist, error) {
 	var tracklist Tracklist
 
@@ -193,8 +193,8 @@ func (s *Store) GetTracklist(id string) (*Tracklist, error) {
 	}
 }
 
-// GetTracklistWithTracks selects a tracklist, and the tracks in the tracklist
-// from the database with the given ID.
+// GetTracklistWithTracks gets a tracklist with the given ID, and associated
+// tracks from the database.
 func (s *Store) GetTracklistWithTracks(id string) (*Tracklist, error) {
 	rows, err := s.Queryx(sqlGetTracklistWithTracksByID, id)
 	if err != nil {
@@ -234,7 +234,6 @@ func (s *Store) GetTracklistWithTracks(id string) (*Tracklist, error) {
 		return nil, fmt.Errorf("rows next failed: %w", err)
 	}
 
-	// TODO: is there a nicer way to check zero row results?
 	if tracklist.ID == "" {
 		return nil, nil
 	}
@@ -242,7 +241,7 @@ func (s *Store) GetTracklistWithTracks(id string) (*Tracklist, error) {
 	return &tracklist, nil
 }
 
-// FindTracklistByName finds a tracklist from the database with the given name.
+// FindTracklistByName finds a tracklist with the given name in the database.
 func (s *Store) FindTracklistByName(name string) (*Tracklist, error) {
 	var tracklist Tracklist
 
@@ -258,8 +257,8 @@ func (s *Store) FindTracklistByName(name string) (*Tracklist, error) {
 	}
 }
 
-// FindTracklistWithTracksByName find a tracklist, and the tracks from the
-// database with the given name.
+// FindTracklistWithTracksByName find a tracklist with the given name, and
+// associated tracks in the database.
 func (s *Store) FindTracklistWithTracksByName(name string) (*Tracklist, error) {
 	rows, err := s.Queryx(sqlFindTracklistWithTracksByName, name)
 	if err != nil {
@@ -306,7 +305,8 @@ func (s *Store) FindTracklistWithTracksByName(name string) (*Tracklist, error) {
 	return &tracklist, nil
 }
 
-// FindTracklistsByTrackID finds all tracklists that contain the givne track.
+// FindTracklistsByTrackID finds all tracklists that contain the given track
+// in the database.
 func (s *Store) FindTracklistsByTrackID(id string) ([]*Tracklist, error) {
 	rows, err := s.Queryx(sqlFindTracklistsByTrackID, id)
 	if err != nil {

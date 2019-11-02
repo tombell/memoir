@@ -22,7 +22,7 @@ const (
 		WHERE id = $1`
 )
 
-// MixUpload represents a single mix upload row in the database.
+// MixUpload contains data about a mix upload row in the database.
 type MixUpload struct {
 	ID          string
 	TracklistID string

@@ -15,7 +15,7 @@ const (
 		) VALUES ($1, $2, $3, $4)`
 )
 
-// TracklistTrack represents a single tracklist_track row in the database.
+// TracklistTrack contains data about a tracklist_track row in the database.
 type TracklistTrack struct {
 	ID          string
 	TracklistID string

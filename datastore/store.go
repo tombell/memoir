@@ -22,8 +22,8 @@ type Store struct {
 	*sqlx.DB
 }
 
-// New returns an initialised Store, that has connected to a database, and
-// verified with a ping.
+// New returns a new Store, that has connected to a database, and verified with
+// a ping.
 func New(dsn string) (*Store, error) {
 	sqlx.NameMapper = func(s string) string {
 		snake := matchFirstCapRegexp.ReplaceAllString(s, "${1}_${2}")
@@ -46,14 +46,4 @@ func New(dsn string) (*Store, error) {
 // Close closes the connection to the database.
 func (s *Store) Close() error {
 	return s.DB.Close()
-}
-
-func toSnakeCase(str string) string {
-	matchFirstCap := regexp.MustCompile("(.)([A-Z][a-z]+)")
-	matchAllCap := regexp.MustCompile("([a-z0-9])([A-Z])")
-
-	snake := matchFirstCap.ReplaceAllString(str, "${1}_${2}")
-	snake = matchAllCap.ReplaceAllString(snake, "${1}_${2}")
-
-	return strings.ToLower(snake)
 }
