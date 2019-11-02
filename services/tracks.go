@@ -11,7 +11,7 @@ import (
 	"github.com/tombell/memoir/datastore"
 )
 
-// TrackImport contains data about a track to import from a Serato CSV export.
+// TrackImport contains data about a track to import.
 type TrackImport struct {
 	Artist string
 	Name   string
@@ -20,7 +20,8 @@ type TrackImport struct {
 	Key    string
 }
 
-// Track contains data about a specific track.
+// Track contains data about a track, with optional played count and search
+// result highlighting.
 type Track struct {
 	ID     string  `json:"id"`
 	Artist string  `json:"artist"`
@@ -38,7 +39,7 @@ type Track struct {
 	NameHighlighted   string `json:"name_highlighted,omitempty"`
 }
 
-// NewTrack returns a new track with fields mapped from a track database record.
+// NewTrack returns a new Track with fields mapped from a track database record.
 func NewTrack(record *datastore.Track) *Track {
 	return &Track{
 		ID:      record.ID,
@@ -53,7 +54,7 @@ func NewTrack(record *datastore.Track) *Track {
 	}
 }
 
-// NewTrackFromSearchResult returns a new track with fields mapped from a track
+// NewTrackFromSearchResult returns a new Track with fields mapped from a track
 // search result database record.
 func NewTrackFromSearchResult(record *datastore.TrackSearchResult) *Track {
 	return &Track{
@@ -70,8 +71,7 @@ func NewTrackFromSearchResult(record *datastore.TrackSearchResult) *Track {
 	}
 }
 
-// ImportTrack imports the new track if it doesn't already exist in the
-// database.
+// ImportTrack imports the new track if it doesn't already exist.
 func (s *Services) ImportTrack(tx *sql.Tx, trackImport *TrackImport) (*Track, error) {
 	track, err := s.DataStore.FindTrackByArtistAndName(trackImport.Artist, trackImport.Name)
 	if err != nil {
@@ -103,8 +103,7 @@ func (s *Services) ImportTrack(tx *sql.Tx, trackImport *TrackImport) (*Track, er
 	return NewTrack(track), nil
 }
 
-// GetMostPlayedTracks gets the tracks that have been included the most in
-// tracklists.
+// GetMostPlayedTracks gets the tracks that have been played most in tracklists.
 func (s *Services) GetMostPlayedTracks(limit int) ([]*Track, error) {
 	tracks, err := s.DataStore.FindMostPlayedTracks(limit)
 	if err != nil {
@@ -120,7 +119,8 @@ func (s *Services) GetMostPlayedTracks(limit int) ([]*Track, error) {
 	return models, nil
 }
 
-// SearchTracks get tracks that the query matches the track artist or name for.
+// SearchTracks searches for tracks that have artists and/or names matching the
+// query.
 func (s *Services) SearchTracks(query string) ([]*Track, error) {
 	tracks, err := s.DataStore.FindTracksByQuery(query)
 	if err != nil {

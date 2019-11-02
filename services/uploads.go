@@ -19,8 +19,8 @@ const (
 	bucketMixUploads     = "memoir-uploads"
 )
 
-// UploadMix uploads the file at the given path to the configured storage
-// backend, and associates with an existing tracklist.
+// UploadMix uploads the mix at the given path to the configured storage
+// backend, and associates with a tracklist with the given name.
 func (s *Services) UploadMix(file, tracklistName string) (string, error) {
 	tracklist, err := s.DataStore.FindTracklistByName(tracklistName)
 	if err != nil {
@@ -91,8 +91,8 @@ func (s *Services) UploadMix(file, tracklistName string) (string, error) {
 	return key, nil
 }
 
-// UploadArtwork uploads the file at the given path to the configured storage
-// backend, and associates with an existing tracklist.
+// UploadArtwork uploads the artwork at the given path to the configured storage
+// backend, and associates with a tracklist with the given name.
 func (s *Services) UploadArtwork(file, tracklistName string) (string, error) {
 	tracklist, err := s.DataStore.FindTracklistByName(tracklistName)
 	if err != nil {
@@ -129,6 +129,8 @@ func (s *Services) UploadArtwork(file, tracklistName string) (string, error) {
 		tx.Rollback()
 		return "", fmt.Errorf("check upload exists failed: %w", err)
 	}
+
+	r.Seek(0, io.SeekStart)
 
 	if !exists {
 		if err := s.FileStore.Put(bucketArtworkUploads, key, r); err != nil {

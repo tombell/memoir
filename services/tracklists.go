@@ -12,7 +12,8 @@ import (
 	"github.com/tombell/memoir/datastore"
 )
 
-// Tracklist contains data about a specific tracklist.
+// Tracklist contains data about a specific tracklist. It can contain optional
+// track count and list of associated tracks.
 type Tracklist struct {
 	ID   string    `json:"id"`
 	Name string    `json:"name"`
@@ -25,7 +26,7 @@ type Tracklist struct {
 	Tracks     []*Track `json:"tracks,omitempty"`
 }
 
-// NewTracklist returns a new tracklist with fields mapped from a database
+// NewTracklist returns a new Tracklist with fields mapped from a database
 // record.
 func NewTracklist(record *datastore.Tracklist) *Tracklist {
 	tracklist := &Tracklist{
@@ -48,7 +49,7 @@ func NewTracklist(record *datastore.Tracklist) *Tracklist {
 	return tracklist
 }
 
-// PagedTracklists represents a paginated list of tracklists, indicating if
+// PagedTracklists contains a paginated list of tracklists, indicating if
 // another page is available.
 type PagedTracklists struct {
 	Tracklists []*Tracklist `json:"tracklists"`
@@ -112,7 +113,7 @@ func (s *Services) GetTracklistByName(name string) (*Tracklist, error) {
 	return NewTracklist(tracklist), nil
 }
 
-// GetTracklistsByTrack gets all tracklists that contain the given track.
+// GetTracklistsByTrack gets all tracklists that include the given track by ID.
 func (s *Services) GetTracklistsByTrack(id string) ([]*Tracklist, error) {
 	tracklists, err := s.DataStore.FindTracklistsByTrackID(id)
 	if err != nil {
@@ -128,8 +129,8 @@ func (s *Services) GetTracklistsByTrack(id string) ([]*Tracklist, error) {
 	return models, nil
 }
 
-// ImportTracklist imports a new tracklist into the database, including the
-// tracklist, and any new tracks that have not been imported before.
+// ImportTracklist imports a new tracklist, including any new tracks that have
+// not been imported before.
 func (s *Services) ImportTracklist(name string, date time.Time, tracks [][]string) (*Tracklist, error) {
 	tracklist, err := s.DataStore.FindTracklistByName(name)
 	if err != nil {
@@ -201,8 +202,8 @@ func (s *Services) ImportTracklist(name string, date time.Time, tracks [][]strin
 	return NewTracklist(tracklist), nil
 }
 
-// ExportTracklist exports a tracklist with the given name to the specific
-// format.
+// ExportTracklist exports a tracklist with the given name to the given
+// io.Writer.
 func (s *Services) ExportTracklist(name string, w io.Writer) error {
 	tracklist, err := s.DataStore.FindTracklistWithTracksByName(name)
 	if err != nil {
@@ -220,7 +221,7 @@ func (s *Services) ExportTracklist(name string, w io.Writer) error {
 	return nil
 }
 
-// RemoveTracklist removes a tracklist with the given name from the database.
+// RemoveTracklist removes a tracklist with the given name.
 func (s *Services) RemoveTracklist(name string) error {
 	tracklist, err := s.DataStore.FindTracklistByName(name)
 	if err != nil {
