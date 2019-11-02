@@ -7,8 +7,8 @@ import (
 
 	"github.com/cheynewallace/tabby"
 
-	"github.com/tombell/memoir/config"
 	"github.com/tombell/memoir/datastore"
+	"github.com/tombell/memoir/pkg/config"
 	"github.com/tombell/memoir/services"
 )
 
