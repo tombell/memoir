@@ -11,9 +11,9 @@ import (
 	"time"
 
 	"github.com/tombell/memoir"
-	"github.com/tombell/memoir/datastore"
 	"github.com/tombell/memoir/pkg/api"
 	"github.com/tombell/memoir/pkg/config"
+	"github.com/tombell/memoir/pkg/datastore"
 	"github.com/tombell/memoir/services"
 )
 

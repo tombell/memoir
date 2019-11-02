@@ -7,9 +7,9 @@ import (
 	"os"
 
 	"github.com/tombell/memoir"
-	"github.com/tombell/memoir/datastore"
 	"github.com/tombell/memoir/filestore/s3"
 	"github.com/tombell/memoir/pkg/config"
+	"github.com/tombell/memoir/pkg/datastore"
 	"github.com/tombell/memoir/services"
 )
 

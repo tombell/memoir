@@ -11,7 +11,7 @@ import (
 
 	"github.com/gofrs/uuid"
 
-	"github.com/tombell/memoir/datastore"
+	"github.com/tombell/memoir/pkg/datastore"
 )
 
 const (

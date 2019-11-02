@@ -9,7 +9,7 @@ import (
 	"github.com/gofrs/uuid"
 	"github.com/tombell/tonality"
 
-	"github.com/tombell/memoir/datastore"
+	"github.com/tombell/memoir/pkg/datastore"
 )
 
 // Tracklist contains data about a specific tracklist. It can contain optional
