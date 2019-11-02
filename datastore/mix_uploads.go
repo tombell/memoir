@@ -6,22 +6,6 @@ import (
 	"time"
 )
 
-const (
-	sqlAddMixUpload = `
-		INSERT INTO mix_uploads (
-			id,
-			tracklist_id,
-			filename,
-			location,
-			created,
-			updated
-		) VALUES ($1, $2, $3, $4, $5, $6)`
-
-	sqlRemoveMixUpload = `
-		DELETE FROM mix_uploads
-		WHERE id = $1`
-)
-
 // MixUpload contains data about a mix upload row in the database.
 type MixUpload struct {
 	ID          string
