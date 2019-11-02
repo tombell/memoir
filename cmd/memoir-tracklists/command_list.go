@@ -9,7 +9,7 @@ import (
 
 	"github.com/tombell/memoir/pkg/config"
 	"github.com/tombell/memoir/pkg/datastore"
-	"github.com/tombell/memoir/services"
+	"github.com/tombell/memoir/pkg/services"
 )
 
 const listHelpText = `usage: memoir-tracklists list [<args>]

@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"github.com/tombell/memoir/services"
+	"github.com/tombell/memoir/pkg/services"
 )
 
 func (s *Server) handleGetTracklistsByTrack() http.HandlerFunc {
