@@ -1,7 +1,7 @@
 package datastore
 
 const (
-	sqlAddMixUpload = `
+	insertMixUploadSQL = `
 		INSERT INTO mix_uploads (
 			id,
 			tracklist_id,
@@ -11,7 +11,7 @@ const (
 			updated
 		) VALUES ($1, $2, $3, $4, $5, $6)`
 
-	sqlRemoveMixUpload = `
+	deleteMixUploadSQL = `
 		DELETE FROM mix_uploads
 		WHERE id = $1`
 )

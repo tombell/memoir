@@ -1,7 +1,7 @@
 package datastore
 
 const (
-	sqlAddTracklistTrack = `
+	insertTracklistTrackSQL = `
 		INSERT INTO tracklist_tracks (
 			id,
 			tracklist_id,

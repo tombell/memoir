@@ -15,7 +15,7 @@ type TracklistTrack struct {
 
 // AddTracklistTrack adds a new tracklist to track mapping into the database.
 func (s *Store) AddTracklistTrack(tx *sql.Tx, tt *TracklistTrack) error {
-	_, err := tx.Exec(sqlAddTracklistTrack,
+	_, err := tx.Exec(insertTracklistTrackSQL,
 		tt.ID,
 		tt.TracklistID,
 		tt.TrackID,

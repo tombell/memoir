@@ -1,7 +1,7 @@
 package datastore
 
 const (
-	sqlAddTracklist = `
+	insertTracklistSQL = `
 		INSERT INTO tracklists (
 			id,
 			name,
@@ -10,16 +10,16 @@ const (
 			updated
 		) VALUES ($1, $2, $3, $4, $5)`
 
-	sqlRemoveTracklist = `
+	deleteTracklistSQL = `
 		DELETE FROM tracklists
 		WHERE id = $1`
 
-	sqlAddArtworkToTracklist = `
+	addArtworkToTracklistSQL = `
 		UPDATE tracklists
 		SET artwork = $1
 		WHERE id = $2`
 
-	sqlGetTracklists = `
+	getTracklistsSQL = `
 		SELECT
 			tl.*,
 			count(tl.id) as track_count
@@ -28,7 +28,7 @@ const (
 		GROUP BY tl.id
 		ORDER BY tl.date DESC`
 
-	sqlGetTracklistByID = `
+	findTracklistByIDSQL = `
 		SELECT
 			id,
 			name,
@@ -39,7 +39,7 @@ const (
 		WHERE id = $1
 		LIMIT 1`
 
-	sqlGetTracklistWithTracksByID = `
+	findTracklistWithTracksByIDSQL = `
 		SELECT
 			tl.*,
 			t.id as track_id,
@@ -56,7 +56,7 @@ const (
 		WHERE tl.id = $1
 		ORDER BY tt.track_number ASC`
 
-	sqlFindTracklistByName = `
+	findTracklistByNameSQL = `
 		SELECT
 			id,
 			name,
@@ -67,7 +67,7 @@ const (
 		WHERE name = $1
 		LIMIT 1`
 
-	sqlFindTracklistWithTracksByName = `
+	findTracklistWithTracksByNameSQL = `
 		SELECT
 			tl.*,
 			t.id as track_id,
@@ -84,7 +84,7 @@ const (
 		WHERE tl.name = $1
 		ORDER BY tt.track_number ASC`
 
-	sqlFindTracklistsByTrackID = `
+	findTracklistByTrackIDSQL = `
 		SELECT tl.*, (
 			SELECT count(id)
 			FROM tracklist_tracks
