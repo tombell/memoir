@@ -10,7 +10,10 @@ import (
 	"github.com/tombell/memoir/pkg/services"
 )
 
-const perPageTracklists = 10
+const (
+	perPageTracklists = 10
+	perPageTracks     = 10
+)
 
 // Server represents an API server, with a router and service dependencies.
 type Server struct {

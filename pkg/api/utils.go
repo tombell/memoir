@@ -9,14 +9,16 @@ import (
 )
 
 func pageQueryParam(r *http.Request) (int, error) {
-	params := r.URL.Query()
-
-	page := params.Get("page")
+	page := r.URL.Query().Get("page")
 	if page == "" {
 		page = "1"
 	}
 
 	return strconv.Atoi(page)
+}
+
+func searchQueryParam(r *http.Request) string {
+	return r.URL.Query().Get("q")
 }
 
 func idRouteParam(r *http.Request) (string, error) {

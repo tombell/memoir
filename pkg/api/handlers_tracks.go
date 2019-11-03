@@ -71,14 +71,25 @@ func (s *Server) handleSearchTracks() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		rid := getRequestID(r)
 
-		tracks, err := s.services.SearchTracks(r.URL.Query().Get("q"))
+		page, err := pageQueryParam(r)
+		if err != nil {
+			s.services.Logger.Printf("rid=%s error=%s\n", rid, err)
+			http.Error(w, err.Error(), http.StatusBadRequest)
+			return
+		}
+
+		q := searchQueryParam(r)
+
+		tracks, err := s.services.SearchTracks(q)
 		if err != nil {
 			s.services.Logger.Printf("rid=%s error=%s\n", rid, err)
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
 
-		resp, err := json.Marshal(tracks)
+		paged := services.NewPagedTracks(tracks, page, perPageTracks)
+
+		resp, err := json.Marshal(paged)
 		if err != nil {
 			s.services.Logger.Printf("rid=%s error=%s\n", rid, err)
 			http.Error(w, err.Error(), http.StatusInternalServerError)

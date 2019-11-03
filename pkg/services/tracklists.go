@@ -3,7 +3,6 @@ package services
 import (
 	"fmt"
 	"io"
-	"math"
 	"time"
 
 	"github.com/gofrs/uuid"
@@ -47,31 +46,6 @@ func NewTracklist(record *datastore.Tracklist) *Tracklist {
 	}
 
 	return tracklist
-}
-
-// PagedTracklists contains a paginated list of tracklists, indicating if
-// another page is available.
-type PagedTracklists struct {
-	Tracklists []*Tracklist `json:"tracklists"`
-	HasMore    bool         `json:"hasMore"`
-}
-
-// NewPagedTracklists returns a new PagedTracklists for the given list of
-// tracklists based on the given page and per page amount.
-func NewPagedTracklists(tracklists []*Tracklist, page, perPage int) *PagedTracklists {
-	total := len(tracklists)
-	pages := math.Ceil(float64(total) / float64(perPage))
-	offset := (page - 1) * perPage
-	count := offset + perPage
-
-	if count > total {
-		count = total
-	}
-
-	return &PagedTracklists{
-		Tracklists: tracklists[offset:count],
-		HasMore:    page < int(pages),
-	}
 }
 
 // GetTracklists gets all tracklists.
