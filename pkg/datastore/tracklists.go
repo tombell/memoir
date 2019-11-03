@@ -100,7 +100,7 @@ func (s *Store) GetTracklist(id string) (*Tracklist, error) {
 // GetTracklistWithTracks gets a tracklist with the given ID, and associated
 // tracks from the database.
 func (s *Store) GetTracklistWithTracks(id string) (*Tracklist, error) {
-	rows, err := s.Queryx(findTracklistByTrackIDSQL, id)
+	rows, err := s.Queryx(findTracklistWithTracksByIDSQL, id)
 	if err != nil {
 		return nil, fmt.Errorf("db query failed: %w", err)
 	}
