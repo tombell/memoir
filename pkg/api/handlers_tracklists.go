@@ -4,19 +4,12 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"github.com/tombell/memoir/services"
+	"github.com/tombell/memoir/pkg/services"
 )
 
-func (s *Server) handleGetTracklistsByTrack() http.HandlerFunc {
+func (s *Server) handleGetTracklists() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		rid := getRequestID(r)
-
-		id, err := idRouteParam(r)
-		if err != nil {
-			s.services.Logger.Printf("rid=%s error=%s\n", rid, err)
-			http.Error(w, err.Error(), http.StatusNotFound)
-			return
-		}
 
 		page, err := pageQueryParam(r)
 		if err != nil {
@@ -25,7 +18,7 @@ func (s *Server) handleGetTracklistsByTrack() http.HandlerFunc {
 			return
 		}
 
-		tracklists, err := s.services.GetTracklistsByTrack(id)
+		tracklists, err := s.services.GetTracklists()
 		if err != nil {
 			s.services.Logger.Printf("rid=%s error=%s\n", rid, err)
 			http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -45,40 +38,30 @@ func (s *Server) handleGetTracklistsByTrack() http.HandlerFunc {
 	}
 }
 
-func (s *Server) handleGetMostPlayedTracks() http.HandlerFunc {
+func (s *Server) handleGetTracklist() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		rid := getRequestID(r)
 
-		tracks, err := s.services.GetMostPlayedTracks(10)
+		id, err := idRouteParam(r)
+		if err != nil {
+			s.services.Logger.Printf("rid=%s error=%s\n", rid, err)
+			http.Error(w, err.Error(), http.StatusNotFound)
+			return
+		}
+
+		tracklist, err := s.services.GetTracklist(id)
 		if err != nil {
 			s.services.Logger.Printf("rid=%s error=%s\n", rid, err)
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
-
-		resp, err := json.Marshal(tracks)
-		if err != nil {
-			s.services.Logger.Printf("rid=%s error=%s\n", rid, err)
-			http.Error(w, err.Error(), http.StatusInternalServerError)
+		if tracklist == nil {
+			s.services.Logger.Printf("rid=%s error=tracklist not found", rid)
+			http.Error(w, "tracklist not found", http.StatusNotFound)
 			return
 		}
 
-		w.Write(resp)
-	}
-}
-
-func (s *Server) handleSearchTracks() http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		rid := getRequestID(r)
-
-		tracks, err := s.services.SearchTracks(r.URL.Query().Get("q"))
-		if err != nil {
-			s.services.Logger.Printf("rid=%s error=%s\n", rid, err)
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
-
-		resp, err := json.Marshal(tracks)
+		resp, err := json.Marshal(tracklist)
 		if err != nil {
 			s.services.Logger.Printf("rid=%s error=%s\n", rid, err)
 			http.Error(w, err.Error(), http.StatusInternalServerError)

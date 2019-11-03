@@ -7,7 +7,7 @@ import (
 
 	"github.com/matryer/way"
 
-	"github.com/tombell/memoir/services"
+	"github.com/tombell/memoir/pkg/services"
 )
 
 const perPageTracklists = 10

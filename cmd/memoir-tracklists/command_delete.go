@@ -5,9 +5,9 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/tombell/memoir/config"
-	"github.com/tombell/memoir/datastore"
-	"github.com/tombell/memoir/services"
+	"github.com/tombell/memoir/pkg/config"
+	"github.com/tombell/memoir/pkg/datastore"
+	"github.com/tombell/memoir/pkg/services"
 )
 
 const deleteHelpText = `usage: memoir-tracklists delete [<args>]

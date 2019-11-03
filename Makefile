@@ -3,14 +3,14 @@ COMMIT=$(shell git rev-parse HEAD | cut -c -8)
 
 LDFLAGS=-ldflags "-X github.com/tombell/memoir.Version=${VERSION} -X github.com/tombell/memoir.Commit=${COMMIT}"
 MODFLAGS=-mod=vendor
-TESTFLAGS=-cover
 
-PLATFORMS:=darwin linux
+PLATFORMS:=darwin \
+           linux  \
 
-BINARIES:=memoir                  \
-          memoir-db               \
-          memoir-tracklists       \
-          memoir-upload           \
+BINARIES:=memoir            \
+          memoir-db         \
+          memoir-tracklists \
+          memoir-upload     \
 
 ARCHIVE_PATH:=/tmp/memoir.tar.gz
 
@@ -35,7 +35,7 @@ $(BINARIES):
 	@go build ${MODFLAGS} ${LDFLAGS} -o dist/$@ ./cmd/$@
 
 test:
-	@go test ${MODFLAGS} ${TESTFLAGS} ./...
+	@go test ${MODFLAGS} -cover ./...
 
 clean:
 	@rm -fr dist $(ARCHIVE_PATH)
@@ -47,7 +47,12 @@ create-migration:
 	@echo "-- UP\n\n-- DOWN" > 'datastore/migrations/$(shell date "+%Y%m%d%H%M%S")_$(NAME).sql'
 
 archive:
-	@bsdtar -zcf $(ARCHIVE_PATH) -s ,^dist/memoir-linux-amd64,dist/memoir, dist/memoir-linux-amd64 Caddyfile memoir.service .env.toml
+	@bsdtar -zcf $(ARCHIVE_PATH) \
+		-s ,^dist/memoir-linux-amd64,dist/memoir, \
+		dist/memoir-linux-amd64 \
+		.env.toml \
+		configs/Caddyfile \
+		configs/memoir.service
 
 .PHONY: all              \
         dev              \

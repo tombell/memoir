@@ -8,7 +8,7 @@ import (
 
 	"github.com/gofrs/uuid"
 
-	"github.com/tombell/memoir/datastore"
+	"github.com/tombell/memoir/pkg/datastore"
 )
 
 // TrackImport contains data about a track to import.

@@ -7,7 +7,7 @@ import (
 	"os"
 	"os/exec"
 
-	"github.com/tombell/memoir/config"
+	"github.com/tombell/memoir/pkg/config"
 )
 
 const createHelpText = `usage: memoir-db create [<args>]

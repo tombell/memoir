@@ -7,10 +7,10 @@ import (
 	"os"
 
 	"github.com/tombell/memoir"
-	"github.com/tombell/memoir/config"
-	"github.com/tombell/memoir/datastore"
-	"github.com/tombell/memoir/filestore/s3"
-	"github.com/tombell/memoir/services"
+	"github.com/tombell/memoir/pkg/config"
+	"github.com/tombell/memoir/pkg/datastore"
+	"github.com/tombell/memoir/pkg/filestore/s3"
+	"github.com/tombell/memoir/pkg/services"
 )
 
 const helpText = `usage: memoir-upload [<args>] <path to mix mp3>

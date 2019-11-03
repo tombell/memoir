@@ -8,7 +8,7 @@ import (
 
 	"github.com/tombell/trek"
 
-	"github.com/tombell/memoir/config"
+	"github.com/tombell/memoir/pkg/config"
 )
 
 const rollbackHelpText = `usage: memoir-db rollback [<args>]
