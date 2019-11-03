@@ -7,7 +7,7 @@ import (
 	"github.com/tombell/memoir/pkg/services"
 )
 
-func (s *Server) handleGetTracklistsByTrack() http.HandlerFunc {
+func (s *Server) handleGetTracklistsByTrackID() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		rid := getRequestID(r)
 
