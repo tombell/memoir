@@ -49,10 +49,12 @@ create-migration:
 archive:
 	@bsdtar -zcf $(ARCHIVE_PATH) \
 		-s ,^dist/memoir-linux-amd64,dist/memoir, \
-		dist/memoir-linux-amd64 \
-		.env.toml \
+		-s ,^configs/Caddyfile,Caddyfile, \
+		-s ,^configs/memoir.service,memoir.service, \
 		configs/Caddyfile \
-		configs/memoir.service
+		configs/memoir.service \
+		dist/memoir-linux-amd64 \
+		.env.toml
 
 .PHONY: all              \
         dev              \
