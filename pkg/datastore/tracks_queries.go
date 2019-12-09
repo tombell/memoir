@@ -10,8 +10,19 @@ const (
 			bpm,
 			key,
 			created,
-			updated
-		) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`
+			updated,
+			tsv
+		) VALUES (
+			$1,
+			$2,
+			$3,
+			$4,
+			$5,
+			$6,
+			$7,
+			$8,
+			setweight(to_tsvector(name), 'A') || setweight(to_tsvector(artist), 'B')
+		)`
 
 	findTrackByIDSQL = `
 		SELECT
@@ -85,7 +96,7 @@ const (
 				q
 			FROM
 				tracks,
-				plainto_tsquery($1) q
+				to_tsquery($1) q
 			WHERE tsv @@ q
 			ORDER BY rank DESC
 		) as searched_tracks
