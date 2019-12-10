@@ -52,6 +52,21 @@ func (s *Services) UploadMix(file, tracklistName string) (string, error) {
 		return "", fmt.Errorf("generate filename failed: %w", err)
 	}
 
+	exists, err := s.FileStore.Exists(bucketMixUploads, key)
+	if err != nil {
+		tx.Rollback()
+		return "", fmt.Errorf("check upload exists failed: %w", err)
+	}
+
+	r.Seek(0, io.SeekStart)
+
+	if !exists {
+		if err := s.FileStore.Put(bucketMixUploads, key, r); err != nil {
+			tx.Rollback()
+			return "", fmt.Errorf("filestore put failed: %w", err)
+		}
+	}
+
 	id, _ := uuid.NewV4()
 
 	upload := &datastore.MixUpload{
@@ -66,21 +81,6 @@ func (s *Services) UploadMix(file, tracklistName string) (string, error) {
 	if err := s.DataStore.AddMixUpload(tx, upload); err != nil {
 		tx.Rollback()
 		return "", fmt.Errorf("insert mix_upload failed: %w", err)
-	}
-
-	exists, err := s.FileStore.Exists(bucketMixUploads, key)
-	if err != nil {
-		tx.Rollback()
-		return "", fmt.Errorf("check upload exists failed: %w", err)
-	}
-
-	r.Seek(0, io.SeekStart)
-
-	if !exists {
-		if err := s.FileStore.Put(bucketMixUploads, key, r); err != nil {
-			tx.Rollback()
-			return "", fmt.Errorf("filestore put failed: %w", err)
-		}
 	}
 
 	if err := tx.Commit(); err != nil {
