@@ -41,10 +41,10 @@ func parseSeratoExport(filepath string) ([][]string, error) {
 
 func parseRekordboxExport(filepath string) ([][]string, error) {
 	f, err := os.Open(filepath)
+	defer f.Close()
 	if err != nil {
 		return nil, err
 	}
-	defer f.Close()
 
 	var records [][]string
 

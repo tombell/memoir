@@ -52,10 +52,10 @@ func main() {
 	}
 
 	store, err := datastore.New(cfg.DB)
+	defer store.Close()
 	if err != nil {
 		logger.Fatalf("error connecting to database: %v", err)
 	}
-	defer store.Close()
 
 	s := api.New(&services.Services{
 		Logger:    logger,

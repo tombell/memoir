@@ -57,10 +57,10 @@ func (s *Store) AddArtworkToTracklist(tx *sql.Tx, id, artwork string) error {
 // GetTracklists gets all tracklists.
 func (s *Store) GetTracklists() ([]*Tracklist, error) {
 	rows, err := s.Queryx(getTracklistsSQL)
+	defer rows.Close()
 	if err != nil {
 		return nil, fmt.Errorf("db query failed: %w", err)
 	}
-	defer rows.Close()
 
 	var tracklists []*Tracklist
 
@@ -101,10 +101,10 @@ func (s *Store) GetTracklist(id string) (*Tracklist, error) {
 // tracks from the database.
 func (s *Store) GetTracklistWithTracks(id string) (*Tracklist, error) {
 	rows, err := s.Queryx(findTracklistWithTracksByIDSQL, id)
+	defer rows.Close()
 	if err != nil {
 		return nil, fmt.Errorf("db query failed: %w", err)
 	}
-	defer rows.Close()
 
 	var tracklist Tracklist
 
@@ -165,10 +165,10 @@ func (s *Store) FindTracklistByName(name string) (*Tracklist, error) {
 // associated tracks in the database.
 func (s *Store) FindTracklistWithTracksByName(name string) (*Tracklist, error) {
 	rows, err := s.Queryx(findTracklistWithTracksByNameSQL, name)
+	defer rows.Close()
 	if err != nil {
 		return nil, fmt.Errorf("db query failed: %w", err)
 	}
-	defer rows.Close()
 
 	var tracklist Tracklist
 
@@ -213,10 +213,10 @@ func (s *Store) FindTracklistWithTracksByName(name string) (*Tracklist, error) {
 // in the database.
 func (s *Store) FindTracklistsByTrackID(id string) ([]*Tracklist, error) {
 	rows, err := s.Queryx(findTracklistByTrackIDSQL, id)
+	defer rows.Close()
 	if err != nil {
 		return nil, fmt.Errorf("db query failed: %w", err)
 	}
-	defer rows.Close()
 
 	var tracklists []*Tracklist
 

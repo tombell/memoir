@@ -64,10 +64,10 @@ func main() {
 	}
 
 	ds, err := datastore.New(cfg.DB)
+	defer ds.Close()
 	if err != nil {
 		logger.Fatalf("error connecting to database: %v\n", err)
 	}
-	defer ds.Close()
 
 	fs := s3.New(cfg.AWS.Key, cfg.AWS.Secret)
 

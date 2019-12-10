@@ -45,10 +45,10 @@ func delete() error {
 	}
 
 	store, err := datastore.New(cfg.DB)
+	defer store.Close()
 	if err != nil {
 		return err
 	}
-	defer store.Close()
 
 	svc := services.Services{
 		DataStore: store,
