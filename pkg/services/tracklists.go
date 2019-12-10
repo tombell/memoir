@@ -83,6 +83,9 @@ func (s *Services) GetTracklistByName(name string) (*Tracklist, error) {
 	if err != nil {
 		return nil, fmt.Errorf("find tracklists with tracks by name failed: %w", err)
 	}
+	if tracklist == nil {
+		return nil, nil
+	}
 
 	return NewTracklist(tracklist), nil
 }
