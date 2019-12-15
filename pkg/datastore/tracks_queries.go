@@ -10,8 +10,7 @@ const (
 			bpm,
 			key,
 			created,
-			updated,
-			tsv
+			updated
 		) VALUES (
 			$1,
 			$2,
@@ -20,9 +19,10 @@ const (
 			$5,
 			$6,
 			$7,
-			$8,
-			setweight(to_tsvector(name), 'A') || setweight(to_tsvector(artist), 'B')
-		)`
+			$8
+		);
+		UPDATE tracks
+		SET tsv = setweight(to_tsvector(name), 'A') || setweight(to_tsvector(artist), 'B')`
 
 	findTrackByIDSQL = `
 		SELECT
