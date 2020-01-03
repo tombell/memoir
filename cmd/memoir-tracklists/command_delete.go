@@ -22,7 +22,7 @@ Special options:
 
 func delete() error {
 	cmd := flag.NewFlagSet("delete", flag.ExitOnError)
-	cmd.Usage = usage(listHelpText)
+	cmd.Usage = usage(deleteHelpText)
 
 	cfgpath := cmd.String("config", ".env.dev.toml", "")
 	tracklist := cmd.String("tracklist", "", "")
