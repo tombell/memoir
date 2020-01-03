@@ -22,7 +22,7 @@ Special options:
 
 func export() error {
 	cmd := flag.NewFlagSet("export", flag.ExitOnError)
-	cmd.Usage = usage(listHelpText)
+	cmd.Usage = usage(exportHelpText)
 
 	cfgpath := cmd.String("config", ".env.dev.toml", "")
 	tracklist := cmd.String("tracklist", "", "")
