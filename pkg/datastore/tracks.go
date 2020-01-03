@@ -135,3 +135,12 @@ func (s *Store) FindTracksByQuery(query string) ([]*TrackSearchResult, error) {
 
 	return tracks, nil
 }
+
+// UpdateTracksTSVector updates the tsvector column of all tracks.
+func (s *Store) UpdateTracksTSVector(tx *sql.Tx) error {
+	if _, err := tx.Exec(updateTracksTSVectorSQL); err != nil {
+		return fmt.Errorf("tx exec failed: %w", err)
+	}
+
+	return nil
+}

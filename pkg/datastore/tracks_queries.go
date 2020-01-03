@@ -11,9 +11,7 @@ const (
 			key,
 			created,
 			updated
-		) VALUES ($1, $2, $3, $4, $5, $6, $7, $8);
-		UPDATE tracks
-		SET tsv = setweight(to_tsvector(name), 'A') || setweight(to_tsvector(artist), 'B')`
+		) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`
 
 	findTrackByIDSQL = `
 		SELECT
@@ -92,4 +90,10 @@ const (
 			ORDER BY rank DESC
 		) as searched_tracks
 		ORDER BY rank DESC`
+
+	updateTracksTSVectorSQL = `
+		UPDATE tracks
+		SET tsv =
+		  setweight(to_tsvector(name), 'A') ||
+		  setweight(to_tsvector(artist), 'B')`
 )

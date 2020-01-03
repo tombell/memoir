@@ -171,6 +171,11 @@ func (s *Services) ImportTracklist(name string, date time.Time, tracks [][]strin
 		}
 	}
 
+	if err := s.DataStore.UpdateTracksTSVector(tx); err != nil {
+		tx.Rollback()
+		return nil, fmt.Errorf("update tracks tsvector failed: %w", err)
+	}
+
 	if err := tx.Commit(); err != nil {
 		tx.Rollback()
 		return nil, fmt.Errorf("tx commit failed: %w", err)
