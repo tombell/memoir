@@ -121,6 +121,7 @@ func (s *Store) GetTracklistWithTracks(id string) (*Tracklist, error) {
 			&tracklist.Created,
 			&tracklist.Updated,
 			&tracklist.Artwork,
+			&tracklist.URL,
 			&track.ID,
 			&track.Artist,
 			&track.Name,
