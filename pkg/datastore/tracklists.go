@@ -11,6 +11,7 @@ type Tracklist struct {
 	ID      string
 	Name    string
 	Artwork string
+	URL     string
 	Date    time.Time
 	Created time.Time
 	Updated time.Time
@@ -24,6 +25,8 @@ func (s *Store) AddTracklist(tx *sql.Tx, tracklist *Tracklist) error {
 	_, err := tx.Exec(insertTracklistSQL,
 		tracklist.ID,
 		tracklist.Name,
+		tracklist.URL,
+		tracklist.Artwork,
 		tracklist.Date,
 		tracklist.Created,
 		tracklist.Updated)

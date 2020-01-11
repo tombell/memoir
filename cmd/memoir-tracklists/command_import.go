@@ -16,6 +16,7 @@ const importHelpText = `usage: memoir-tracklists import [<args>]
   --config     Path to .env.toml configuration file
   --tracklist  Name of the tracklist to import
   --date       Date for the tracklist being imported
+  --url        URL for the Mixcloud upload of the tracklist
   --serato     Tracklist is an exported file from Serato
   --rekordbox  Tracklist is en exported file from Rekordbox DJ
 
@@ -31,6 +32,7 @@ func importTracklist() error {
 	cfgpath := cmd.String("config", ".env.dev.toml", "")
 	tracklist := cmd.String("tracklist", "", "")
 	date := cmd.String("date", "", "")
+	url := cmd.String("url", "", "")
 	isSerato := cmd.Bool("serato", false, "")
 	isRekordbox := cmd.Bool("rekordbox", false, "")
 
@@ -89,7 +91,7 @@ func importTracklist() error {
 		DataStore: store,
 	}
 
-	if _, err := svc.ImportTracklist(*tracklist, parsedDate, records); err != nil {
+	if _, err := svc.ImportTracklist(*tracklist, parsedDate, *url, records); err != nil {
 		return err
 	}
 

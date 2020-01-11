@@ -17,6 +17,7 @@ type Tracklist struct {
 	ID   string    `json:"id"`
 	Name string    `json:"name"`
 	Date time.Time `json:"date"`
+	URL  string    `json:"url"`
 
 	Created time.Time `json:"-"`
 	Updated time.Time `json:"-"`
@@ -32,6 +33,7 @@ func NewTracklist(record *datastore.Tracklist) *Tracklist {
 		ID:         record.ID,
 		Name:       record.Name,
 		Date:       record.Date,
+		URL:        record.URL,
 		Created:    record.Created,
 		Updated:    record.Updated,
 		TrackCount: record.TrackCount,
@@ -108,7 +110,7 @@ func (s *Services) GetTracklistsByTrack(id string) ([]*Tracklist, error) {
 
 // ImportTracklist imports a new tracklist, including any new tracks that have
 // not been imported before.
-func (s *Services) ImportTracklist(name string, date time.Time, tracks [][]string) (*Tracklist, error) {
+func (s *Services) ImportTracklist(name string, date time.Time, url string, tracks [][]string) (*Tracklist, error) {
 	tracklist, err := s.DataStore.FindTracklistByName(name)
 	if err != nil {
 		return nil, fmt.Errorf("find tracklist failed: %w", err)
@@ -123,6 +125,7 @@ func (s *Services) ImportTracklist(name string, date time.Time, tracks [][]strin
 		ID:      id.String(),
 		Name:    name,
 		Date:    date,
+		URL:     url,
 		Created: time.Now().UTC(),
 		Updated: time.Now().UTC(),
 	}
