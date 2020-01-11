@@ -44,7 +44,7 @@ modules:
 	@go mod download && go mod tidy && go mod vendor
 
 create-migration:
-	@echo "-- UP\n\n-- DOWN" > 'datastore/migrations/$(shell date "+%Y%m%d%H%M%S")_$(NAME).sql'
+	@echo "-- UP\n\n-- DOWN" > 'pkg/datastore/migrations/$(shell date "+%Y%m%d%H%M%S")_$(NAME).sql'
 
 archive:
 	@bsdtar -zcf $(ARCHIVE_PATH) \
