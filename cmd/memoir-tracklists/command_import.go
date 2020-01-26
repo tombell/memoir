@@ -91,7 +91,14 @@ func importTracklist() error {
 		DataStore: store,
 	}
 
-	if _, err := svc.ImportTracklist(*tracklist, parsedDate, *url, records); err != nil {
+	tracklistImport := &services.TracklistImport{
+		Name:   *tracklist,
+		Date:   parsedDate,
+		URL:    *url,
+		Tracks: records,
+	}
+
+	if _, err := svc.ImportTracklist(tracklistImport); err != nil {
 		return err
 	}
 

@@ -11,6 +11,14 @@ import (
 	"github.com/tombell/memoir/pkg/datastore"
 )
 
+// TracklistImport contains data about a tracklist to import.
+type TracklistImport struct {
+	Name   string
+	Date   time.Time
+	URL    string
+	Tracks [][]string
+}
+
 // Tracklist contains data about a specific tracklist. It can contain optional
 // track count and list of associated tracks.
 type Tracklist struct {
@@ -110,22 +118,22 @@ func (s *Services) GetTracklistsByTrack(id string) ([]*Tracklist, error) {
 
 // ImportTracklist imports a new tracklist, including any new tracks that have
 // not been imported before.
-func (s *Services) ImportTracklist(name string, date time.Time, url string, tracks [][]string) (*Tracklist, error) {
-	tracklist, err := s.DataStore.FindTracklistByName(name)
+func (s *Services) ImportTracklist(tracklistImport *TracklistImport) (*Tracklist, error) {
+	tracklist, err := s.DataStore.FindTracklistByName(tracklistImport.Name)
 	if err != nil {
 		return nil, fmt.Errorf("find tracklist failed: %w", err)
 	}
 	if tracklist != nil {
-		return nil, fmt.Errorf("tracklist named %q already exists", name)
+		return nil, fmt.Errorf("tracklist named %q already exists", tracklistImport.Name)
 	}
 
 	id, _ := uuid.NewV4()
 
 	tracklist = &datastore.Tracklist{
 		ID:      id.String(),
-		Name:    name,
-		Date:    date,
-		URL:     url,
+		Name:    tracklistImport.Name,
+		Date:    tracklistImport.Date,
+		URL:     tracklistImport.URL,
 		Created: time.Now().UTC(),
 		Updated: time.Now().UTC(),
 	}
@@ -140,7 +148,7 @@ func (s *Services) ImportTracklist(name string, date time.Time, url string, trac
 		return nil, fmt.Errorf("insert tracklist failed: %w", err)
 	}
 
-	for idx, data := range tracks {
+	for idx, data := range tracklistImport.Tracks {
 		normalizedKey, err := tonality.ConvertKeyToNotation(data[3], tonality.CamelotKeys)
 		if err != nil {
 			return nil, fmt.Errorf("normalizing key to camelot key notation failed: %w", err)
