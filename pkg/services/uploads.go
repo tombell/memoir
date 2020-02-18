@@ -7,89 +7,11 @@ import (
 	"io"
 	"io/ioutil"
 	"path/filepath"
-	"time"
-
-	"github.com/gofrs/uuid"
-
-	"github.com/tombell/memoir/pkg/datastore"
 )
 
 const (
 	bucketArtworkUploads = "memoir-artwork"
-	bucketMixUploads     = "memoir-uploads"
 )
-
-// UploadMix uploads the mix at the given path to the configured storage
-// backend, and associates with a tracklist with the given name.
-func (s *Services) UploadMix(file, tracklistName string) (string, error) {
-	tracklist, err := s.DataStore.FindTracklistByName(tracklistName)
-	if err != nil {
-		return "", fmt.Errorf("find tracklist failed: %w", err)
-	}
-	if tracklist == nil {
-		return "", fmt.Errorf("tracklist named %q doesn't exist", tracklistName)
-	}
-
-	tx, err := s.DataStore.Begin()
-	if err != nil {
-		return "", fmt.Errorf("db begin failed: %w", err)
-	}
-
-	data, err := ioutil.ReadFile(file)
-	if err != nil {
-		tx.Rollback()
-		return "", fmt.Errorf("read file failed: %w", err)
-	}
-
-	filename := filepath.Base(file)
-	ext := filepath.Ext(filename)
-
-	r := bytes.NewReader(data)
-
-	key, err := s.generateObjectKey(r, ext)
-	if err != nil {
-		tx.Rollback()
-		return "", fmt.Errorf("generate filename failed: %w", err)
-	}
-
-	exists, err := s.FileStore.Exists(bucketMixUploads, key)
-	if err != nil {
-		tx.Rollback()
-		return "", fmt.Errorf("check upload exists failed: %w", err)
-	}
-
-	r.Seek(0, io.SeekStart)
-
-	if !exists {
-		if err := s.FileStore.Put(bucketMixUploads, key, r); err != nil {
-			tx.Rollback()
-			return "", fmt.Errorf("filestore put failed: %w", err)
-		}
-	}
-
-	id, _ := uuid.NewV4()
-
-	upload := &datastore.MixUpload{
-		ID:          id.String(),
-		TracklistID: tracklist.ID,
-		Filename:    filename,
-		Location:    key,
-		Created:     time.Now().UTC(),
-		Updated:     time.Now().UTC(),
-	}
-
-	if err := s.DataStore.AddMixUpload(tx, upload); err != nil {
-		tx.Rollback()
-		return "", fmt.Errorf("insert mix_upload failed: %w", err)
-	}
-
-	if err := tx.Commit(); err != nil {
-		tx.Rollback()
-		return "", fmt.Errorf("tx commit failed: %w", err)
-	}
-
-	return key, nil
-}
 
 // UploadArtwork uploads the artwork at the given path to the configured storage
 // backend, and associates with a tracklist with the given name.
@@ -124,7 +46,7 @@ func (s *Services) UploadArtwork(file, tracklistName string) (string, error) {
 		return "", fmt.Errorf("generate filename failed: %w", err)
 	}
 
-	exists, err := s.FileStore.Exists(bucketMixUploads, key)
+	exists, err := s.FileStore.Exists(bucketArtworkUploads, key)
 	if err != nil {
 		tx.Rollback()
 		return "", fmt.Errorf("check upload exists failed: %w", err)
