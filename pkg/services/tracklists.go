@@ -13,19 +13,21 @@ import (
 
 // TracklistImport contains data about a tracklist to import.
 type TracklistImport struct {
-	Name   string
-	Date   time.Time
-	URL    string
-	Tracks [][]string
+	Name    string
+	Date    time.Time
+	URL     string
+	Artwork string
+	Tracks  [][]string
 }
 
 // Tracklist contains data about a specific tracklist. It can contain optional
 // track count and list of associated tracks.
 type Tracklist struct {
-	ID   string    `json:"id"`
-	Name string    `json:"name"`
-	Date time.Time `json:"date"`
-	URL  string    `json:"url"`
+	ID      string    `json:"id"`
+	Name    string    `json:"name"`
+	Date    time.Time `json:"date"`
+	URL     string    `json:"url"`
+	Artwork string    `json:"artwork"`
 
 	Created time.Time `json:"-"`
 	Updated time.Time `json:"-"`
@@ -42,6 +44,7 @@ func NewTracklist(record *datastore.Tracklist) *Tracklist {
 		Name:       record.Name,
 		Date:       record.Date,
 		URL:        record.URL,
+		Artwork:    record.Artwork,
 		Created:    record.Created,
 		Updated:    record.Updated,
 		TrackCount: record.TrackCount,
@@ -134,6 +137,7 @@ func (s *Services) ImportTracklist(tracklistImport *TracklistImport) (*Tracklist
 		Name:    tracklistImport.Name,
 		Date:    tracklistImport.Date,
 		URL:     tracklistImport.URL,
+		Artwork: tracklistImport.Artwork,
 		Created: time.Now().UTC(),
 		Updated: time.Now().UTC(),
 	}
