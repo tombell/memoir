@@ -11,7 +11,7 @@ import (
 )
 
 const (
-	perPageTracklists = 10
+	perPageTracklists = 20
 	perPageTracks     = 10
 )
 
