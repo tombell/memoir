@@ -1,4 +1,4 @@
-# github.com/aws/aws-sdk-go v1.29.19
+# github.com/aws/aws-sdk-go v1.30.8
 github.com/aws/aws-sdk-go/aws
 github.com/aws/aws-sdk-go/aws/arn
 github.com/aws/aws-sdk-go/aws/awserr
@@ -45,7 +45,7 @@ github.com/aws/aws-sdk-go/service/sts/stsiface
 github.com/cheynewallace/tabby
 # github.com/gofrs/uuid v3.2.0+incompatible
 github.com/gofrs/uuid
-# github.com/jmespath/go-jmespath v0.0.0-20180206201540-c2b33e8439af
+# github.com/jmespath/go-jmespath v0.3.0
 github.com/jmespath/go-jmespath
 # github.com/jmoiron/sqlx v1.2.0
 github.com/jmoiron/sqlx
@@ -56,7 +56,7 @@ github.com/lib/pq/oid
 github.com/lib/pq/scram
 # github.com/matryer/way v0.0.0-20180416093233-9632d0c407b0
 github.com/matryer/way
-# github.com/pelletier/go-toml v1.6.0
+# github.com/pelletier/go-toml v1.7.0
 github.com/pelletier/go-toml
 # github.com/tombell/tonality v1.0.0
 github.com/tombell/tonality
