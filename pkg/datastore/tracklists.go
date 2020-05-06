@@ -47,16 +47,6 @@ func (s *Store) RemoveTracklist(tx *sql.Tx, id string) error {
 	return nil
 }
 
-// AddArtworkToTracklist adds an artwork file key to the given tracklist in the
-// database.
-func (s *Store) AddArtworkToTracklist(tx *sql.Tx, id, artwork string) error {
-	if _, err := tx.Exec(addArtworkToTracklistSQL, artwork, id); err != nil {
-		return fmt.Errorf("tx exec failed: %w", err)
-	}
-
-	return nil
-}
-
 // GetTracklists gets all tracklists.
 func (s *Store) GetTracklists() ([]*Tracklist, error) {
 	rows, err := s.Queryx(getTracklistsSQL)

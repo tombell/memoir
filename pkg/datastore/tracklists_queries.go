@@ -16,11 +16,6 @@ const (
 		DELETE FROM tracklists
 		WHERE id = $1`
 
-	addArtworkToTracklistSQL = `
-		UPDATE tracklists
-		SET artwork = $1
-		WHERE id = $2`
-
 	getTracklistsSQL = `
 		SELECT
 			tl.*,

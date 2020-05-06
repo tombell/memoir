@@ -14,24 +14,10 @@ const (
 )
 
 // UploadArtwork uploads the artwork at the given path to the configured storage
-// backend, and associates with a tracklist with the given name.
-func (s *Services) UploadArtwork(file, tracklistName string) (string, error) {
-	tracklist, err := s.DataStore.FindTracklistByName(tracklistName)
-	if err != nil {
-		return "", fmt.Errorf("find tracklist failed: %w", err)
-	}
-	if tracklist == nil {
-		return "", fmt.Errorf("tracklist named %q doesn't exist", tracklistName)
-	}
-
-	tx, err := s.DataStore.Begin()
-	if err != nil {
-		return "", fmt.Errorf("db begin failed: %w", err)
-	}
-
+// backend.
+func (s *Services) UploadArtwork(file string) (string, error) {
 	data, err := ioutil.ReadFile(file)
 	if err != nil {
-		tx.Rollback()
 		return "", fmt.Errorf("read file failed: %w", err)
 	}
 
@@ -42,13 +28,11 @@ func (s *Services) UploadArtwork(file, tracklistName string) (string, error) {
 
 	key, err := s.generateObjectKey(r, ext)
 	if err != nil {
-		tx.Rollback()
 		return "", fmt.Errorf("generate filename failed: %w", err)
 	}
 
 	exists, err := s.FileStore.Exists(bucketArtworkUploads, key)
 	if err != nil {
-		tx.Rollback()
 		return "", fmt.Errorf("check upload exists failed: %w", err)
 	}
 
@@ -56,19 +40,8 @@ func (s *Services) UploadArtwork(file, tracklistName string) (string, error) {
 
 	if !exists {
 		if err := s.FileStore.Put(bucketArtworkUploads, key, r); err != nil {
-			tx.Rollback()
 			return "", fmt.Errorf("filestore put failed: %w", err)
 		}
-	}
-
-	if err := s.DataStore.AddArtworkToTracklist(tx, tracklist.ID, key); err != nil {
-		tx.Rollback()
-		return "", fmt.Errorf("add artwork to tracklist failed: %w", err)
-	}
-
-	if err := tx.Commit(); err != nil {
-		tx.Rollback()
-		return "", fmt.Errorf("tx commit failed: %w", err)
 	}
 
 	return key, nil

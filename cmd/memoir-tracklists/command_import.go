@@ -8,15 +8,23 @@ import (
 
 	"github.com/tombell/memoir/pkg/config"
 	"github.com/tombell/memoir/pkg/datastore"
+	"github.com/tombell/memoir/pkg/filestore/s3"
 	"github.com/tombell/memoir/pkg/services"
 )
 
-const importHelpText = `usage: memoir-tracklists import [<args>]
+const importHelpText = `usage: memoir-tracklists import [<args>] <path to tracklist>
 
   --config     Path to .env.toml configuration file
-  --tracklist  Name of the tracklist to import
+
+Tracklist options:
+
   --date       Date for the tracklist being imported
+  --tracklist  Name of the tracklist to import
+  --artwork    Path to the artwork file for the tracklist
   --url        URL for the Mixcloud upload of the tracklist
+
+Tracklist file type:
+
   --serato     Tracklist is an exported file from Serato
   --rekordbox  Tracklist is en exported file from Rekordbox DJ
 
@@ -31,6 +39,7 @@ func importTracklist() error {
 
 	cfgpath := cmd.String("config", ".env.dev.toml", "")
 	tracklist := cmd.String("tracklist", "", "")
+	artwork := cmd.String("artwork", "", "")
 	date := cmd.String("date", "", "")
 	url := cmd.String("url", "", "")
 	isSerato := cmd.Bool("serato", false, "")
@@ -87,15 +96,24 @@ func importTracklist() error {
 		return err
 	}
 
+	filestore := s3.New(cfg.AWS.Key, cfg.AWS.Secret)
+
 	svc := services.Services{
 		DataStore: store,
+		FileStore: filestore,
+	}
+
+	key, err := svc.UploadArtwork(*artwork)
+	if err != nil {
+		return err
 	}
 
 	tracklistImport := &services.TracklistImport{
-		Name:   *tracklist,
-		Date:   parsedDate,
-		URL:    *url,
-		Tracks: records,
+		Name:    *tracklist,
+		Date:    parsedDate,
+		URL:     *url,
+		Artwork: key,
+		Tracks:  records,
 	}
 
 	if _, err := svc.ImportTracklist(tracklistImport); err != nil {
