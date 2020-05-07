@@ -1,11 +1,9 @@
 package services
 
 import (
-	"bytes"
 	"crypto/md5"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"path/filepath"
 )
 
@@ -15,16 +13,8 @@ const (
 
 // UploadArtwork uploads the artwork at the given path to the configured storage
 // backend.
-func (s *Services) UploadArtwork(file string) (string, error) {
-	data, err := ioutil.ReadFile(file)
-	if err != nil {
-		return "", fmt.Errorf("read file failed: %w", err)
-	}
-
-	filename := filepath.Base(file)
+func (s *Services) UploadArtwork(r io.ReadSeeker, filename string) (string, error) {
 	ext := filepath.Ext(filename)
-
-	r := bytes.NewReader(data)
 
 	key, err := s.generateObjectKey(r, ext)
 	if err != nil {

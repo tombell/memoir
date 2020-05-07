@@ -1,9 +1,12 @@
 package main
 
 import (
+	"bytes"
 	"flag"
 	"fmt"
+	"io/ioutil"
 	"os"
+	"path/filepath"
 	"time"
 
 	"github.com/tombell/memoir/pkg/config"
@@ -103,7 +106,15 @@ func importTracklist() error {
 		FileStore: filestore,
 	}
 
-	key, err := svc.UploadArtwork(*artwork)
+	data, err := ioutil.ReadFile(*artwork)
+	if err != nil {
+		return err
+	}
+
+	r := bytes.NewReader(data)
+	filename := filepath.Base(*artwork)
+
+	key, err := svc.UploadArtwork(r, filename)
 	if err != nil {
 		return err
 	}

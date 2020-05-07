@@ -19,4 +19,10 @@ func (s *Server) routes() {
 
 	s.router.Handle("GET", "/tracks/search",
 		use(s.handleSearchTracks(), s.json, s.cors, s.instruments, s.requestID))
+
+	// Uploads
+
+	s.router.Handle("POST", "/uploads/artwork",
+		use(s.handleUploadArtwork(), s.json, s.cors, s.instruments, s.requestID))
+
 }
