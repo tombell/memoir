@@ -13,11 +13,11 @@ import (
 
 // TracklistImport contains data about a tracklist to import.
 type TracklistImport struct {
-	Name    string
-	Date    time.Time
-	URL     string
-	Artwork string
-	Tracks  [][]string
+	Name    string     `json:"name"`
+	Date    time.Time  `json:"date"`
+	URL     string     `json:"url"`
+	Artwork string     `json:"artwork"`
+	Tracks  [][]string `json:"tracks"`
 }
 
 // Tracklist contains data about a specific tracklist. It can contain optional

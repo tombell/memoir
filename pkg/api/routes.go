@@ -6,6 +6,10 @@ func (s *Server) routes() {
 	s.router.Handle("GET", "/tracklists",
 		use(s.handleGetTracklists(), s.json, s.cors, s.instruments, s.requestID))
 
+	s.router.Handle("POST", "/tracklists",
+		// TODO: add simple auth middleware to check for some API key?
+		use(s.handleImportTracklist(), s.json, s.cors, s.instruments, s.requestID))
+
 	s.router.Handle("GET", "/tracklists/:id",
 		use(s.handleGetTracklist(), s.json, s.cors, s.instruments, s.requestID))
 
