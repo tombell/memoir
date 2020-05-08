@@ -1,6 +1,8 @@
 package api
 
 func (s *Server) routes() {
+	s.router.Handle("OPTIONS", "/...", use(s.handlePreflight(), s.cors))
+
 	// Tracklists
 
 	s.router.Handle("GET", "/tracklists",
