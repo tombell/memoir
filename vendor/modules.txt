@@ -1,4 +1,4 @@
-# github.com/aws/aws-sdk-go v1.30.8
+# github.com/aws/aws-sdk-go v1.30.24
 github.com/aws/aws-sdk-go/aws
 github.com/aws/aws-sdk-go/aws/arn
 github.com/aws/aws-sdk-go/aws/awserr
@@ -43,14 +43,14 @@ github.com/aws/aws-sdk-go/service/sts
 github.com/aws/aws-sdk-go/service/sts/stsiface
 # github.com/cheynewallace/tabby v1.1.0
 github.com/cheynewallace/tabby
-# github.com/gofrs/uuid v3.2.0+incompatible
+# github.com/gofrs/uuid v3.3.0+incompatible
 github.com/gofrs/uuid
 # github.com/jmespath/go-jmespath v0.3.0
 github.com/jmespath/go-jmespath
 # github.com/jmoiron/sqlx v1.2.0
 github.com/jmoiron/sqlx
 github.com/jmoiron/sqlx/reflectx
-# github.com/lib/pq v1.3.0
+# github.com/lib/pq v1.5.2
 github.com/lib/pq
 github.com/lib/pq/oid
 github.com/lib/pq/scram
