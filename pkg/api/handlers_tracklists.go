@@ -109,3 +109,47 @@ func (s *Server) handleImportTracklist() http.HandlerFunc {
 		w.Write(resp)
 	}
 }
+
+func (s *Server) handleUpdateTracklist() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		rid := getRequestID(r)
+
+		id, err := idRouteParam(r)
+		if err != nil {
+			s.services.Logger.Printf("rid=%s error=%s\n", rid, err)
+			http.Error(w, err.Error(), http.StatusNotFound)
+			return
+		}
+
+		body, err := ioutil.ReadAll(r.Body)
+		defer r.Body.Close()
+		if err != nil {
+			s.services.Logger.Printf("rid=%s error=%s\n", rid, err)
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		var tracklistUpdate services.TracklistUpdate
+		if err := json.Unmarshal(body, &tracklistUpdate); err != nil {
+			s.services.Logger.Printf("rid=%s error=%s\n", rid, err)
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		tracklist, err := s.services.UpdateTracklist(id, &tracklistUpdate)
+		if err != nil {
+			s.services.Logger.Printf("rid=%s error=%s\n", rid, err)
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		resp, err := json.Marshal(tracklist)
+		if err != nil {
+			s.services.Logger.Printf("rid=%s error=%s\n", rid, err)
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		w.Write(resp)
+	}
+}
