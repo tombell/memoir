@@ -20,6 +20,13 @@ type TracklistImport struct {
 	Tracks  [][]string `json:"tracks"`
 }
 
+// TracklistUpdate contains data about a tracklist to update.
+type TracklistUpdate struct {
+	Name string    `json:"name"`
+	Date time.Time `json:"date"`
+	URL  string    `json:"url"`
+}
+
 // Tracklist contains data about a specific tracklist. It can contain optional
 // track count and list of associated tracks.
 type Tracklist struct {
@@ -194,6 +201,40 @@ func (s *Services) ImportTracklist(tracklistImport *TracklistImport) (*Tracklist
 	if err := tx.Commit(); err != nil {
 		tx.Rollback()
 		return nil, fmt.Errorf("tx commit failed: %w", err)
+	}
+
+	return NewTracklist(tracklist), nil
+}
+
+// UpdateTracklist updates the information of a tracklist.
+func (s *Services) UpdateTracklist(id string, tracklistUpdate *TracklistUpdate) (*Tracklist, error) {
+	tx, err := s.DataStore.Begin()
+	if err != nil {
+		return nil, fmt.Errorf("db begin failed: %w", err)
+	}
+
+	update := &datastore.TracklistUpdate{
+		ID:   id,
+		Name: tracklistUpdate.Name,
+		URL:  tracklistUpdate.URL,
+		Date: tracklistUpdate.Date,
+	}
+
+	if err := s.DataStore.UpdateTracklist(tx, update); err != nil {
+		return nil, fmt.Errorf("update tracklist failed: %w", err)
+	}
+
+	if err := tx.Commit(); err != nil {
+		tx.Rollback()
+		return nil, fmt.Errorf("tx commit failed: %w", err)
+	}
+
+	tracklist, err := s.DataStore.GetTracklistWithTracks(id)
+	if err != nil {
+		return nil, fmt.Errorf("find tracklist failed: %w", err)
+	}
+	if tracklist == nil {
+		return nil, fmt.Errorf("tracklist %q exist", id)
 	}
 
 	return NewTracklist(tracklist), nil
