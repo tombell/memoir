@@ -20,6 +20,14 @@ type Tracklist struct {
 	Tracks     []*Track
 }
 
+// TracklistUpdate contains data to update a tracklist in the database.
+type TracklistUpdate struct {
+	ID   string
+	Name string
+	URL  string
+	Date time.Time
+}
+
 // AddTracklist adds a new tracklist into the database.
 func (s *Store) AddTracklist(tx *sql.Tx, tracklist *Tracklist) error {
 	_, err := tx.Exec(insertTracklistSQL,
@@ -41,6 +49,15 @@ func (s *Store) AddTracklist(tx *sql.Tx, tracklist *Tracklist) error {
 // RemoveTracklist removes a tracklist from the database.
 func (s *Store) RemoveTracklist(tx *sql.Tx, id string) error {
 	if _, err := tx.Exec(deleteTracklistSQL, id); err != nil {
+		return fmt.Errorf("tx exec failed: %w", err)
+	}
+
+	return nil
+}
+
+// UpdateTracklist updates a tracklist in the database.
+func (s *Store) UpdateTracklist(tx *sql.Tx, tracklist *TracklistUpdate) error {
+	if _, err := tx.Exec(updateTracklistSQL, tracklist.ID, tracklist.Name, tracklist.URL, tracklist.Date); err != nil {
 		return fmt.Errorf("tx exec failed: %w", err)
 	}
 

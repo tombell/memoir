@@ -16,6 +16,14 @@ const (
 		DELETE FROM tracklists
 		WHERE id = $1`
 
+	updateTracklistSQL = `
+		UPDATE tracklists
+		SET
+			name = $2,
+			url = $3,
+			date = $4
+		WHERE id = $1`
+
 	getTracklistsSQL = `
 		SELECT
 			tl.*,
