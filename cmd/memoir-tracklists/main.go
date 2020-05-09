@@ -14,7 +14,6 @@ const (
 
 Commands:
   list       List all tracklists, most recent to oldest
-  show       Show the tracks within a given tracklist
   import     Import a tracklist from Serato, or Rekordbox
   export     Export a tracklist to a simple "artist - title" list
   delete     Delete a tracklist
@@ -51,28 +50,22 @@ func main() {
 
 	logger := log.New(os.Stderr, "", 0)
 
+	var err error
+
 	switch os.Args[1] {
 	case "list", "l":
-		if err := list(); err != nil {
-			logger.Fatalf("error listing tracklists: %q\n", err)
-		}
-	case "show", "s":
-		if err := show(); err != nil {
-			logger.Fatalf("error showing tracklist: %q\n", err)
-		}
+		err = listTracklists()
 	case "import", "i":
-		if err := importTracklist(); err != nil {
-			logger.Fatalf("error importing tracklist: %q\n", err)
-		}
+		err = importTracklist()
 	case "export", "e":
-		if err := export(); err != nil {
-			logger.Fatalf("error exporting tracklist: %q\n", err)
-		}
+		err = exportTracklist()
 	case "delete", "d":
-		if err := delete(); err != nil {
-			logger.Fatalf("error deleting tracklist: %q\n", err)
-		}
+		err = deleteTracklist()
 	default:
-		logger.Fatalf("error: %q is not a valid command\n", os.Args[1])
+		err = fmt.Errorf("%q is not a valid command", os.Args[1])
+	}
+
+	if err != nil {
+		logger.Fatalf("error: %s\n", err)
 	}
 }

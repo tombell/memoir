@@ -20,7 +20,7 @@ Special options:
   --help       Show this message, then exit
 `
 
-func delete() error {
+func deleteTracklist() error {
 	cmd := flag.NewFlagSet("delete", flag.ExitOnError)
 	cmd.Usage = usage(deleteHelpText)
 

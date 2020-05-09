@@ -20,7 +20,7 @@ Special options:
   --help       Show this message, then exit
 `
 
-func export() error {
+func exportTracklist() error {
 	cmd := flag.NewFlagSet("export", flag.ExitOnError)
 	cmd.Usage = usage(exportHelpText)
 

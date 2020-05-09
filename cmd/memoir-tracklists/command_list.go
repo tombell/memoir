@@ -21,7 +21,7 @@ Special options:
   --help    Show this message, then exit
 `
 
-func list() error {
+func listTracklists() error {
 	cmd := flag.NewFlagSet("list", flag.ExitOnError)
 	cmd.Usage = usage(listHelpText)
 
