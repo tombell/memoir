@@ -56,24 +56,22 @@ func main() {
 
 	logger := log.New(os.Stderr, "", 0)
 
+	var err error
+
 	switch os.Args[1] {
 	case "create":
-		if err := create(); err != nil {
-			logger.Fatalf("error creating database: %v\n", err)
-		}
+		err = create()
 	case "drop":
-		if err := drop(); err != nil {
-			logger.Fatalf("error dropping database: %v\n", err)
-		}
+		err = drop()
 	case "migrate":
-		if err := migrate(); err != nil {
-			logger.Fatalf("error applying migrations: %v\n", err)
-		}
+		err = migrate()
 	case "rollback":
-		if err := rollback(); err != nil {
-			logger.Fatalf("error rolling back migrations: %v\n", err)
-		}
+		err = rollback()
 	default:
-		logger.Fatalf("error %q is not a valid command\n", os.Args[1])
+		err = fmt.Errorf("%q is not a valid command", os.Args[1])
+	}
+
+	if err != nil {
+		logger.Fatalf("error: %v", err)
 	}
 }
