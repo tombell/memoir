@@ -11,6 +11,10 @@ type Config struct {
 	DB         string `toml:"db"`
 	Migrations string `toml:"migrations"`
 
+	API struct {
+		WriteKey string `toml:"write_key"`
+	} `toml:"api"`
+
 	AWS struct {
 		Bucket string `toml:"bucket"`
 		Region string `toml:"region"`
