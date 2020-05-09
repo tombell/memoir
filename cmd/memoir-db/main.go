@@ -66,11 +66,11 @@ func main() {
 			logger.Fatalf("error dropping database: %v\n", err)
 		}
 	case "migrate":
-		if err := migrate(logger); err != nil {
+		if err := migrate(); err != nil {
 			logger.Fatalf("error applying migrations: %v\n", err)
 		}
 	case "rollback":
-		if err := rollback(logger); err != nil {
+		if err := rollback(); err != nil {
 			logger.Fatalf("error rolling back migrations: %v\n", err)
 		}
 	default:

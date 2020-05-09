@@ -3,7 +3,6 @@ package main
 import (
 	"flag"
 	"fmt"
-	"log"
 	"os"
 
 	"github.com/tombell/trek"
@@ -20,7 +19,7 @@ Special options:
   --help    Show this message, then exit
 `
 
-func migrate(logger *log.Logger) error {
+func migrate() error {
 	cmd := flag.NewFlagSet("migrate", flag.ExitOnError)
 	cmd.Usage = usage(migrateHelpText)
 
@@ -39,7 +38,7 @@ func migrate(logger *log.Logger) error {
 		return fmt.Errorf("config load failed: %w", err)
 	}
 
-	if err := trek.Migrate(logger, "postgres", cfg.DB, cfg.Migrations); err != nil {
+	if err := trek.Migrate("postgres", cfg.DB, cfg.Migrations); err != nil {
 		return fmt.Errorf("trek migrate failed: %w", err)
 	}
 

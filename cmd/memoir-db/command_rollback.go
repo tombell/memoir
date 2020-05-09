@@ -3,7 +3,6 @@ package main
 import (
 	"flag"
 	"fmt"
-	"log"
 	"os"
 
 	"github.com/tombell/trek"
@@ -21,7 +20,7 @@ Special options:
   --help    Show this message, then exit
 `
 
-func rollback(logger *log.Logger) error {
+func rollback() error {
 	cmd := flag.NewFlagSet("rollback", flag.ExitOnError)
 	cmd.Usage = usage(rollbackHelpText)
 
@@ -41,7 +40,7 @@ func rollback(logger *log.Logger) error {
 		return fmt.Errorf("config load failed: %w", err)
 	}
 
-	if err := trek.Rollback(logger, "postgres", cfg.DB, cfg.Migrations, *steps); err != nil {
+	if err := trek.Rollback("postgres", cfg.DB, cfg.Migrations, *steps); err != nil {
 		return fmt.Errorf("trek rollback failed: %w", err)
 	}
 

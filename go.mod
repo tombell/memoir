@@ -9,7 +9,7 @@ require (
 	github.com/matryer/way v0.0.0-20180416093233-9632d0c407b0
 	github.com/pelletier/go-toml v1.7.0
 	github.com/tombell/tonality v1.0.0
-	github.com/tombell/trek v0.0.6
+	github.com/tombell/trek v0.0.7
 	golang.org/x/text v0.3.2
 )
 
