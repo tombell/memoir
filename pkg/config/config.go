@@ -27,7 +27,7 @@ func Load(filepath string) (*Config, error) {
 	}
 
 	var cfg Config
-	if err := tree.Unmarshal(cfg); err != nil {
+	if err := tree.Unmarshal(&cfg); err != nil {
 		return nil, err
 	}
 
