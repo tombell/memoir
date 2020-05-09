@@ -58,7 +58,7 @@ func main() {
 		logger.Fatalf("error connecting to database: %v", err)
 	}
 
-	filestore := s3.New(cfg.AWS.Key, cfg.AWS.Secret)
+	filestore := s3.New(cfg.AWS.Key, cfg.AWS.Secret, cfg.AWS.Region)
 
 	s := api.New(&services.Services{
 		Logger:    logger,

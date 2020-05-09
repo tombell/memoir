@@ -13,6 +13,7 @@ type Config struct {
 
 	AWS struct {
 		Bucket string `toml:"bucket"`
+		Region string `toml:"region"`
 		Key    string `toml:"key"`
 		Secret string `toml:"secret"`
 	} `toml:"aws"`

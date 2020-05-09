@@ -12,10 +12,6 @@ import (
 	"github.com/aws/aws-sdk-go/service/s3"
 )
 
-const (
-	defaultS3Region = "us-east-1"
-)
-
 // S3 is a file store implementing the Store interface, using S3 as the
 // storage backend.
 type S3 struct {
@@ -23,9 +19,9 @@ type S3 struct {
 }
 
 // New returns an initialised S3 storage layer.
-func New(key, secret string) *S3 {
+func New(key, secret, region string) *S3 {
 	creds := credentials.NewStaticCredentials(key, secret, "")
-	cfg := aws.NewConfig().WithCredentials(creds).WithRegion(defaultS3Region)
+	cfg := aws.NewConfig().WithCredentials(creds).WithRegion(region)
 	sess, _ := session.NewSession(cfg)
 
 	return &S3{s3.New(sess)}

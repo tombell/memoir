@@ -99,7 +99,7 @@ func importTracklist() error {
 		return err
 	}
 
-	filestore := s3.New(cfg.AWS.Key, cfg.AWS.Secret)
+	filestore := s3.New(cfg.AWS.Key, cfg.AWS.Secret, cfg.AWS.Region)
 
 	svc := services.Services{
 		Config:    cfg,
