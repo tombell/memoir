@@ -9,6 +9,7 @@ import (
 	"path/filepath"
 	"time"
 
+	"github.com/tombell/memoir/internal/jsondate"
 	"github.com/tombell/memoir/pkg/config"
 	"github.com/tombell/memoir/pkg/datastore"
 	"github.com/tombell/memoir/pkg/filestore/s3"
@@ -122,7 +123,7 @@ func importTracklist() error {
 
 	tracklistImport := &services.TracklistImport{
 		Name:    *tracklist,
-		Date:    parsedDate,
+		Date:    jsondate.Date{Time: parsedDate},
 		URL:     *url,
 		Artwork: key,
 		Tracks:  records,

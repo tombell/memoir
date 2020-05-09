@@ -8,33 +8,34 @@ import (
 	"github.com/gofrs/uuid"
 	"github.com/tombell/tonality"
 
+	"github.com/tombell/memoir/internal/jsondate"
 	"github.com/tombell/memoir/pkg/datastore"
 )
 
 // TracklistImport contains data about a tracklist to import.
 type TracklistImport struct {
-	Name    string     `json:"name"`
-	Date    time.Time  `json:"date"`
-	URL     string     `json:"url"`
-	Artwork string     `json:"artwork"`
-	Tracks  [][]string `json:"tracks"`
+	Name    string        `json:"name"`
+	Date    jsondate.Date `json:"date"`
+	URL     string        `json:"url"`
+	Artwork string        `json:"artwork"`
+	Tracks  [][]string    `json:"tracks"`
 }
 
 // TracklistUpdate contains data about a tracklist to update.
 type TracklistUpdate struct {
-	Name string    `json:"name"`
-	Date time.Time `json:"date"`
-	URL  string    `json:"url"`
+	Name string        `json:"name"`
+	Date jsondate.Date `json:"date"`
+	URL  string        `json:"url"`
 }
 
 // Tracklist contains data about a specific tracklist. It can contain optional
 // track count and list of associated tracks.
 type Tracklist struct {
-	ID      string    `json:"id"`
-	Name    string    `json:"name"`
-	Date    time.Time `json:"date"`
-	URL     string    `json:"url"`
-	Artwork string    `json:"artwork"`
+	ID      string        `json:"id"`
+	Name    string        `json:"name"`
+	Date    jsondate.Date `json:"date"`
+	URL     string        `json:"url"`
+	Artwork string        `json:"artwork"`
 
 	Created time.Time `json:"-"`
 	Updated time.Time `json:"-"`
@@ -49,7 +50,7 @@ func NewTracklist(record *datastore.Tracklist) *Tracklist {
 	tracklist := &Tracklist{
 		ID:         record.ID,
 		Name:       record.Name,
-		Date:       record.Date,
+		Date:       jsondate.Date{record.Date},
 		URL:        record.URL,
 		Artwork:    record.Artwork,
 		Created:    record.Created,
@@ -129,7 +130,7 @@ func (s *Services) ImportTracklist(tracklistImport *TracklistImport) (*Tracklist
 	tracklist = &datastore.Tracklist{
 		ID:      id.String(),
 		Name:    tracklistImport.Name,
-		Date:    tracklistImport.Date,
+		Date:    tracklistImport.Date.Time,
 		URL:     tracklistImport.URL,
 		Artwork: tracklistImport.Artwork,
 		Created: time.Now().UTC(),
@@ -204,7 +205,7 @@ func (s *Services) UpdateTracklist(id string, tracklistUpdate *TracklistUpdate) 
 		ID:   id,
 		Name: tracklistUpdate.Name,
 		URL:  tracklistUpdate.URL,
-		Date: tracklistUpdate.Date,
+		Date: tracklistUpdate.Date.Time,
 	}
 
 	if err := s.DataStore.UpdateTracklist(tx, update); err != nil {
