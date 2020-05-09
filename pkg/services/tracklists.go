@@ -97,19 +97,6 @@ func (s *Services) GetTracklist(id string) (*Tracklist, error) {
 	return NewTracklist(tracklist), nil
 }
 
-// GetTracklistByName gets a tracklist with the given name.
-func (s *Services) GetTracklistByName(name string) (*Tracklist, error) {
-	tracklist, err := s.DataStore.FindTracklistWithTracksByName(name)
-	if err != nil {
-		return nil, fmt.Errorf("find tracklists with tracks by name failed: %w", err)
-	}
-	if tracklist == nil {
-		return nil, nil
-	}
-
-	return NewTracklist(tracklist), nil
-}
-
 // GetTracklistsByTrack gets all tracklists that include the given track by ID.
 func (s *Services) GetTracklistsByTrack(id string) ([]*Tracklist, error) {
 	tracklists, err := s.DataStore.FindTracklistsByTrackID(id)
