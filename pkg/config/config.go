@@ -12,6 +12,7 @@ type Config struct {
 	Migrations string `toml:"migrations"`
 
 	AWS struct {
+		Bucket string `toml:"bucket"`
 		Key    string `toml:"key"`
 		Secret string `toml:"secret"`
 	} `toml:"aws"`
@@ -24,11 +25,10 @@ func Load(filepath string) (*Config, error) {
 		return nil, err
 	}
 
-	cfg := &Config{}
-
+	var cfg Config
 	if err := tree.Unmarshal(cfg); err != nil {
 		return nil, err
 	}
 
-	return cfg, nil
+	return &cfg, nil
 }

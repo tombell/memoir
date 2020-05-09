@@ -7,10 +7,6 @@ import (
 	"path/filepath"
 )
 
-const (
-	bucketArtworkUploads = "memoir-artwork"
-)
-
 // UploadArtwork uploads the artwork at the given path to the configured storage
 // backend.
 func (s *Services) UploadArtwork(r io.ReadSeeker, filename string) (string, error) {
@@ -21,7 +17,7 @@ func (s *Services) UploadArtwork(r io.ReadSeeker, filename string) (string, erro
 		return "", fmt.Errorf("generate filename failed: %w", err)
 	}
 
-	exists, err := s.FileStore.Exists(bucketArtworkUploads, key)
+	exists, err := s.FileStore.Exists(s.Config.AWS.Bucket, key)
 	if err != nil {
 		return "", fmt.Errorf("check upload exists failed: %w", err)
 	}
@@ -29,7 +25,7 @@ func (s *Services) UploadArtwork(r io.ReadSeeker, filename string) (string, erro
 	r.Seek(0, io.SeekStart)
 
 	if !exists {
-		if err := s.FileStore.Put(bucketArtworkUploads, key, r); err != nil {
+		if err := s.FileStore.Put(s.Config.AWS.Bucket, key, r); err != nil {
 			return "", fmt.Errorf("filestore put failed: %w", err)
 		}
 	}

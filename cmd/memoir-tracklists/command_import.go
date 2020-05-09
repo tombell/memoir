@@ -102,6 +102,7 @@ func importTracklist() error {
 	filestore := s3.New(cfg.AWS.Key, cfg.AWS.Secret)
 
 	svc := services.Services{
+		Config:    cfg,
 		DataStore: store,
 		FileStore: filestore,
 	}
