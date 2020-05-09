@@ -10,15 +10,13 @@ func (s *Server) routes() {
 		use(s.handleGetTracklists(), s.json, s.cors, s.instruments, s.requestID))
 
 	s.router.Handle("POST", "/tracklists",
-		// TODO: add simple auth middleware to check for some API key?
-		use(s.handleImportTracklist(), s.json, s.cors, s.instruments, s.requestID))
+		use(s.handleImportTracklist(), s.json, s.cors, s.auth, s.instruments, s.requestID))
 
 	s.router.Handle("GET", "/tracklists/:id",
 		use(s.handleGetTracklist(), s.json, s.cors, s.instruments, s.requestID))
 
 	s.router.Handle("PATCH", "/tracklists/:id",
-		// TODO: add simple auth middleware to check for some API key?
-		use(s.handleUpdateTracklist(), s.json, s.cors, s.instruments, s.requestID))
+		use(s.handleUpdateTracklist(), s.json, s.cors, s.auth, s.instruments, s.requestID))
 
 	// Tracks
 
@@ -34,6 +32,6 @@ func (s *Server) routes() {
 	// Uploads
 
 	s.router.Handle("POST", "/uploads/artwork",
-		use(s.handleUploadArtwork(), s.json, s.cors, s.instruments, s.requestID))
+		use(s.handleUploadArtwork(), s.json, s.cors, s.auth, s.instruments, s.requestID))
 
 }
