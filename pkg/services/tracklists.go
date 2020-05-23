@@ -88,7 +88,7 @@ func (s *Services) GetTracklists(rid string) ([]*Tracklist, error) {
 
 // GetTracklist gets a tracklist with the given ID.
 func (s *Services) GetTracklist(rid, id string) (*Tracklist, error) {
-	s.Logger.Printf("[%s] getting tracklist (id %s", rid, id)
+	s.Logger.Printf("[%s] getting tracklist (id %s)", rid, id)
 
 	tracklist, err := s.DataStore.GetTracklistWithTracks(id)
 	if err != nil {
