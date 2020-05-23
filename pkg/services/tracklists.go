@@ -40,7 +40,7 @@ type Tracklist struct {
 	Created time.Time `json:"-"`
 	Updated time.Time `json:"-"`
 
-	TrackCount int      `json:"track_count"`
+	TrackCount int      `json:"trackCount"`
 	Tracks     []*Track `json:"tracks,omitempty"`
 }
 

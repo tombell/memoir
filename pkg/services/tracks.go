@@ -35,8 +35,8 @@ type Track struct {
 
 	Played int `json:"played,omitempty"`
 
-	ArtistHighlighted string `json:"artist_highlighted,omitempty"`
-	NameHighlighted   string `json:"name_highlighted,omitempty"`
+	ArtistHighlighted string `json:"artistHighlighted,omitempty"`
+	NameHighlighted   string `json:"nameHighlighted,omitempty"`
 }
 
 // NewTrack returns a new Track with fields mapped from a track database record.
