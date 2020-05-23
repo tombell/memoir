@@ -7,7 +7,7 @@ import (
 
 func (s *Server) handleUploadArtwork() http.HandlerFunc {
 	type response struct {
-		Key string `json:"artwork"`
+		Key string `json:"key"`
 	}
 
 	return func(w http.ResponseWriter, r *http.Request) {
