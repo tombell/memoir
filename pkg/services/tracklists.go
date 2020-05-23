@@ -70,7 +70,9 @@ func NewTracklist(record *datastore.Tracklist) *Tracklist {
 }
 
 // GetTracklists gets all tracklists.
-func (s *Services) GetTracklists() ([]*Tracklist, error) {
+func (s *Services) GetTracklists(rid string) ([]*Tracklist, error) {
+	s.Logger.Printf("[%s] getting tracklists", rid)
+
 	tracklists, err := s.DataStore.GetTracklists()
 	if err != nil {
 		return nil, fmt.Errorf("get tracklists failed: %w", err)
@@ -86,7 +88,9 @@ func (s *Services) GetTracklists() ([]*Tracklist, error) {
 }
 
 // GetTracklist gets a tracklist with the given ID.
-func (s *Services) GetTracklist(id string) (*Tracklist, error) {
+func (s *Services) GetTracklist(rid, id string) (*Tracklist, error) {
+	s.Logger.Printf("[%s] getting tracklist (id %s", rid, id)
+
 	tracklist, err := s.DataStore.GetTracklistWithTracks(id)
 	if err != nil {
 		return nil, fmt.Errorf("get tracklist with tracks failed: %w", err)
@@ -118,7 +122,9 @@ func (s *Services) GetTracklistsByTrack(rid, id string) ([]*Tracklist, error) {
 
 // ImportTracklist imports a new tracklist, including any new tracks that have
 // not been imported before.
-func (s *Services) ImportTracklist(tracklistImport *TracklistImport) (*Tracklist, error) {
+func (s *Services) ImportTracklist(rid string, tracklistImport *TracklistImport) (*Tracklist, error) {
+	s.Logger.Printf("[%s] importing tracklist (name %s)", rid, tracklistImport.Name)
+
 	tracklist, err := s.DataStore.FindTracklistByName(tracklistImport.Name)
 	if err != nil {
 		return nil, fmt.Errorf("find tracklist failed: %w", err)
@@ -197,7 +203,9 @@ func (s *Services) ImportTracklist(tracklistImport *TracklistImport) (*Tracklist
 }
 
 // UpdateTracklist updates the information of a tracklist.
-func (s *Services) UpdateTracklist(id string, tracklistUpdate *TracklistUpdate) (*Tracklist, error) {
+func (s *Services) UpdateTracklist(rid, id string, tracklistUpdate *TracklistUpdate) (*Tracklist, error) {
+	s.Logger.Printf("[%s] updating tracklist (id %s)", rid, id)
+
 	tx, err := s.DataStore.Begin()
 	if err != nil {
 		return nil, fmt.Errorf("db begin failed: %w", err)

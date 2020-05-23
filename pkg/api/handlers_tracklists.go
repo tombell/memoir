@@ -14,14 +14,14 @@ func (s *Server) handleGetTracklists() http.HandlerFunc {
 
 		page, err := pageQueryParam(r)
 		if err != nil {
-			s.services.Logger.Printf("rid=%s error=%s\n", rid, err)
+			s.services.Logger.Printf("[%s] error=%s\n", rid, err)
 			http.Error(w, err.Error(), http.StatusBadRequest)
 			return
 		}
 
-		tracklists, err := s.services.GetTracklists()
+		tracklists, err := s.services.GetTracklists(rid)
 		if err != nil {
-			s.services.Logger.Printf("rid=%s error=%s\n", rid, err)
+			s.services.Logger.Printf("[%s] error=%s\n", rid, err)
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
@@ -30,7 +30,7 @@ func (s *Server) handleGetTracklists() http.HandlerFunc {
 
 		resp, err := json.Marshal(paged)
 		if err != nil {
-			s.services.Logger.Printf("rid=%s error=%s\n", rid, err)
+			s.services.Logger.Printf("[%s] error=%s\n", rid, err)
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
@@ -45,26 +45,26 @@ func (s *Server) handleGetTracklist() http.HandlerFunc {
 
 		id, err := idRouteParam(r)
 		if err != nil {
-			s.services.Logger.Printf("rid=%s error=%s\n", rid, err)
+			s.services.Logger.Printf("[%s] error=%s\n", rid, err)
 			http.Error(w, err.Error(), http.StatusNotFound)
 			return
 		}
 
-		tracklist, err := s.services.GetTracklist(id)
+		tracklist, err := s.services.GetTracklist(rid, id)
 		if err != nil {
-			s.services.Logger.Printf("rid=%s error=%s\n", rid, err)
+			s.services.Logger.Printf("[%s] error=%s\n", rid, err)
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
 		if tracklist == nil {
-			s.services.Logger.Printf("rid=%s error=tracklist not found", rid)
+			s.services.Logger.Printf("[%s] error=tracklist not found", rid)
 			http.Error(w, "tracklist not found", http.StatusNotFound)
 			return
 		}
 
 		resp, err := json.Marshal(tracklist)
 		if err != nil {
-			s.services.Logger.Printf("rid=%s error=%s\n", rid, err)
+			s.services.Logger.Printf("[%s] error=%s\n", rid, err)
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
@@ -80,28 +80,28 @@ func (s *Server) handleImportTracklist() http.HandlerFunc {
 		body, err := ioutil.ReadAll(r.Body)
 		defer r.Body.Close()
 		if err != nil {
-			s.services.Logger.Printf("rid=%s error=%s\n", rid, err)
+			s.services.Logger.Printf("[%s] error=%s\n", rid, err)
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
 
 		var tracklistImport services.TracklistImport
 		if err := json.Unmarshal(body, &tracklistImport); err != nil {
-			s.services.Logger.Printf("rid=%s error=%s\n", rid, err)
+			s.services.Logger.Printf("[%s] error=%s\n", rid, err)
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
 
-		tracklist, err := s.services.ImportTracklist(&tracklistImport)
+		tracklist, err := s.services.ImportTracklist(rid, &tracklistImport)
 		if err != nil {
-			s.services.Logger.Printf("rid=%s error=%s\n", rid, err)
+			s.services.Logger.Printf("[%s] error=%s\n", rid, err)
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
 
 		resp, err := json.Marshal(tracklist)
 		if err != nil {
-			s.services.Logger.Printf("rid=%s error=%s\n", rid, err)
+			s.services.Logger.Printf("[%s] error=%s\n", rid, err)
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
@@ -116,7 +116,7 @@ func (s *Server) handleUpdateTracklist() http.HandlerFunc {
 
 		id, err := idRouteParam(r)
 		if err != nil {
-			s.services.Logger.Printf("rid=%s error=%s\n", rid, err)
+			s.services.Logger.Printf("[%s] error=%s\n", rid, err)
 			http.Error(w, err.Error(), http.StatusNotFound)
 			return
 		}
@@ -124,28 +124,28 @@ func (s *Server) handleUpdateTracklist() http.HandlerFunc {
 		body, err := ioutil.ReadAll(r.Body)
 		defer r.Body.Close()
 		if err != nil {
-			s.services.Logger.Printf("rid=%s error=%s\n", rid, err)
+			s.services.Logger.Printf("[%s] error=%s\n", rid, err)
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
 
 		var tracklistUpdate services.TracklistUpdate
 		if err := json.Unmarshal(body, &tracklistUpdate); err != nil {
-			s.services.Logger.Printf("rid=%s error=%s\n", rid, err)
+			s.services.Logger.Printf("[%s] error=%s\n", rid, err)
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
 
-		tracklist, err := s.services.UpdateTracklist(id, &tracklistUpdate)
+		tracklist, err := s.services.UpdateTracklist(rid, id, &tracklistUpdate)
 		if err != nil {
-			s.services.Logger.Printf("rid=%s error=%s\n", rid, err)
+			s.services.Logger.Printf("[%s] error=%s\n", rid, err)
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
 
 		resp, err := json.Marshal(tracklist)
 		if err != nil {
-			s.services.Logger.Printf("rid=%s error=%s\n", rid, err)
+			s.services.Logger.Printf("[%s] error=%s\n", rid, err)
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
