@@ -9,7 +9,9 @@ import (
 
 // UploadArtwork uploads the artwork at the given path to the configured storage
 // backend.
-func (s *Services) UploadArtwork(r io.ReadSeeker, filename string) (string, error) {
+func (s *Services) UploadArtwork(rid string, r io.ReadSeeker, filename string) (string, error) {
+	s.Logger.Printf("[%s] uploading artwork %s", rid, filename)
+
 	ext := filepath.Ext(filename)
 
 	key, err := s.generateObjectKey(r, ext)
