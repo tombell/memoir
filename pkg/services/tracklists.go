@@ -2,7 +2,6 @@ package services
 
 import (
 	"fmt"
-	"io"
 	"time"
 
 	"github.com/gofrs/uuid"
@@ -236,51 +235,4 @@ func (s *Services) UpdateTracklist(rid, id string, tracklistUpdate *TracklistUpd
 	}
 
 	return NewTracklist(tracklist), nil
-}
-
-// ExportTracklist exports a tracklist with the given name to the given
-// io.Writer.
-func (s *Services) ExportTracklist(name string, w io.Writer) error {
-	tracklist, err := s.DataStore.FindTracklistWithTracksByName(name)
-	if err != nil {
-		return fmt.Errorf("find tracklist with tracks failed: %w", err)
-	}
-	if tracklist == nil {
-		return fmt.Errorf("tracklist named %q doesn't exist", name)
-	}
-
-	for _, track := range tracklist.Tracks {
-		str := fmt.Sprintf("%s - %s\n", track.Artist, track.Name)
-		w.Write([]byte(str))
-	}
-
-	return nil
-}
-
-// RemoveTracklist removes a tracklist with the given name.
-func (s *Services) RemoveTracklist(name string) error {
-	tracklist, err := s.DataStore.FindTracklistByName(name)
-	if err != nil {
-		return fmt.Errorf("find tracklist failed: %w", err)
-	}
-	if tracklist == nil {
-		return fmt.Errorf("tracklist named %q doesn't exist", name)
-	}
-
-	tx, err := s.DataStore.Begin()
-	if err != nil {
-		return fmt.Errorf("db begin failed: %w", err)
-	}
-
-	if err := s.DataStore.RemoveTracklist(tx, tracklist.ID); err != nil {
-		tx.Rollback()
-		return fmt.Errorf("remove tracklist failed: %w", err)
-	}
-
-	if err := tx.Commit(); err != nil {
-		tx.Rollback()
-		return fmt.Errorf("tx commit failed: %w", err)
-	}
-
-	return nil
 }
