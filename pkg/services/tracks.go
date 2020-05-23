@@ -104,7 +104,9 @@ func (s *Services) ImportTrack(tx *sql.Tx, trackImport *TrackImport) (*Track, er
 }
 
 // GetMostPlayedTracks gets the tracks that have been played most in tracklists.
-func (s *Services) GetMostPlayedTracks(limit int) ([]*Track, error) {
+func (s *Services) GetMostPlayedTracks(rid string, limit int) ([]*Track, error) {
+	s.Logger.Printf("[%s] getting most played tracks (limit %d)", rid, limit)
+
 	tracks, err := s.DataStore.FindMostPlayedTracks(limit)
 	if err != nil {
 		return nil, fmt.Errorf("find most played tracks failed: %w", err)
@@ -121,7 +123,9 @@ func (s *Services) GetMostPlayedTracks(limit int) ([]*Track, error) {
 
 // SearchTracks searches for tracks that have artists and/or names matching the
 // query.
-func (s *Services) SearchTracks(query string) ([]*Track, error) {
+func (s *Services) SearchTracks(rid, query string) ([]*Track, error) {
+	s.Logger.Printf("[%s] searching tracks (query %q)", rid, query)
+
 	tracks, err := s.DataStore.FindTracksByQuery(query + ":*")
 	if err != nil {
 		return nil, fmt.Errorf("find tracks by query failed: %w", err)

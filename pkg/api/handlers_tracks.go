@@ -13,21 +13,21 @@ func (s *Server) handleGetTracklistsByTrackID() http.HandlerFunc {
 
 		id, err := idRouteParam(r)
 		if err != nil {
-			s.services.Logger.Printf("rid=%s error=%s\n", rid, err)
+			s.services.Logger.Printf("[%s] error=%s\n", rid, err)
 			http.Error(w, err.Error(), http.StatusNotFound)
 			return
 		}
 
 		page, err := pageQueryParam(r)
 		if err != nil {
-			s.services.Logger.Printf("rid=%s error=%s\n", rid, err)
+			s.services.Logger.Printf("[%s] error=%s\n", rid, err)
 			http.Error(w, err.Error(), http.StatusBadRequest)
 			return
 		}
 
-		tracklists, err := s.services.GetTracklistsByTrack(id)
+		tracklists, err := s.services.GetTracklistsByTrack(rid, id)
 		if err != nil {
-			s.services.Logger.Printf("rid=%s error=%s\n", rid, err)
+			s.services.Logger.Printf("[%s] error=%s\n", rid, err)
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
@@ -36,7 +36,7 @@ func (s *Server) handleGetTracklistsByTrackID() http.HandlerFunc {
 
 		resp, err := json.Marshal(paged)
 		if err != nil {
-			s.services.Logger.Printf("rid=%s error=%s\n", rid, err)
+			s.services.Logger.Printf("[%s] error=%s\n", rid, err)
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
@@ -49,16 +49,16 @@ func (s *Server) handleGetMostPlayedTracks() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		rid := getRequestID(r)
 
-		tracks, err := s.services.GetMostPlayedTracks(10)
+		tracks, err := s.services.GetMostPlayedTracks(rid, mostPlayedTracksLimit)
 		if err != nil {
-			s.services.Logger.Printf("rid=%s error=%s\n", rid, err)
+			s.services.Logger.Printf("[%s] error=%s\n", rid, err)
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
 
 		resp, err := json.Marshal(tracks)
 		if err != nil {
-			s.services.Logger.Printf("rid=%s error=%s\n", rid, err)
+			s.services.Logger.Printf("[%s] error=%s\n", rid, err)
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
@@ -73,16 +73,16 @@ func (s *Server) handleSearchTracks() http.HandlerFunc {
 
 		page, err := pageQueryParam(r)
 		if err != nil {
-			s.services.Logger.Printf("rid=%s error=%s\n", rid, err)
+			s.services.Logger.Printf("[%s] error=%s\n", rid, err)
 			http.Error(w, err.Error(), http.StatusBadRequest)
 			return
 		}
 
 		q := searchQueryParam(r)
 
-		tracks, err := s.services.SearchTracks(q)
+		tracks, err := s.services.SearchTracks(rid, q)
 		if err != nil {
-			s.services.Logger.Printf("rid=%s error=%s\n", rid, err)
+			s.services.Logger.Printf("[%s] error=%s\n", rid, err)
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
@@ -91,7 +91,7 @@ func (s *Server) handleSearchTracks() http.HandlerFunc {
 
 		resp, err := json.Marshal(paged)
 		if err != nil {
-			s.services.Logger.Printf("rid=%s error=%s\n", rid, err)
+			s.services.Logger.Printf("[%s] error=%s\n", rid, err)
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}

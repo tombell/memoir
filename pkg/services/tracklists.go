@@ -99,7 +99,9 @@ func (s *Services) GetTracklist(id string) (*Tracklist, error) {
 }
 
 // GetTracklistsByTrack gets all tracklists that include the given track by ID.
-func (s *Services) GetTracklistsByTrack(id string) ([]*Tracklist, error) {
+func (s *Services) GetTracklistsByTrack(rid, id string) ([]*Tracklist, error) {
+	s.Logger.Printf("[%s] getting tracklists by track (id %s)", rid, rid)
+
 	tracklists, err := s.DataStore.FindTracklistsByTrackID(id)
 	if err != nil {
 		return nil, fmt.Errorf("find tracklists by track id failed: %w", err)
