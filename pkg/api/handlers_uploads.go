@@ -7,7 +7,7 @@ import (
 
 func (s *Server) handleUploadArtwork() http.HandlerFunc {
 	type response struct {
-		Artwork string `json:"artwork"`
+		Key string `json:"artwork"`
 	}
 
 	return func(w http.ResponseWriter, r *http.Request) {
@@ -28,7 +28,7 @@ func (s *Server) handleUploadArtwork() http.HandlerFunc {
 			return
 		}
 
-		resp, err := json.Marshal(&response{Artwork: key})
+		resp, err := json.Marshal(&response{Key: key})
 		if err != nil {
 			s.services.Logger.Printf("rid=%s error=%s\n", rid, err)
 			http.Error(w, err.Error(), http.StatusInternalServerError)
