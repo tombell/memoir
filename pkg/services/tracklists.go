@@ -49,7 +49,7 @@ func NewTracklist(record *datastore.Tracklist) *Tracklist {
 	tracklist := &Tracklist{
 		ID:         record.ID,
 		Name:       record.Name,
-		Date:       jsondate.Date{record.Date},
+		Date:       jsondate.Date{Time: record.Date},
 		URL:        record.URL,
 		Artwork:    record.Artwork,
 		Created:    record.Created,
