@@ -14,7 +14,6 @@ const (
 
 Commands:
   list       List all tracklists, most recent to oldest
-  import     Import a tracklist from Serato, or Rekordbox
   export     Export a tracklist to a simple "artist - title" list
   delete     Delete a tracklist
 
@@ -55,8 +54,6 @@ func main() {
 	switch os.Args[1] {
 	case "list", "l":
 		err = listTracklists()
-	case "import", "i":
-		err = importTracklist()
 	case "export", "e":
 		err = exportTracklist()
 	case "delete", "d":
