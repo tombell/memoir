@@ -72,7 +72,9 @@ func NewTrackFromSearchResult(record *datastore.TrackSearchResult) *Track {
 }
 
 // ImportTrack imports the new track if it doesn't already exist.
-func (s *Services) ImportTrack(tx *sql.Tx, trackImport *TrackImport) (*Track, error) {
+func (s *Services) ImportTrack(rid string, tx *sql.Tx, trackImport *TrackImport) (*Track, error) {
+	s.Logger.Printf("[%s] importing track (name %s)", rid, trackImport.Name)
+
 	track, err := s.DataStore.FindTrackByArtistAndName(trackImport.Artist, trackImport.Name)
 	if err != nil {
 		tx.Rollback()

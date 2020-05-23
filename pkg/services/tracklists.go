@@ -169,7 +169,7 @@ func (s *Services) ImportTracklist(rid string, tracklistImport *TracklistImport)
 			Genre:  data[4],
 		}
 
-		track, err := s.ImportTrack(tx, trackImport)
+		track, err := s.ImportTrack(rid, tx, trackImport)
 		if err != nil {
 			return nil, fmt.Errorf("import track failed: %w", err)
 		}
