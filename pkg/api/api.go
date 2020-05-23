@@ -11,8 +11,9 @@ import (
 )
 
 const (
-	perPageTracklists = 20
-	perPageTracks     = 10
+	perPageTracklists     = 20
+	perPageTracks         = 10
+	mostPlayedTracksLimit = 10
 )
 
 // Server represents an API server, with a router and service dependencies.
