@@ -9,7 +9,6 @@ PLATFORMS:=darwin \
 
 BINARIES:=memoir            \
           memoir-db         \
-          memoir-tracklists \
 
 ARCHIVE_PATH:=/tmp/memoir.tar.gz
 
