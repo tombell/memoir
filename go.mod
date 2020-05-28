@@ -1,8 +1,7 @@
 module github.com/tombell/memoir
 
 require (
-	github.com/aws/aws-sdk-go v1.31.4
-	github.com/cheynewallace/tabby v1.1.0
+	github.com/aws/aws-sdk-go v1.31.7
 	github.com/gofrs/uuid v3.3.0+incompatible
 	github.com/jmoiron/sqlx v1.2.0
 	github.com/lib/pq v1.5.2
@@ -10,7 +9,7 @@ require (
 	github.com/pelletier/go-toml v1.8.0
 	github.com/tombell/tonality v1.0.0
 	github.com/tombell/trek v0.0.7
-	golang.org/x/text v0.3.2
+	golang.org/x/text v0.3.2 // indirect
 )
 
 go 1.14
