@@ -1,4 +1,4 @@
-# github.com/aws/aws-sdk-go v1.34.4
+# github.com/aws/aws-sdk-go v1.34.22
 ## explicit
 github.com/aws/aws-sdk-go/aws
 github.com/aws/aws-sdk-go/aws/arn
@@ -60,7 +60,7 @@ github.com/lib/pq/scram
 # github.com/matryer/way v0.0.0-20180416093233-9632d0c407b0
 ## explicit
 github.com/matryer/way
-# github.com/pelletier/go-toml v1.8.0
+# github.com/pelletier/go-toml v1.8.1
 ## explicit
 github.com/pelletier/go-toml
 # github.com/tombell/tonality v1.0.0
@@ -70,4 +70,6 @@ github.com/tombell/tonality
 ## explicit
 github.com/tombell/trek
 # golang.org/x/text v0.3.2
+## explicit
+# gopkg.in/yaml.v2 v2.3.0
 ## explicit
