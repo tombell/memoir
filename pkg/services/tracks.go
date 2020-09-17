@@ -128,7 +128,7 @@ func (s *Services) GetMostPlayedTracks(rid string, limit int) ([]*Track, error) 
 func (s *Services) SearchTracks(rid, query string) ([]*Track, error) {
 	s.Logger.Printf("[%s] searching tracks (query %q)", rid, query)
 
-	tracks, err := s.DataStore.FindTracksByQuery(query + ":*")
+	tracks, err := s.DataStore.FindTracksByQuery(query)
 	if err != nil {
 		return nil, fmt.Errorf("find tracks by query failed: %w", err)
 	}

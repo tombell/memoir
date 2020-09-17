@@ -85,7 +85,7 @@ const (
 				q
 			FROM
 				tracks,
-				to_tsquery($1) q
+				plainto_tsquery($1) q
 			WHERE tsv @@ q
 			ORDER BY rank DESC
 		) as searched_tracks
