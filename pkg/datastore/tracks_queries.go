@@ -85,7 +85,7 @@ const (
 				q
 			FROM
 				tracks,
-				plainto_tsquery($1) q
+				websearch_to_tsquery($1) q
 			WHERE tsv @@ q
 			ORDER BY rank DESC
 		) as searched_tracks
