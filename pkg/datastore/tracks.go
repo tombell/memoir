@@ -24,6 +24,7 @@ type Track struct {
 // artist or name.
 type TrackSearchResult struct {
 	Track
+
 	ArtistHighlighted string
 	NameHighlighted   string
 }
