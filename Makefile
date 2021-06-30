@@ -39,7 +39,7 @@ clean:
 	@rm -fr dist $(ARCHIVE_PATH)
 
 modules:
-	@go mod download && go mod tidy && go mod vendor
+	@go get -u ./... && go mod download && go mod tidy && go mod vendor
 
 create-migration:
 	@echo "-- UP\n\n-- DOWN" > 'pkg/datastore/migrations/$(shell date "+%Y%m%d%H%M%S")_$(NAME).sql'
