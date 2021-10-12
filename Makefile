@@ -4,13 +4,8 @@ COMMIT=$(shell git rev-parse HEAD | cut -c -8)
 LDFLAGS=-ldflags "-X github.com/tombell/memoir.Version=${VERSION} -X github.com/tombell/memoir.Commit=${COMMIT}"
 MODFLAGS=-mod=vendor
 
-PLATFORMS:=darwin \
-           linux  \
-
-BINARIES:=memoir            \
-          memoir-db         \
-
-ARCHIVE_PATH:=/tmp/memoir.tar.gz
+PLATFORMS:=darwin linux
+BINARIES:=memoir memoir-db
 
 all: dev
 
@@ -28,9 +23,17 @@ $(PLATFORMS):
 		GOOS=$@ GOARCH=amd64 go build ${MODFLAGS} ${LDFLAGS} -o dist/$$target-$@-amd64 ./cmd/$$target || exit 1; \
 	done
 
-$(BINARIES):
-	@echo building dist/$@
-	@go build ${MODFLAGS} ${LDFLAGS} -o dist/$@ ./cmd/$@
+run:
+	@dist/memoir
+
+watch:
+	@while sleep 1; do \
+		trap "exit" SIGINT; \
+		find . \
+			-type d \( -name vendor \) -prune -false -o \
+			-type f \( -name "*.go" \) \
+			| entr -c -d -r make dev run; \
+	done
 
 test:
 	@go test ${MODFLAGS} -cover ./...
@@ -38,29 +41,11 @@ test:
 clean:
 	@rm -fr dist $(ARCHIVE_PATH)
 
-modules:
-	@go get -u ./... && go mod download && go mod tidy && go mod vendor
-
-create-migration:
-	@echo "-- UP\n\n-- DOWN" > 'pkg/datastore/migrations/$(shell date "+%Y%m%d%H%M%S")_$(NAME).sql'
-
-archive:
-	@bsdtar -zcf $(ARCHIVE_PATH) \
-		-s ,^dist/memoir-linux-amd64,dist/memoir, \
-		-s ,^configs/Caddyfile,Caddyfile, \
-		-s ,^configs/memoir.service,memoir.service, \
-		configs/Caddyfile \
-		configs/memoir.service \
-		dist/memoir-linux-amd64 \
-		.env.toml
-
-.PHONY: all              \
-        dev              \
-        prod             \
-        $(PLATFORMS)     \
-        $(BINARIES)      \
-        test             \
-        clean            \
-        modules          \
-        create-migration \
-        archive          \
+.PHONY: all          \
+        dev          \
+        prod         \
+        $(PLATFORMS) \
+        run          \
+        watch        \
+        test         \
+        clean        \
