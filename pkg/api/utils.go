@@ -8,13 +8,20 @@ import (
 	"github.com/matryer/way"
 )
 
-func pageQueryParam(r *http.Request) (int, error) {
+func (s *Server) pageQueryParam(rid string, w http.ResponseWriter, r *http.Request) int {
 	page := r.URL.Query().Get("page")
 	if page == "" {
 		page = "1"
 	}
 
-	return strconv.Atoi(page)
+	n, err := strconv.Atoi(page)
+	if err != nil {
+		s.services.Logger.Printf("[%s] error=%s\n", rid, err)
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return -1
+	}
+
+	return n
 }
 
 func searchQueryParam(r *http.Request) string {

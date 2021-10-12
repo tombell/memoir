@@ -12,12 +12,7 @@ func (s *Server) handleGetTracklistsByTrackID() http.HandlerFunc {
 
 		id := s.idRouteParam(rid, w, r)
 
-		page, err := pageQueryParam(r)
-		if err != nil {
-			s.services.Logger.Printf("[%s] error=%s\n", rid, err)
-			http.Error(w, err.Error(), http.StatusBadRequest)
-			return
-		}
+		page := s.pageQueryParam(rid, w, r)
 
 		tracklists, err := s.services.GetTracklistsByTrack(rid, id)
 		if err != nil {
@@ -51,12 +46,7 @@ func (s *Server) handleSearchTracks() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		rid := getRequestID(r)
 
-		page, err := pageQueryParam(r)
-		if err != nil {
-			s.services.Logger.Printf("[%s] error=%s\n", rid, err)
-			http.Error(w, err.Error(), http.StatusBadRequest)
-			return
-		}
+		page := s.pageQueryParam(rid, w, r)
 
 		q := searchQueryParam(r)
 
