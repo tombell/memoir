@@ -66,12 +66,7 @@ func (s *Server) handleTracklistGet() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		rid := getRequestID(r)
 
-		id, err := idRouteParam(r)
-		if err != nil {
-			s.services.Logger.Printf("[%s] error=%s\n", rid, err)
-			http.Error(w, err.Error(), http.StatusNotFound)
-			return
-		}
+		id := s.idRouteParam(rid, w, r)
 
 		tracklist, err := s.services.GetTracklist(rid, id)
 		if err != nil {
@@ -93,12 +88,7 @@ func (s *Server) handleTracklistPatch() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		rid := getRequestID(r)
 
-		id, err := idRouteParam(r)
-		if err != nil {
-			s.services.Logger.Printf("[%s] error=%s\n", rid, err)
-			http.Error(w, err.Error(), http.StatusNotFound)
-			return
-		}
+		id := s.idRouteParam(rid, w, r)
 
 		body, err := ioutil.ReadAll(r.Body)
 		defer r.Body.Close()
