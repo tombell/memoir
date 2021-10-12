@@ -14,7 +14,7 @@ import (
 	"github.com/tombell/memoir/pkg/api"
 	"github.com/tombell/memoir/pkg/config"
 	"github.com/tombell/memoir/pkg/datastore"
-	"github.com/tombell/memoir/pkg/filestore/s3"
+	"github.com/tombell/memoir/pkg/filestore"
 	"github.com/tombell/memoir/pkg/services"
 )
 
@@ -52,19 +52,19 @@ func main() {
 		logger.Fatalf("error loading config: %v", err)
 	}
 
-	store, err := datastore.New(cfg.DB)
-	defer store.Close()
+	ds, err := datastore.New(cfg.DB)
+	defer ds.Close()
 	if err != nil {
 		logger.Fatalf("error connecting to database: %v", err)
 	}
 
-	filestore := s3.New(cfg.AWS.Key, cfg.AWS.Secret, cfg.AWS.Region)
+	fs := filestore.New(cfg.AWS.Key, cfg.AWS.Secret, cfg.AWS.Region)
 
 	s := api.New(&services.Services{
 		Logger:    logger,
 		Config:    cfg,
-		DataStore: store,
-		FileStore: filestore,
+		DataStore: ds,
+		FileStore: fs,
 	})
 
 	go func() {

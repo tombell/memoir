@@ -12,6 +12,6 @@ import (
 type Services struct {
 	Config    *config.Config
 	DataStore *datastore.Store
-	FileStore filestore.Store
+	FileStore *filestore.Store
 	Logger    *log.Logger
 }
