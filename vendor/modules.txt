@@ -1,5 +1,5 @@
 # github.com/aws/aws-sdk-go v1.41.1
-## explicit
+## explicit; go 1.11
 github.com/aws/aws-sdk-go/aws
 github.com/aws/aws-sdk-go/aws/arn
 github.com/aws/aws-sdk-go/aws/awserr
@@ -55,13 +55,14 @@ github.com/aws/aws-sdk-go/service/sts/stsiface
 ## explicit
 github.com/gofrs/uuid
 # github.com/jmespath/go-jmespath v0.4.0
+## explicit; go 1.14
 github.com/jmespath/go-jmespath
 # github.com/jmoiron/sqlx v1.3.4
-## explicit
+## explicit; go 1.10
 github.com/jmoiron/sqlx
 github.com/jmoiron/sqlx/reflectx
 # github.com/lib/pq v1.10.3
-## explicit
+## explicit; go 1.13
 github.com/lib/pq
 github.com/lib/pq/oid
 github.com/lib/pq/scram
@@ -69,13 +70,13 @@ github.com/lib/pq/scram
 ## explicit
 github.com/matryer/way
 # github.com/pelletier/go-toml v1.9.4
-## explicit
+## explicit; go 1.12
 github.com/pelletier/go-toml
 # github.com/tombell/tonality v1.0.0
-## explicit
+## explicit; go 1.12
 github.com/tombell/tonality
 # github.com/tombell/trek v0.0.7
-## explicit
+## explicit; go 1.13
 github.com/tombell/trek
 # gopkg.in/yaml.v2 v2.3.0
 ## explicit
