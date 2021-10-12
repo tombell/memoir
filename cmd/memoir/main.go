@@ -9,7 +9,7 @@ import (
 	"github.com/tombell/memoir/cmd/memoir/commands"
 )
 
-const helpText = `usage: memoir [<args>]
+const helpText = `usage: memoir <command> [<args>]
 
 Commands:
   run          Run the API server
