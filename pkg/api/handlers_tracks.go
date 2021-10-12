@@ -6,7 +6,7 @@ import (
 	"github.com/tombell/memoir/pkg/services"
 )
 
-func (s *Server) handleGetTracklistsByTrackID() http.HandlerFunc {
+func (s *Server) handleTracklistsByTrackGet() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		rid := getRequestID(r)
 
@@ -27,7 +27,7 @@ func (s *Server) handleGetTracklistsByTrackID() http.HandlerFunc {
 	}
 }
 
-func (s *Server) handleGetMostPlayedTracks() http.HandlerFunc {
+func (s *Server) handleTracksMostPlayedGet() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		rid := getRequestID(r)
 
@@ -42,7 +42,7 @@ func (s *Server) handleGetMostPlayedTracks() http.HandlerFunc {
 	}
 }
 
-func (s *Server) handleSearchTracks() http.HandlerFunc {
+func (s *Server) handleTracksSearchGet() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		rid := getRequestID(r)
 

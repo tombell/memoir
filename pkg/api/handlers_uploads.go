@@ -4,7 +4,7 @@ import (
 	"net/http"
 )
 
-func (s *Server) handleUploadArtwork() http.HandlerFunc {
+func (s *Server) handleUploadArtworkPost() http.HandlerFunc {
 	type response struct {
 		Key string `json:"key"`
 	}

@@ -28,16 +28,16 @@ func (s *Server) routes() {
 	// Tracks
 
 	s.router.Handle("GET", "/tracks/:id/tracklists",
-		use(s.handleGetTracklistsByTrackID(), s.json, s.cors, s.logging, s.requestID))
+		use(s.handleTracklistsByTrackGet(), s.json, s.cors, s.logging, s.requestID))
 
 	s.router.Handle("GET", "/tracks/mostplayed",
-		use(s.handleGetMostPlayedTracks(), s.json, s.cors, s.logging, s.requestID))
+		use(s.handleTracksMostPlayedGet(), s.json, s.cors, s.logging, s.requestID))
 
 	s.router.Handle("GET", "/tracks/search",
-		use(s.handleSearchTracks(), s.json, s.cors, s.logging, s.requestID))
+		use(s.handleTracksSearchGet(), s.json, s.cors, s.logging, s.requestID))
 
 	// Uploads
 
 	s.router.Handle("POST", "/uploads/artwork",
-		use(s.handleUploadArtwork(), s.json, s.cors, s.auth, s.logging, s.requestID))
+		use(s.handleUploadArtworkPost(), s.json, s.cors, s.auth, s.logging, s.requestID))
 }
