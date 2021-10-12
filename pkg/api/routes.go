@@ -33,5 +33,4 @@ func (s *Server) routes() {
 
 	s.router.Handle("POST", "/uploads/artwork",
 		use(s.handleUploadArtwork(), s.json, s.cors, s.auth, s.logging, s.requestID))
-
 }
