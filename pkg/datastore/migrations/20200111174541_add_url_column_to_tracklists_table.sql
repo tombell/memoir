@@ -1,9 +1,0 @@
--- UP
-
-ALTER TABLE tracklists
-ADD COLUMN url VARCHAR(256) NOT NULL DEFAULT '';
-
--- DOWN
-
-ALTER TABLE tracklists
-DROP url;
