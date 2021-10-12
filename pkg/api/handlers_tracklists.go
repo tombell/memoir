@@ -8,7 +8,7 @@ import (
 	"github.com/tombell/memoir/pkg/services"
 )
 
-func (s *Server) handleGetTracklists() http.HandlerFunc {
+func (s *Server) handleTracklistsGet() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		rid := getRequestID(r)
 
@@ -39,41 +39,7 @@ func (s *Server) handleGetTracklists() http.HandlerFunc {
 	}
 }
 
-func (s *Server) handleGetTracklist() http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		rid := getRequestID(r)
-
-		id, err := idRouteParam(r)
-		if err != nil {
-			s.services.Logger.Printf("[%s] error=%s\n", rid, err)
-			http.Error(w, err.Error(), http.StatusNotFound)
-			return
-		}
-
-		tracklist, err := s.services.GetTracklist(rid, id)
-		if err != nil {
-			s.services.Logger.Printf("[%s] error=%s\n", rid, err)
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
-		if tracklist == nil {
-			s.services.Logger.Printf("[%s] error=tracklist not found", rid)
-			http.Error(w, "tracklist not found", http.StatusNotFound)
-			return
-		}
-
-		resp, err := json.Marshal(tracklist)
-		if err != nil {
-			s.services.Logger.Printf("[%s] error=%s\n", rid, err)
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
-
-		w.Write(resp)
-	}
-}
-
-func (s *Server) handleImportTracklist() http.HandlerFunc {
+func (s *Server) handleTracklistsPost() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		rid := getRequestID(r)
 
@@ -110,7 +76,41 @@ func (s *Server) handleImportTracklist() http.HandlerFunc {
 	}
 }
 
-func (s *Server) handleUpdateTracklist() http.HandlerFunc {
+func (s *Server) handleTracklistGet() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		rid := getRequestID(r)
+
+		id, err := idRouteParam(r)
+		if err != nil {
+			s.services.Logger.Printf("[%s] error=%s\n", rid, err)
+			http.Error(w, err.Error(), http.StatusNotFound)
+			return
+		}
+
+		tracklist, err := s.services.GetTracklist(rid, id)
+		if err != nil {
+			s.services.Logger.Printf("[%s] error=%s\n", rid, err)
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		if tracklist == nil {
+			s.services.Logger.Printf("[%s] error=tracklist not found", rid)
+			http.Error(w, "tracklist not found", http.StatusNotFound)
+			return
+		}
+
+		resp, err := json.Marshal(tracklist)
+		if err != nil {
+			s.services.Logger.Printf("[%s] error=%s\n", rid, err)
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		w.Write(resp)
+	}
+}
+
+func (s *Server) handleTracklistPatch() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		rid := getRequestID(r)
 

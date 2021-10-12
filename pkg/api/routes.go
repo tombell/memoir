@@ -7,16 +7,16 @@ func (s *Server) routes() {
 	// Tracklists
 
 	s.router.Handle("GET", "/tracklists",
-		use(s.handleGetTracklists(), s.json, s.cors, s.logging, s.requestID))
+		use(s.handleTracklistsGet(), s.json, s.cors, s.logging, s.requestID))
 
 	s.router.Handle("POST", "/tracklists",
-		use(s.handleImportTracklist(), s.json, s.cors, s.auth, s.logging, s.requestID))
+		use(s.handleTracklistsPost(), s.json, s.cors, s.auth, s.logging, s.requestID))
 
 	s.router.Handle("GET", "/tracklists/:id",
-		use(s.handleGetTracklist(), s.json, s.cors, s.logging, s.requestID))
+		use(s.handleTracklistGet(), s.json, s.cors, s.logging, s.requestID))
 
 	s.router.Handle("PATCH", "/tracklists/:id",
-		use(s.handleUpdateTracklist(), s.json, s.cors, s.auth, s.logging, s.requestID))
+		use(s.handleTracklistPatch(), s.json, s.cors, s.auth, s.logging, s.requestID))
 
 	// Tracks
 
