@@ -1,4 +1,0 @@
-api.iamdjriff.co.uk {
-  proxy / localhost:8080
-  header / -Server
-}
