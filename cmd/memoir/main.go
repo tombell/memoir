@@ -45,7 +45,7 @@ func main() {
 		flag.Usage()
 	}
 
-	logger := log.New(os.Stderr, "", log.LstdFlags)
+	logger := log.New(os.Stderr, "", 0)
 
 	switch os.Args[1] {
 	case "run":
