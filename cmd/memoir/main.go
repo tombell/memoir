@@ -1,26 +1,22 @@
 package main
 
 import (
-	"context"
 	"flag"
 	"fmt"
 	"log"
-	"net/http"
 	"os"
-	"os/signal"
-	"time"
 
-	"github.com/tombell/memoir"
-	"github.com/tombell/memoir/pkg/api"
-	"github.com/tombell/memoir/pkg/config"
-	"github.com/tombell/memoir/pkg/datastore"
-	"github.com/tombell/memoir/pkg/filestore"
-	"github.com/tombell/memoir/pkg/services"
+	"github.com/tombell/memoir/cmd/memoir/commands"
 )
 
 const helpText = `usage: memoir [<args>]
 
-  --config   Path to .env.toml configuration file
+Commands:
+  run          Run the API server
+  db:create    Create the database
+  db:drop      Drop the database
+  db:migrate   Migrate the database
+  db:rollback  Rolls back applied migrations from the database
 
 Special options:
   --help     Show this message, then exit
@@ -41,52 +37,27 @@ func main() {
 	flag.Parse()
 
 	if *version {
-		fmt.Fprintf(os.Stdout, "memoir %s (%s)\n", memoir.Version, memoir.Commit)
+		fmt.Fprintf(os.Stdout, "memoir %s (%s)\n", Version, Commit)
 		os.Exit(0)
+	}
+
+	if len(os.Args) < 2 {
+		flag.Usage()
 	}
 
 	logger := log.New(os.Stderr, "", log.LstdFlags)
 
-	cfg, err := config.Load(*cfgpath)
-	if err != nil {
-		logger.Fatalf("error loading config: %v", err)
+	switch os.Args[1] {
+	case "run":
+		commands.RunCommand(logger)
+	case "db:create":
+		commands.DatabaseCreateCommand(logger)
+	case "db:drop":
+		commands.DatabaseDrop(logger)
+	case "db:migrate":
+		commands.DatabaseMigrate(logger)
+	case "db:rollback":
+	default:
+		logger.Fatalf("error: %q is not a valid command", os.Args[1])
 	}
-
-	ds, err := datastore.New(cfg.DB)
-	defer ds.Close()
-	if err != nil {
-		logger.Fatalf("error connecting to database: %v", err)
-	}
-
-	fs := filestore.New(cfg.AWS.Key, cfg.AWS.Secret, cfg.AWS.Region)
-
-	s := api.New(&services.Services{
-		Logger:    logger,
-		Config:    cfg,
-		DataStore: ds,
-		FileStore: fs,
-	})
-
-	go func() {
-		if err := s.Start(); err != nil {
-			if err == http.ErrServerClosed {
-				logger.Println("api server shutdown finished")
-				return
-			}
-
-			logger.Fatalf("error starting api server: %v", err)
-		}
-	}()
-
-	c := make(chan os.Signal, 1)
-	signal.Notify(c, os.Interrupt)
-	<-c
-
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-	defer cancel()
-
-	if err := s.Shutdown(ctx); err != nil {
-		logger.Fatalf("error shutting down api server: %v", err)
-	}
-
 }

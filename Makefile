@@ -1,30 +1,25 @@
 VERSION?=dev
 COMMIT=$(shell git rev-parse HEAD | cut -c -8)
 
-LDFLAGS=-ldflags "-X github.com/tombell/memoir.Version=${VERSION} -X github.com/tombell/memoir.Commit=${COMMIT}"
+LDFLAGS=-ldflags "-X main.Version=$(VERSION) -X main.Commit=$(COMMIT)"
 MODFLAGS=-mod=vendor
 
 PLATFORMS:=darwin linux
-BINARIES:=memoir memoir-db
 
 all: dev
 
 dev:
-	@for target in $(BINARIES); do \
-		echo building dist/$$target; \
-		go build ${MODFLAGS} ${LDFLAGS} -o dist/$$target ./cmd/$$target || exit 1; \
-	done
+	@echo building dist/memoir
+	@go build ${MODFLAGS} ${LDFLAGS} -o dist/memoir ./cmd/memoir
 
 prod: $(PLATFORMS)
 
 $(PLATFORMS):
-	@for target in $(BINARIES); do \
-		echo building dist/$$target-$@-amd64; \
-		GOOS=$@ GOARCH=amd64 go build ${MODFLAGS} ${LDFLAGS} -o dist/$$target-$@-amd64 ./cmd/$$target || exit 1; \
-	done
+	@echo building dist/memoir-$@-amd64
+	@GOOS=$@ GOARCH=amd64 go build ${MODFLAGS} ${LDFLAGS} -o dist/memoir-$@-amd64 ./cmd/memoir
 
 run:
-	@dist/memoir
+	@dist/memoir run
 
 watch:
 	@while sleep 1; do \
