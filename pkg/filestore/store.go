@@ -57,12 +57,10 @@ func (s *Store) Put(bucket, key string, r io.ReadSeeker) error {
 
 	r.Seek(0, io.SeekStart)
 
-	contentType := http.DetectContentType(buf[:])
-
 	input := &s3.PutObjectInput{
 		Bucket:      aws.String(bucket),
 		Key:         aws.String(key),
-		ContentType: aws.String(contentType),
+		ContentType: aws.String(http.DetectContentType(buf[:])),
 		Body:        r,
 	}
 

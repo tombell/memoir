@@ -5,10 +5,6 @@ import (
 )
 
 func (s *Server) handleUploadArtworkPost() http.HandlerFunc {
-	type response struct {
-		Key string `json:"key"`
-	}
-
 	return func(w http.ResponseWriter, r *http.Request) {
 		rid := getRequestID(r)
 
@@ -20,13 +16,13 @@ func (s *Server) handleUploadArtworkPost() http.HandlerFunc {
 		}
 		defer file.Close()
 
-		key, err := s.services.UploadArtwork(rid, file, header.Filename)
+		uploaded, err := s.services.UploadArtwork(rid, file, header.Filename)
 		if err != nil {
 			s.services.Logger.Printf("[%s] error=%s\n", rid, err)
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
 
-		s.writeJSON(rid, w, &response{Key: key})
+		s.writeJSON(rid, w, uploaded)
 	}
 }

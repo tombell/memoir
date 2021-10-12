@@ -7,32 +7,37 @@ import (
 	"path/filepath"
 )
 
+// UploadedItem contains data about an object uploaded to the file store.
+type UploadedItem struct {
+	Key string `json:"key"`
+}
+
 // UploadArtwork uploads the artwork at the given path to the configured storage
 // backend.
-func (s *Services) UploadArtwork(rid string, r io.ReadSeeker, filename string) (string, error) {
+func (s *Services) UploadArtwork(rid string, r io.ReadSeeker, filename string) (*UploadedItem, error) {
 	s.Logger.Printf("[%s] uploading artwork %s", rid, filename)
 
 	ext := filepath.Ext(filename)
 
 	key, err := s.generateObjectKey(r, ext)
 	if err != nil {
-		return "", fmt.Errorf("generate filename failed: %w", err)
+		return nil, fmt.Errorf("generate filename failed: %w", err)
 	}
 
 	exists, err := s.FileStore.Exists(s.Config.AWS.Bucket, key)
 	if err != nil {
-		return "", fmt.Errorf("check upload exists failed: %w", err)
+		return nil, fmt.Errorf("check upload exists failed: %w", err)
 	}
 
 	r.Seek(0, io.SeekStart)
 
 	if !exists {
 		if err := s.FileStore.Put(s.Config.AWS.Bucket, key, r); err != nil {
-			return "", fmt.Errorf("filestore put failed: %w", err)
+			return nil, fmt.Errorf("filestore put failed: %w", err)
 		}
 	}
 
-	return key, nil
+	return &UploadedItem{Key: key}, nil
 }
 
 func (s *Services) generateObjectKey(r io.Reader, ext string) (string, error) {
