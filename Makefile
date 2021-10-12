@@ -3,6 +3,7 @@ COMMIT=$(shell git rev-parse HEAD | cut -c -8)
 
 LDFLAGS=-ldflags "-X main.Version=$(VERSION) -X main.Commit=$(COMMIT)"
 MODFLAGS=-mod=vendor
+TESTFLAGS=-cover
 
 PLATFORMS:=darwin linux
 
@@ -31,7 +32,7 @@ watch:
 	done
 
 test:
-	@go test ${MODFLAGS} -cover ./...
+	@go test ${MODFLAGS} ${TESTFLAGS} ./...
 
 clean:
 	@rm -fr dist $(ARCHIVE_PATH)
