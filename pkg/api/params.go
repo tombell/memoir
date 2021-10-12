@@ -24,10 +24,6 @@ func (s *Server) pageQueryParam(rid string, w http.ResponseWriter, r *http.Reque
 	return n
 }
 
-func searchQueryParam(r *http.Request) string {
-	return r.URL.Query().Get("q")
-}
-
 func (s *Server) idRouteParam(rid string, w http.ResponseWriter, r *http.Request) string {
 	id := way.Param(r.Context(), "id")
 
@@ -38,4 +34,8 @@ func (s *Server) idRouteParam(rid string, w http.ResponseWriter, r *http.Request
 	}
 
 	return id
+}
+
+func searchQueryParam(r *http.Request) string {
+	return r.URL.Query().Get("q")
 }
