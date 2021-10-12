@@ -28,14 +28,7 @@ func (s *Server) handleTracklistsGet() http.HandlerFunc {
 
 		paged := services.NewPagedTracklists(tracklists, page, perPageTracklists)
 
-		resp, err := json.Marshal(paged)
-		if err != nil {
-			s.services.Logger.Printf("[%s] error=%s\n", rid, err)
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
-
-		w.Write(resp)
+		s.writeJSON(rid, w, paged)
 	}
 }
 
@@ -65,14 +58,7 @@ func (s *Server) handleTracklistsPost() http.HandlerFunc {
 			return
 		}
 
-		resp, err := json.Marshal(tracklist)
-		if err != nil {
-			s.services.Logger.Printf("[%s] error=%s\n", rid, err)
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
-
-		w.Write(resp)
+		s.writeJSON(rid, w, tracklist)
 	}
 }
 
@@ -99,14 +85,7 @@ func (s *Server) handleTracklistGet() http.HandlerFunc {
 			return
 		}
 
-		resp, err := json.Marshal(tracklist)
-		if err != nil {
-			s.services.Logger.Printf("[%s] error=%s\n", rid, err)
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
-
-		w.Write(resp)
+		s.writeJSON(rid, w, tracklist)
 	}
 }
 
@@ -143,13 +122,6 @@ func (s *Server) handleTracklistPatch() http.HandlerFunc {
 			return
 		}
 
-		resp, err := json.Marshal(tracklist)
-		if err != nil {
-			s.services.Logger.Printf("[%s] error=%s\n", rid, err)
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
-
-		w.Write(resp)
+		s.writeJSON(rid, w, tracklist)
 	}
 }

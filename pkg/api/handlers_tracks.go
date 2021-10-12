@@ -1,7 +1,6 @@
 package api
 
 import (
-	"encoding/json"
 	"net/http"
 
 	"github.com/tombell/memoir/pkg/services"
@@ -34,14 +33,7 @@ func (s *Server) handleGetTracklistsByTrackID() http.HandlerFunc {
 
 		paged := services.NewPagedTracklists(tracklists, page, perPageTracklists)
 
-		resp, err := json.Marshal(paged)
-		if err != nil {
-			s.services.Logger.Printf("[%s] error=%s\n", rid, err)
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
-
-		w.Write(resp)
+		s.writeJSON(rid, w, paged)
 	}
 }
 
@@ -56,14 +48,7 @@ func (s *Server) handleGetMostPlayedTracks() http.HandlerFunc {
 			return
 		}
 
-		resp, err := json.Marshal(tracks)
-		if err != nil {
-			s.services.Logger.Printf("[%s] error=%s\n", rid, err)
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
-
-		w.Write(resp)
+		s.writeJSON(rid, w, tracks)
 	}
 }
 
@@ -89,13 +74,6 @@ func (s *Server) handleSearchTracks() http.HandlerFunc {
 
 		paged := services.NewPagedTracks(tracks, page, perPageTracks)
 
-		resp, err := json.Marshal(paged)
-		if err != nil {
-			s.services.Logger.Printf("[%s] error=%s\n", rid, err)
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
-
-		w.Write(resp)
+		s.writeJSON(rid, w, paged)
 	}
 }

@@ -1,7 +1,6 @@
 package api
 
 import (
-	"encoding/json"
 	"net/http"
 )
 
@@ -28,13 +27,6 @@ func (s *Server) handleUploadArtwork() http.HandlerFunc {
 			return
 		}
 
-		resp, err := json.Marshal(&response{Key: key})
-		if err != nil {
-			s.services.Logger.Printf("[%s] error=%s\n", rid, err)
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
-
-		w.Write(resp)
+		s.writeJSON(rid, w, &response{Key: key})
 	}
 }
