@@ -1,13 +1,12 @@
-package main
+package commands
 
 import (
 	"flag"
-	"fmt"
+	"log"
 	"os"
 
-	"github.com/tombell/trek"
-
 	"github.com/tombell/memoir/pkg/config"
+	"github.com/tombell/trek"
 )
 
 const migrateHelpText = `usage: memoir-db migrate [<args>]
@@ -19,28 +18,27 @@ Special options:
   --help    Show this message, then exit
 `
 
-func migrate() error {
+// DatabaseMigrate ...
+func DatabaseMigrate(logger *log.Logger) {
 	cmd := flag.NewFlagSet("migrate", flag.ExitOnError)
-	cmd.Usage = usage(migrateHelpText)
+	cmd.Usage = usageText(migrateHelpText)
 
 	cfgpath := cmd.String("config", ".env.dev.toml", "")
 
 	if err := cmd.Parse(os.Args[2:]); err != nil {
-		return fmt.Errorf("cmd parse failed: %w", err)
+		logger.Fatalf("error: cmd parse failed: %s", err)
 	}
 
 	if !cmd.Parsed() {
-		return nil
+		return
 	}
 
 	cfg, err := config.Load(*cfgpath)
 	if err != nil {
-		return fmt.Errorf("config load failed: %w", err)
+		logger.Fatalf("error: config load failed: %s", err)
 	}
 
 	if err := trek.Migrate("postgres", cfg.DB, cfg.Migrations); err != nil {
-		return fmt.Errorf("trek migrate failed: %w", err)
+		logger.Fatalf("error: trek migrate failed: %s", err)
 	}
-
-	return nil
 }

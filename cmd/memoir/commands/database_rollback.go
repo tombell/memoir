@@ -1,8 +1,8 @@
-package main
+package commands
 
 import (
 	"flag"
-	"fmt"
+	"log"
 	"os"
 
 	"github.com/tombell/trek"
@@ -20,29 +20,28 @@ Special options:
   --help    Show this message, then exit
 `
 
-func rollback() error {
+// DatabaseRollback ...
+func DatabaseRollback(logger *log.Logger) {
 	cmd := flag.NewFlagSet("rollback", flag.ExitOnError)
-	cmd.Usage = usage(rollbackHelpText)
+	cmd.Usage = usageText(rollbackHelpText)
 
 	cfgpath := cmd.String("config", ".env.dev.toml", "")
 	steps := cmd.Int("steps", 1, "")
 
 	if err := cmd.Parse(os.Args[2:]); err != nil {
-		return fmt.Errorf("cmd parse failed: %w", err)
+		logger.Fatalf("error: cmd parse failed: %s", err)
 	}
 
 	if !cmd.Parsed() {
-		return nil
+		return
 	}
 
 	cfg, err := config.Load(*cfgpath)
 	if err != nil {
-		return fmt.Errorf("config load failed: %w", err)
+		logger.Fatalf("error: config load failed: %s", err)
 	}
 
 	if err := trek.Rollback("postgres", cfg.DB, cfg.Migrations, *steps); err != nil {
-		return fmt.Errorf("trek rollback failed: %w", err)
+		logger.Fatalf("error: trek rollback failed: %s", err)
 	}
-
-	return nil
 }
