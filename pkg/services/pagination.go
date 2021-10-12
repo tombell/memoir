@@ -23,10 +23,14 @@ func NewPagedTracklists(tracklists []*Tracklist, page, perPage int) *PagedTrackl
 		count = total
 	}
 
-	return &PagedTracklists{
-		Tracklists: tracklists[offset:count],
+	paged := &PagedTracklists{
+		Tracklists: make([]*Tracklist, 0),
 		HasMore:    page < int(pages),
 	}
+
+	paged.Tracklists = append(paged.Tracklists, tracklists[offset:count]...)
+
+	return paged
 }
 
 // PagedTracks contains a paginated list of tracks, indicating if another page
@@ -48,8 +52,12 @@ func NewPagedTracks(tracks []*Track, page, perPage int) *PagedTracks {
 		count = total
 	}
 
-	return &PagedTracks{
-		Tracks:  tracks[offset:count],
+	paged := &PagedTracks{
+		Tracks:  make([]*Track, 0),
 		HasMore: page < int(pages),
 	}
+
+	paged.Tracks = append(paged.Tracks, tracks[offset:count]...)
+
+	return paged
 }
