@@ -1,4 +1,4 @@
-# github.com/aws/aws-sdk-go v1.39.3
+# github.com/aws/aws-sdk-go v1.41.0
 ## explicit
 github.com/aws/aws-sdk-go/aws
 github.com/aws/aws-sdk-go/aws/arn
@@ -60,7 +60,7 @@ github.com/jmespath/go-jmespath
 ## explicit
 github.com/jmoiron/sqlx
 github.com/jmoiron/sqlx/reflectx
-# github.com/lib/pq v1.10.2
+# github.com/lib/pq v1.10.3
 ## explicit
 github.com/lib/pq
 github.com/lib/pq/oid
@@ -68,7 +68,7 @@ github.com/lib/pq/scram
 # github.com/matryer/way v0.0.0-20180416093233-9632d0c407b0
 ## explicit
 github.com/matryer/way
-# github.com/pelletier/go-toml v1.9.3
+# github.com/pelletier/go-toml v1.9.4
 ## explicit
 github.com/pelletier/go-toml
 # github.com/tombell/tonality v1.0.0
