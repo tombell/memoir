@@ -1,6 +1,8 @@
 package config
 
 import (
+	"fmt"
+
 	"github.com/pelletier/go-toml"
 )
 
@@ -27,12 +29,12 @@ type Config struct {
 func Load(filepath string) (*Config, error) {
 	tree, err := toml.LoadFile(filepath)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("toml load file failed: %w", err)
 	}
 
 	var cfg Config
 	if err := tree.Unmarshal(&cfg); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("toml unmarshal failed: %w", err)
 	}
 
 	return &cfg, nil
