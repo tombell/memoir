@@ -1,7 +1,8 @@
-package datastore
+package queries
 
 const (
-	insertTrackSQL = `
+	// InsertTrack ...
+	InsertTrack = `
 		INSERT INTO tracks (
 			id,
 			artist,
@@ -13,7 +14,8 @@ const (
 			updated
 		) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`
 
-	findTrackByIDSQL = `
+	// FindTrackByID ...
+	FindTrackByID = `
 		SELECT
 			id,
 			artist,
@@ -27,7 +29,8 @@ const (
 		WHERE id = $1
 		LIMIT 1`
 
-	findTrackByArtistAndNameSQL = `
+	// FindTrackByArtistAndName ...
+	FindTrackByArtistAndName = `
 		SELECT
 			id,
 			artist,
@@ -42,7 +45,8 @@ const (
 		AND name = $2
 		LIMIT 1`
 
-	findMostPlayedTracksSQL = `
+	// FindMostPlayedTracks ...
+	FindMostPlayedTracks = `
 		SELECT
 			t.id,
 			t.artist,
@@ -59,7 +63,8 @@ const (
 		ORDER BY played DESC
 		LIMIT $1`
 
-	findTracksByQuerySQL = `
+	// FindTracksByQuery ...
+	FindTracksByQuery = `
 		SELECT
 			id,
 			artist,
@@ -91,7 +96,8 @@ const (
 		) as searched_tracks
 		ORDER BY rank DESC`
 
-	updateTracksTSVectorSQL = `
+	// UpdateTracksTSVector ...
+	UpdateTracksTSVector = `
 		UPDATE tracks
 		SET tsv =
 		  setweight(to_tsvector(name), 'A') ||

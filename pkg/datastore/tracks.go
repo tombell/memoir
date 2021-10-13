@@ -4,6 +4,8 @@ import (
 	"database/sql"
 	"fmt"
 	"time"
+
+	"github.com/tombell/memoir/pkg/datastore/queries"
 )
 
 // Track contains data about a track row in the database.
@@ -31,7 +33,7 @@ type TrackSearchResult struct {
 
 // AddTrack adds a new track into the database.
 func (s *Store) AddTrack(tx *sql.Tx, track *Track) error {
-	_, err := tx.Exec(insertTrackSQL,
+	_, err := tx.Exec(queries.InsertTrack,
 		track.ID,
 		track.Artist,
 		track.Name,
@@ -52,7 +54,7 @@ func (s *Store) AddTrack(tx *sql.Tx, track *Track) error {
 func (s *Store) GetTrack(id string) (*Track, error) {
 	var track Track
 
-	err := s.QueryRowx(findTrackByIDSQL, id).StructScan(&track)
+	err := s.QueryRowx(queries.FindTrackByID, id).StructScan(&track)
 
 	switch {
 	case err == sql.ErrNoRows:
@@ -69,7 +71,7 @@ func (s *Store) GetTrack(id string) (*Track, error) {
 func (s *Store) FindTrackByArtistAndName(artist, name string) (*Track, error) {
 	var track Track
 
-	err := s.QueryRowx(findTrackByArtistAndNameSQL, artist, name).StructScan(&track)
+	err := s.QueryRowx(queries.FindTrackByArtistAndName, artist, name).StructScan(&track)
 
 	switch {
 	case err == sql.ErrNoRows:
@@ -84,7 +86,7 @@ func (s *Store) FindTrackByArtistAndName(artist, name string) (*Track, error) {
 // FindMostPlayedTracks finds the tracks that are most played, limiting it to
 // the given count in the database.
 func (s *Store) FindMostPlayedTracks(limit int) ([]*Track, error) {
-	rows, err := s.Queryx(findMostPlayedTracksSQL, limit)
+	rows, err := s.Queryx(queries.FindMostPlayedTracks, limit)
 	defer rows.Close()
 	if err != nil {
 		return nil, fmt.Errorf("db query failed: %w", err)
@@ -112,7 +114,7 @@ func (s *Store) FindMostPlayedTracks(limit int) ([]*Track, error) {
 // FindTracksByQuery finds the tracks that have artists or names matching the
 // given query in the database.
 func (s *Store) FindTracksByQuery(query string) ([]*TrackSearchResult, error) {
-	rows, err := s.Queryx(findTracksByQuerySQL, query)
+	rows, err := s.Queryx(queries.FindTracksByQuery, query)
 	defer rows.Close()
 	if err != nil {
 		return nil, fmt.Errorf("db query failed: %w", err)
@@ -139,7 +141,7 @@ func (s *Store) FindTracksByQuery(query string) ([]*TrackSearchResult, error) {
 
 // UpdateTracksTSVector updates the tsvector column of all tracks.
 func (s *Store) UpdateTracksTSVector(tx *sql.Tx) error {
-	if _, err := tx.Exec(updateTracksTSVectorSQL); err != nil {
+	if _, err := tx.Exec(queries.UpdateTracksTSVector); err != nil {
 		return fmt.Errorf("tx exec failed: %w", err)
 	}
 
