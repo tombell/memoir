@@ -1,7 +1,8 @@
-package datastore
+package queries
 
 const (
-	insertTracklistTrackSQL = `
+	// InsertTracklistTrack ...
+	InsertTracklistTrack = `
 		INSERT INTO tracklist_tracks (
 			id,
 			tracklist_id,
