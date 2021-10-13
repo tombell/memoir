@@ -1,7 +1,8 @@
-package datastore
+package queries
 
 const (
-	insertTracklistSQL = `
+	// InsertTracklist ...
+	InsertTracklist = `
 		INSERT INTO tracklists (
 			id,
 			name,
@@ -12,11 +13,13 @@ const (
 			updated
 		) VALUES ($1, $2, $3, $4, $5, $6, $7)`
 
-	deleteTracklistSQL = `
+	// DeleteTracklist ...
+	DeleteTracklist = `
 		DELETE FROM tracklists
 		WHERE id = $1`
 
-	updateTracklistSQL = `
+	// UpdateTracklist ...
+	UpdateTracklist = `
 		UPDATE tracklists
 		SET
 			name = $2,
@@ -24,7 +27,8 @@ const (
 			date = $4
 		WHERE id = $1`
 
-	getTracklistsSQL = `
+	// GetTracklists ...
+	GetTracklists = `
 		SELECT
 			tl.*,
 			count(tl.id) as track_count
@@ -33,7 +37,8 @@ const (
 		GROUP BY tl.id
 		ORDER BY tl.date DESC`
 
-	findTracklistByIDSQL = `
+	// FindTracklistByID ...
+	FindTracklistByID = `
 		SELECT
 			id,
 			name,
@@ -44,7 +49,8 @@ const (
 		WHERE id = $1
 		LIMIT 1`
 
-	findTracklistWithTracksByIDSQL = `
+	// FindTracklistWithTracksByID ...
+	FindTracklistWithTracksByID = `
 		SELECT
 			tl.*,
 			t.id as track_id,
@@ -61,7 +67,8 @@ const (
 		WHERE tl.id = $1
 		ORDER BY tt.track_number ASC`
 
-	findTracklistByNameSQL = `
+	// FindTracklistByName ...
+	FindTracklistByName = `
 		SELECT
 			id,
 			name,
@@ -72,7 +79,8 @@ const (
 		WHERE name = $1
 		LIMIT 1`
 
-	findTracklistWithTracksByNameSQL = `
+	// FindTracklistWithTracksByName ...
+	FindTracklistWithTracksByName = `
 		SELECT
 			tl.*,
 			t.id as track_id,
@@ -89,7 +97,8 @@ const (
 		WHERE tl.name = $1
 		ORDER BY tt.track_number ASC`
 
-	findTracklistByTrackIDSQL = `
+	// FindTracklistByTrackID ...
+	FindTracklistByTrackID = `
 		SELECT tl.*, (
 			SELECT count(id)
 			FROM tracklist_tracks

@@ -4,6 +4,8 @@ import (
 	"database/sql"
 	"fmt"
 	"time"
+
+	"github.com/tombell/memoir/pkg/datastore/queries"
 )
 
 // Tracklist contains data about a tracklist row in the database.
@@ -30,7 +32,7 @@ type TracklistUpdate struct {
 
 // AddTracklist adds a new tracklist into the database.
 func (s *Store) AddTracklist(tx *sql.Tx, tracklist *Tracklist) error {
-	_, err := tx.Exec(insertTracklistSQL,
+	_, err := tx.Exec(queries.InsertTracklist,
 		tracklist.ID,
 		tracklist.Name,
 		tracklist.URL,
@@ -48,7 +50,7 @@ func (s *Store) AddTracklist(tx *sql.Tx, tracklist *Tracklist) error {
 
 // RemoveTracklist removes a tracklist from the database.
 func (s *Store) RemoveTracklist(tx *sql.Tx, id string) error {
-	if _, err := tx.Exec(deleteTracklistSQL, id); err != nil {
+	if _, err := tx.Exec(queries.DeleteTracklist, id); err != nil {
 		return fmt.Errorf("tx exec failed: %w", err)
 	}
 
@@ -57,7 +59,7 @@ func (s *Store) RemoveTracklist(tx *sql.Tx, id string) error {
 
 // UpdateTracklist updates a tracklist in the database.
 func (s *Store) UpdateTracklist(tx *sql.Tx, tracklist *TracklistUpdate) error {
-	if _, err := tx.Exec(updateTracklistSQL, tracklist.ID, tracklist.Name, tracklist.URL, tracklist.Date); err != nil {
+	if _, err := tx.Exec(queries.UpdateTracklist, tracklist.ID, tracklist.Name, tracklist.URL, tracklist.Date); err != nil {
 		return fmt.Errorf("tx exec failed: %w", err)
 	}
 
@@ -66,7 +68,7 @@ func (s *Store) UpdateTracklist(tx *sql.Tx, tracklist *TracklistUpdate) error {
 
 // GetTracklists gets all tracklists.
 func (s *Store) GetTracklists() ([]*Tracklist, error) {
-	rows, err := s.Queryx(getTracklistsSQL)
+	rows, err := s.Queryx(queries.GetTracklists)
 	defer rows.Close()
 	if err != nil {
 		return nil, fmt.Errorf("db query failed: %w", err)
@@ -95,7 +97,7 @@ func (s *Store) GetTracklists() ([]*Tracklist, error) {
 func (s *Store) GetTracklist(id string) (*Tracklist, error) {
 	var tracklist Tracklist
 
-	err := s.QueryRowx(findTracklistByIDSQL, id).StructScan(&tracklist)
+	err := s.QueryRowx(queries.FindTracklistByID, id).StructScan(&tracklist)
 
 	switch {
 	case err == sql.ErrNoRows:
@@ -110,7 +112,7 @@ func (s *Store) GetTracklist(id string) (*Tracklist, error) {
 // GetTracklistWithTracks gets a tracklist with the given ID, and associated
 // tracks from the database.
 func (s *Store) GetTracklistWithTracks(id string) (*Tracklist, error) {
-	rows, err := s.Queryx(findTracklistWithTracksByIDSQL, id)
+	rows, err := s.Queryx(queries.FindTracklistWithTracksByID, id)
 	defer rows.Close()
 	if err != nil {
 		return nil, fmt.Errorf("db query failed: %w", err)
@@ -160,7 +162,7 @@ func (s *Store) GetTracklistWithTracks(id string) (*Tracklist, error) {
 func (s *Store) FindTracklistByName(name string) (*Tracklist, error) {
 	var tracklist Tracklist
 
-	err := s.QueryRowx(findTracklistByNameSQL, name).StructScan(&tracklist)
+	err := s.QueryRowx(queries.FindTracklistByName, name).StructScan(&tracklist)
 
 	switch {
 	case err == sql.ErrNoRows:
@@ -175,7 +177,7 @@ func (s *Store) FindTracklistByName(name string) (*Tracklist, error) {
 // FindTracklistWithTracksByName find a tracklist with the given name, and
 // associated tracks in the database.
 func (s *Store) FindTracklistWithTracksByName(name string) (*Tracklist, error) {
-	rows, err := s.Queryx(findTracklistWithTracksByNameSQL, name)
+	rows, err := s.Queryx(queries.FindTracklistWithTracksByName, name)
 	defer rows.Close()
 	if err != nil {
 		return nil, fmt.Errorf("db query failed: %w", err)
@@ -224,7 +226,7 @@ func (s *Store) FindTracklistWithTracksByName(name string) (*Tracklist, error) {
 // FindTracklistsByTrackID finds all tracklists that contain the given track
 // in the database.
 func (s *Store) FindTracklistsByTrackID(id string) ([]*Tracklist, error) {
-	rows, err := s.Queryx(findTracklistByTrackIDSQL, id)
+	rows, err := s.Queryx(queries.FindTracklistByTrackID, id)
 	defer rows.Close()
 	if err != nil {
 		return nil, fmt.Errorf("db query failed: %w", err)
