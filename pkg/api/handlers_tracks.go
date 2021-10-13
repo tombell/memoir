@@ -9,9 +9,7 @@ import (
 func (s *Server) handleTracklistsByTrackGet() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		rid := getRequestID(r)
-
 		id := s.idRouteParam(rid, w, r)
-
 		page := s.pageQueryParam(rid, w, r)
 
 		tracklists, err := s.services.GetTracklistsByTrack(rid, id)
@@ -45,10 +43,8 @@ func (s *Server) handleTracksMostPlayedGet() http.HandlerFunc {
 func (s *Server) handleTracksSearchGet() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		rid := getRequestID(r)
-
-		page := s.pageQueryParam(rid, w, r)
-
 		q := searchQueryParam(r)
+		page := s.pageQueryParam(rid, w, r)
 
 		tracks, err := s.services.SearchTracks(rid, q)
 		if err != nil {

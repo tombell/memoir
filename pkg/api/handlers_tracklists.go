@@ -11,7 +11,6 @@ import (
 func (s *Server) handleTracklistsGet() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		rid := getRequestID(r)
-
 		page := s.pageQueryParam(rid, w, r)
 
 		tracklists, err := s.services.GetTracklists(rid)
@@ -60,7 +59,6 @@ func (s *Server) handleTracklistsPost() http.HandlerFunc {
 func (s *Server) handleTracklistGet() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		rid := getRequestID(r)
-
 		id := s.idRouteParam(rid, w, r)
 
 		tracklist, err := s.services.GetTracklist(rid, id)
@@ -82,7 +80,6 @@ func (s *Server) handleTracklistGet() http.HandlerFunc {
 func (s *Server) handleTracklistPatch() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		rid := getRequestID(r)
-
 		id := s.idRouteParam(rid, w, r)
 
 		body, err := ioutil.ReadAll(r.Body)
