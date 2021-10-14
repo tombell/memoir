@@ -86,20 +86,13 @@ const (
 				key,
 				created,
 				updated,
-				ts_rank(tsv, q) as rank,
+				ts_rank(fts_name_and_artist, q) as rank,
 				q
 			FROM
 				tracks,
 				websearch_to_tsquery($1) q
-			WHERE tsv @@ q
+			WHERE fts_name_and_artist @@ q
 			ORDER BY rank DESC
 		) as searched_tracks
 		ORDER BY rank DESC`
-
-	// UpdateTracksTSVector ...
-	UpdateTracksTSVector = `
-		UPDATE tracks
-		SET tsv =
-		  setweight(to_tsvector(name), 'A') ||
-		  setweight(to_tsvector(artist), 'B')`
 )
