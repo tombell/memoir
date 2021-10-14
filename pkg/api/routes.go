@@ -27,6 +27,9 @@ func (s *Server) routes() {
 
 	// Tracks
 
+	s.router.Handle("GET", "/tracks/:id",
+		use(s.handleTrackGet(), s.json, s.cors, s.logging, s.requestID))
+
 	s.router.Handle("GET", "/tracks/:id/tracklists",
 		use(s.handleTracklistsByTrackGet(), s.json, s.cors, s.logging, s.requestID))
 

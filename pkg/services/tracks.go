@@ -71,6 +71,21 @@ func NewTrackFromSearchResult(record *datastore.TrackSearchResult) *Track {
 	}
 }
 
+// GetTrack gets a track with the given ID.
+func (s *Services) GetTrack(rid, id string) (*Track, error) {
+	s.Logger.Printf("[%s] getting track (id %s)", rid, id)
+
+	track, err := s.DataStore.GetTrack(id)
+	if err != nil {
+		return nil, fmt.Errorf("get track failed: %w", err)
+	}
+	if track == nil {
+		return nil, nil
+	}
+
+	return NewTrack(track), nil
+}
+
 // ImportTrack imports the new track if it doesn't already exist.
 func (s *Services) ImportTrack(rid string, tx *sql.Tx, trackImport *TrackImport) (*Track, error) {
 	s.Logger.Printf("[%s] importing track (name %s)", rid, trackImport.Name)
