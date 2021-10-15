@@ -30,6 +30,19 @@ type TracklistUpdate struct {
 	Date time.Time
 }
 
+// GetTracklistsCount returns the total number of tracklists.
+func (s *Store) GetTracklistsCount() (int, error) {
+	var count struct {
+		Count int
+	}
+
+	if err := s.DB.Get(&count, queries.GetTracklistsCount); err != nil {
+		return -1, fmt.Errorf("db get failed: %w", err)
+	}
+
+	return count.Count, nil
+}
+
 // AddTracklist adds a new tracklist into the database.
 func (s *Store) AddTracklist(tx *sql.Tx, tracklist *Tracklist) error {
 	_, err := tx.Exec(queries.InsertTracklist,
