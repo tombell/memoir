@@ -7,11 +7,6 @@ import (
 	"path/filepath"
 )
 
-// UploadedItem contains data about an object uploaded to the file store.
-type UploadedItem struct {
-	Key string `json:"key"`
-}
-
 // UploadArtwork uploads the artwork at the given path to the configured storage
 // backend.
 func (s *Services) UploadArtwork(rid string, r io.ReadSeeker, filename string) (*UploadedItem, error) {
