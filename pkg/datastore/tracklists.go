@@ -79,9 +79,9 @@ func (s *Store) UpdateTracklist(tx *sql.Tx, tracklist *TracklistUpdate) error {
 	return nil
 }
 
-// GetTracklists gets all tracklists.
-func (s *Store) GetTracklists() ([]*Tracklist, error) {
-	rows, err := s.Queryx(queries.GetTracklists)
+// GetTracklists gets the given amount of tracklists for the given offset.
+func (s *Store) GetTracklists(offset, limit int) ([]*Tracklist, error) {
+	rows, err := s.Queryx(queries.GetTracklists, offset, limit)
 	defer rows.Close()
 	if err != nil {
 		return nil, fmt.Errorf("db query failed: %w", err)

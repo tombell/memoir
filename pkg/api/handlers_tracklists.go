@@ -13,16 +13,15 @@ func (s *Server) handleGetTracklists() http.HandlerFunc {
 		rid := getRequestID(r)
 		page := s.pageQueryParam(rid, w, r)
 
-		tracklists, err := s.services.GetTracklists(rid)
+		tracklists, total, err := s.services.GetTracklists(rid, page, perPageTracklists)
 		if err != nil {
 			s.services.Logger.Printf("[%s] error=%s\n", rid, err)
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
 
-		paged := services.NewPagedTracklists(tracklists, page, perPageTracklists)
-
-		s.writeJSON(rid, w, paged)
+		s.addPaginationHeaders(w, page, perPageTracklists, total)
+		s.writeJSON(rid, w, tracklists)
 	}
 }
 

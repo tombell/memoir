@@ -10,13 +10,24 @@ import (
 	"github.com/tombell/memoir/pkg/datastore"
 )
 
-// GetTracklists gets all tracklists.
-func (s *Services) GetTracklists(rid string) ([]*Tracklist, error) {
-	s.Logger.Printf("[%s] getting tracklists", rid)
+// GetTracklists gets the given amount of tracklists for the given page.
+func (s *Services) GetTracklists(rid string, page, per int) ([]*Tracklist, int, error) {
+	s.Logger.Printf("[%s] getting tracklists (page %d)", rid, page)
 
-	tracklists, err := s.DataStore.GetTracklists()
+	offset := per * (page - 1)
+
+	done := make(chan struct{})
+
+	var count int
+
+	go func() {
+		count, _ = s.DataStore.GetTracklistsCount()
+		close(done)
+	}()
+
+	tracklists, err := s.DataStore.GetTracklists(offset, per)
 	if err != nil {
-		return nil, fmt.Errorf("get tracklists failed: %w", err)
+		return nil, -1, fmt.Errorf("get tracklists failed: %w", err)
 	}
 
 	var models []*Tracklist
@@ -25,7 +36,9 @@ func (s *Services) GetTracklists(rid string) ([]*Tracklist, error) {
 		models = append(models, NewTracklist(tracklist))
 	}
 
-	return models, nil
+	<-done
+
+	return models, count, nil
 }
 
 // GetTracklist gets a tracklist with the given ID.
