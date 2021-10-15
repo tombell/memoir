@@ -35,7 +35,7 @@ test:
 	@go test ${MODFLAGS} ${TESTFLAGS} ./...
 
 clean:
-	@rm -fr dist $(ARCHIVE_PATH)
+	@rm -fr dist
 
 .PHONY: all          \
         dev          \
