@@ -8,7 +8,7 @@ import (
 	"github.com/tombell/memoir/pkg/services"
 )
 
-func (s *Server) handleTracklistsGet() http.HandlerFunc {
+func (s *Server) handleGetTracklists() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		rid := getRequestID(r)
 		page := s.pageQueryParam(rid, w, r)
@@ -26,7 +26,7 @@ func (s *Server) handleTracklistsGet() http.HandlerFunc {
 	}
 }
 
-func (s *Server) handleTracklistsPost() http.HandlerFunc {
+func (s *Server) handlePostTracklists() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		rid := getRequestID(r)
 
@@ -56,7 +56,7 @@ func (s *Server) handleTracklistsPost() http.HandlerFunc {
 	}
 }
 
-func (s *Server) handleTracklistGet() http.HandlerFunc {
+func (s *Server) handleGetTracklist() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		rid := getRequestID(r)
 		id := s.idRouteParam(rid, w, r)
@@ -77,7 +77,7 @@ func (s *Server) handleTracklistGet() http.HandlerFunc {
 	}
 }
 
-func (s *Server) handleTracklistPatch() http.HandlerFunc {
+func (s *Server) handlePatchTracklist() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		rid := getRequestID(r)
 		id := s.idRouteParam(rid, w, r)

@@ -6,7 +6,7 @@ import (
 	"github.com/tombell/memoir/pkg/services"
 )
 
-func (s *Server) handleTrackGet() http.HandlerFunc {
+func (s *Server) handleGetTrack() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		rid := getRequestID(r)
 		id := s.idRouteParam(rid, w, r)
@@ -22,7 +22,7 @@ func (s *Server) handleTrackGet() http.HandlerFunc {
 	}
 }
 
-func (s *Server) handleTracklistsByTrackGet() http.HandlerFunc {
+func (s *Server) handleGetTracklistsByTrack() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		rid := getRequestID(r)
 		id := s.idRouteParam(rid, w, r)
@@ -41,7 +41,7 @@ func (s *Server) handleTracklistsByTrackGet() http.HandlerFunc {
 	}
 }
 
-func (s *Server) handleTracksMostPlayedGet() http.HandlerFunc {
+func (s *Server) handleGetMostPlayedTracks() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		rid := getRequestID(r)
 
@@ -56,7 +56,7 @@ func (s *Server) handleTracksMostPlayedGet() http.HandlerFunc {
 	}
 }
 
-func (s *Server) handleTracksSearchGet() http.HandlerFunc {
+func (s *Server) handleSearchTracks() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		rid := getRequestID(r)
 		q := searchQueryParam(r)

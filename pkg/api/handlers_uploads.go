@@ -4,7 +4,7 @@ import (
 	"net/http"
 )
 
-func (s *Server) handleUploadArtworkPost() http.HandlerFunc {
+func (s *Server) handlePostArtwork() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		rid := getRequestID(r)
 
