@@ -13,5 +13,6 @@ func (s *Server) writeJSON(rid string, w http.ResponseWriter, model interface{})
 		return
 	}
 
+	w.Header().Add("Content-Type", "application/json")
 	w.Write(resp)
 }
