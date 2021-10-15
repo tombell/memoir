@@ -71,6 +71,24 @@ func NewTrackFromSearchResult(record *datastore.TrackSearchResult) *Track {
 	}
 }
 
+// GetTracks ...
+func (s *Services) GetTracks(rid string) ([]*Track, error) {
+	s.Logger.Printf("[%s] getting tracks", rid)
+
+	tracks, err := s.DataStore.GetTracks()
+	if err != nil {
+		return nil, fmt.Errorf("get tracks failed: %w", err)
+	}
+
+	var models []*Track
+
+	for _, track := range tracks {
+		models = append(models, NewTrack(track))
+	}
+
+	return models, nil
+}
+
 // GetTrack gets a track with the given ID.
 func (s *Services) GetTrack(rid, id string) (*Track, error) {
 	s.Logger.Printf("[%s] getting track (id %s)", rid, id)

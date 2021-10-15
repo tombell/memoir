@@ -6,6 +6,23 @@ import (
 	"github.com/tombell/memoir/pkg/services"
 )
 
+func (s *Server) handleTracksGet() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		rid := getRequestID(r)
+		page := s.pageQueryParam(rid, w, r)
+
+		tracks, err := s.services.GetTracks(rid)
+		if err != nil {
+			s.services.Logger.Printf("[%s] error=%s\n", rid, err)
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		paged := services.NewPagedTracks(tracks, page, perPageTracks)
+
+		s.writeJSON(rid, w, paged)
+	}
+}
 func (s *Server) handleTrackGet() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		rid := getRequestID(r)

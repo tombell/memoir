@@ -50,6 +50,29 @@ func (s *Store) AddTrack(tx *sql.Tx, track *Track) error {
 	return nil
 }
 
+// GetTracks ...
+func (s *Store) GetTracks() ([]*Track, error) {
+	rows, err := s.Queryx(queries.GetTracks)
+	defer rows.Close()
+	if err != nil {
+		return nil, fmt.Errorf("db query failed: %w", err)
+	}
+
+	var tracks []*Track
+
+	for rows.Next() {
+		var track Track
+
+		if err := rows.StructScan(&track); err != nil {
+			return nil, fmt.Errorf("rows scan failed: %w", err)
+		}
+
+		tracks = append(tracks, &track)
+	}
+
+	return tracks, nil
+}
+
 // GetTrack gets a track with the given ID from the database.
 func (s *Store) GetTrack(id string) (*Track, error) {
 	var track Track

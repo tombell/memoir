@@ -14,6 +14,19 @@ const (
 			updated
 		) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`
 
+	// GetTracks ...
+	GetTracks = `
+		SELECT
+			id,
+			artist,
+			name,
+			genre,
+			bpm,
+			key,
+			created,
+			updated
+		FROM tracks`
+
 	// FindTrackByID ...
 	FindTrackByID = `
 		SELECT
