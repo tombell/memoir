@@ -6,7 +6,9 @@ import (
 
 type contextKey string
 
-func use(h http.HandlerFunc, middlewares ...func(http.HandlerFunc) http.HandlerFunc) http.HandlerFunc {
+type middleware func(http.HandlerFunc) http.HandlerFunc
+
+func use(h http.HandlerFunc, middlewares ...middleware) http.HandlerFunc {
 	for _, m := range middlewares {
 		h = m(h)
 	}
