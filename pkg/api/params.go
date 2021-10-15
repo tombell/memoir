@@ -21,6 +21,10 @@ func (s *Server) pageQueryParam(rid string, w http.ResponseWriter, r *http.Reque
 		return -1
 	}
 
+	if n < 1 {
+		n = 1
+	}
+
 	return n
 }
 
