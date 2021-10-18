@@ -10,16 +10,14 @@ func (s *Server) handlePostArtwork() http.HandlerFunc {
 
 		file, header, err := r.FormFile("artwork")
 		if err != nil {
-			s.services.Logger.Printf("[%s] error=%s\n", rid, err)
-			http.Error(w, err.Error(), http.StatusBadRequest)
+			s.writeError(rid, w, err)
 			return
 		}
 		defer file.Close()
 
 		uploaded, err := s.services.UploadArtwork(rid, file, header.Filename)
 		if err != nil {
-			s.services.Logger.Printf("[%s] error=%s\n", rid, err)
-			http.Error(w, err.Error(), http.StatusInternalServerError)
+			s.writeError(rid, w, err)
 			return
 		}
 

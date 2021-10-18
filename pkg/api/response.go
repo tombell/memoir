@@ -14,11 +14,15 @@ func (s *Server) addPaginationHeaders(w http.ResponseWriter, per, page, total in
 	w.Header().Add("Total-Pages", strconv.Itoa(pages))
 }
 
+func (s *Server) writeError(rid string, w http.ResponseWriter, err error) {
+	s.services.Logger.Printf("[%s] error=%s\n", rid, err)
+	http.Error(w, err.Error(), http.StatusInternalServerError)
+}
+
 func (s *Server) writeJSON(rid string, w http.ResponseWriter, model interface{}) {
 	resp, err := json.Marshal(model)
 	if err != nil {
-		s.services.Logger.Printf("[%s] error=%s\n", rid, err)
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		s.writeError(rid, w, err)
 		return
 	}
 

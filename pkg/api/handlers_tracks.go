@@ -11,8 +11,7 @@ func (s *Server) handleGetTrack() http.HandlerFunc {
 
 		track, err := s.services.GetTrack(rid, id)
 		if err != nil {
-			s.services.Logger.Printf("[%s] error=%s\n", rid, err)
-			http.Error(w, err.Error(), http.StatusInternalServerError)
+			s.writeError(rid, w, err)
 			return
 		}
 
@@ -28,8 +27,7 @@ func (s *Server) handleGetTracklistsByTrack() http.HandlerFunc {
 
 		tracklists, total, err := s.services.GetTracklistsByTrack(rid, id, page, perPageTracklists)
 		if err != nil {
-			s.services.Logger.Printf("[%s] error=%s\n", rid, err)
-			http.Error(w, err.Error(), http.StatusInternalServerError)
+			s.writeError(rid, w, err)
 			return
 		}
 
@@ -44,8 +42,7 @@ func (s *Server) handleGetMostPlayedTracks() http.HandlerFunc {
 
 		tracks, err := s.services.GetMostPlayedTracks(rid, mostPlayedTracksLimit)
 		if err != nil {
-			s.services.Logger.Printf("[%s] error=%s\n", rid, err)
-			http.Error(w, err.Error(), http.StatusInternalServerError)
+			s.writeError(rid, w, err)
 			return
 		}
 
@@ -60,8 +57,7 @@ func (s *Server) handleSearchTracks() http.HandlerFunc {
 
 		tracks, err := s.services.SearchTracks(rid, q)
 		if err != nil {
-			s.services.Logger.Printf("[%s] error=%s\n", rid, err)
-			http.Error(w, err.Error(), http.StatusInternalServerError)
+			s.writeError(rid, w, err)
 			return
 		}
 
