@@ -2,8 +2,6 @@ package api
 
 import (
 	"net/http"
-
-	"github.com/tombell/memoir/pkg/services"
 )
 
 func (s *Server) handleGetTrack() http.HandlerFunc {
@@ -59,7 +57,6 @@ func (s *Server) handleSearchTracks() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		rid := getRequestID(r)
 		q := searchQueryParam(r)
-		page := s.pageQueryParam(rid, w, r)
 
 		tracks, err := s.services.SearchTracks(rid, q)
 		if err != nil {
@@ -68,8 +65,6 @@ func (s *Server) handleSearchTracks() http.HandlerFunc {
 			return
 		}
 
-		paged := services.NewPagedTracks(tracks, page, perPageTracks)
-
-		s.writeJSON(rid, w, paged)
+		s.writeJSON(rid, w, tracks)
 	}
 }
