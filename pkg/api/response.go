@@ -15,8 +15,13 @@ func (s *Server) addPaginationHeaders(w http.ResponseWriter, per, page, total in
 }
 
 func (s *Server) writeError(rid string, w http.ResponseWriter, err error) {
-	s.services.Logger.Printf("[%s] error=%s\n", rid, err)
+	s.services.Logger.Printf("[%s] error=%s", rid, err)
 	http.Error(w, err.Error(), http.StatusInternalServerError)
+}
+
+func (s *Server) writeNotFound(rid string, w http.ResponseWriter, msg string) {
+	s.services.Logger.Printf("[%s] %s", rid, msg)
+	w.WriteHeader(http.StatusNotFound)
 }
 
 func (s *Server) writeJSON(rid string, w http.ResponseWriter, model interface{}) {

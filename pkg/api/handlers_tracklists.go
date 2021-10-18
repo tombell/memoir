@@ -2,6 +2,7 @@ package api
 
 import (
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"net/http"
 
@@ -56,13 +57,17 @@ func (s *Server) handleGetTracklist() http.HandlerFunc {
 		rid := getRequestID(r)
 		id := s.idRouteParam(rid, w, r)
 
+		if id == "" {
+			return
+		}
+
 		tracklist, err := s.services.GetTracklist(rid, id)
 		if err != nil {
 			s.writeError(rid, w, err)
 			return
 		}
 		if tracklist == nil {
-			s.writeError(rid, w, err)
+			s.writeNotFound(rid, w, fmt.Sprintf("could not find tracklist with id: %s", id))
 			return
 		}
 
@@ -74,6 +79,10 @@ func (s *Server) handlePatchTracklist() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		rid := getRequestID(r)
 		id := s.idRouteParam(rid, w, r)
+
+		if id == "" {
+			return
+		}
 
 		body, err := ioutil.ReadAll(r.Body)
 		defer r.Body.Close()

@@ -1,6 +1,7 @@
 package api
 
 import (
+	"fmt"
 	"net/http"
 	"strconv"
 
@@ -32,8 +33,7 @@ func (s *Server) idRouteParam(rid string, w http.ResponseWriter, r *http.Request
 	id := way.Param(r.Context(), "id")
 
 	if _, err := uuid.FromString(id); err != nil {
-		s.services.Logger.Printf("[%s] error=%s\n", rid, err)
-		http.Error(w, err.Error(), http.StatusNotFound)
+		s.writeNotFound(rid, w, fmt.Sprintf("could not decode id: %s", id))
 		return ""
 	}
 

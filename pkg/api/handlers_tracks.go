@@ -1,6 +1,7 @@
 package api
 
 import (
+	"fmt"
 	"net/http"
 )
 
@@ -9,9 +10,17 @@ func (s *Server) handleGetTrack() http.HandlerFunc {
 		rid := getRequestID(r)
 		id := s.idRouteParam(rid, w, r)
 
+		if id == "" {
+			return
+		}
+
 		track, err := s.services.GetTrack(rid, id)
 		if err != nil {
 			s.writeError(rid, w, err)
+			return
+		}
+		if track == nil {
+			s.writeNotFound(rid, w, fmt.Sprintf("could not find track with id: %s", id))
 			return
 		}
 
@@ -24,6 +33,10 @@ func (s *Server) handleGetTracklistsByTrack() http.HandlerFunc {
 		rid := getRequestID(r)
 		id := s.idRouteParam(rid, w, r)
 		page := s.pageQueryParam(rid, w, r)
+
+		if id == "" {
+			return
+		}
 
 		tracklists, total, err := s.services.GetTracklistsByTrack(rid, id, page, perPageTracklists)
 		if err != nil {
