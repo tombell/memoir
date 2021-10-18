@@ -13,11 +13,6 @@ const (
 			updated
 		) VALUES ($1, $2, $3, $4, $5, $6, $7)`
 
-	// DeleteTracklist ...
-	DeleteTracklist = `
-		DELETE FROM tracklists
-		WHERE id = $1`
-
 	// UpdateTracklist ...
 	UpdateTracklist = `
 		UPDATE tracklists

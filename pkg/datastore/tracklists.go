@@ -48,15 +48,6 @@ func (s *Store) AddTracklist(tx *sql.Tx, tracklist *Tracklist) error {
 	return nil
 }
 
-// RemoveTracklist removes a tracklist from the database.
-func (s *Store) RemoveTracklist(tx *sql.Tx, id string) error {
-	if _, err := tx.Exec(queries.DeleteTracklist, id); err != nil {
-		return fmt.Errorf("tx exec failed: %w", err)
-	}
-
-	return nil
-}
-
 // UpdateTracklist updates a tracklist in the database.
 func (s *Store) UpdateTracklist(tx *sql.Tx, tracklist *TracklistUpdate) error {
 	if _, err := tx.Exec(queries.UpdateTracklist, tracklist.ID, tracklist.Name, tracklist.URL, tracklist.Date); err != nil {
