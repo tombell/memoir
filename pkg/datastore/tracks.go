@@ -10,25 +10,18 @@ import (
 
 // Track contains data about a track row in the database.
 type Track struct {
-	ID      string
-	Artist  string
-	Name    string
-	Genre   string
-	BPM     float64
-	Key     string
-	Created time.Time
-	Updated time.Time
-
-	Played int
-}
-
-// TrackSearchResult contains data about track search result matching on the
-// artist or name.
-type TrackSearchResult struct {
-	Track
-
+	ID                string
+	Artist            string
 	ArtistHighlighted string
 	NameHighlighted   string
+	Name              string
+	Genre             string
+	BPM               float64
+	Key               string
+	Created           time.Time
+	Updated           time.Time
+
+	Played int
 }
 
 // AddTrack adds a new track into the database.
@@ -113,17 +106,17 @@ func (s *Store) FindMostPlayedTracks(limit int) ([]*Track, error) {
 
 // FindTracksByQuery finds the tracks that have artists or names matching the
 // given query in the database.
-func (s *Store) FindTracksByQuery(query string) ([]*TrackSearchResult, error) {
+func (s *Store) FindTracksByQuery(query string) ([]*Track, error) {
 	rows, err := s.Queryx(queries.FindTracksByQuery, query)
 	defer rows.Close()
 	if err != nil {
 		return nil, fmt.Errorf("db query failed: %w", err)
 	}
 
-	var tracks []*TrackSearchResult
+	var tracks []*Track
 
 	for rows.Next() {
-		var track TrackSearchResult
+		var track Track
 
 		if err := rows.StructScan(&track); err != nil {
 			return nil, fmt.Errorf("rows struct scan failed: %w", err)
