@@ -5,9 +5,8 @@ import (
 	"time"
 
 	"github.com/gofrs/uuid"
-	"github.com/tombell/tonality"
-
 	"github.com/tombell/memoir/pkg/datastore"
+	"github.com/tombell/tonality"
 )
 
 // GetTracklists gets the given amount of tracklists for the given page.
@@ -41,71 +40,27 @@ func (s *Services) GetTracklists(rid string, page, per int) ([]*Tracklist, int, 
 	return models, count, nil
 }
 
-// GetTracklist gets a tracklist with the given ID.
-func (s *Services) GetTracklist(rid, id string) (*Tracklist, error) {
-	s.Logger.Printf("[%s] getting tracklist (id %s)", rid, id)
-
-	tracklist, err := s.DataStore.GetTracklistWithTracks(id)
-	if err != nil {
-		return nil, fmt.Errorf("get tracklist with tracks failed: %w", err)
-	}
-	if tracklist == nil {
-		return nil, nil
-	}
-
-	return NewTracklist(tracklist), nil
-}
-
-// GetTracklistsByTrack gets all tracklists that include the given track by ID.
-func (s *Services) GetTracklistsByTrack(rid, id string, page, per int) ([]*Tracklist, int, error) {
-	s.Logger.Printf("[%s] getting tracklists by track (id %s, page: %d)", rid, id, page)
-
-	done := make(chan struct{})
-
-	var count int
-
-	go func() {
-		count, _ = s.DataStore.FindTracklistsByTrackIDCount(id)
-		close(done)
-	}()
-
-	tracklists, err := s.DataStore.FindTracklistsByTrackID(id)
-	if err != nil {
-		return nil, -1, fmt.Errorf("find tracklists by track id failed: %w", err)
-	}
-
-	var models []*Tracklist
-
-	for _, tracklist := range tracklists {
-		models = append(models, NewTracklist(tracklist))
-	}
-
-	<-done
-
-	return models, count, nil
-}
-
-// ImportTracklist imports a new tracklist, including any new tracks that have
+// AddTracklist imports a new tracklist, including any new tracks that have
 // not been imported before.
-func (s *Services) ImportTracklist(rid string, tracklistImport *TracklistImport) (*Tracklist, error) {
-	s.Logger.Printf("[%s] importing tracklist (name %s)", rid, tracklistImport.Name)
+func (s *Services) AddTracklist(rid string, tracklistAdd *TracklistAdd) (*Tracklist, error) {
+	s.Logger.Printf("[%s] adding tracklist (name %s)", rid, tracklistAdd.Name)
 
-	tracklist, err := s.DataStore.FindTracklistByName(tracklistImport.Name)
+	tracklist, err := s.DataStore.FindTracklistByName(tracklistAdd.Name)
 	if err != nil {
 		return nil, fmt.Errorf("find tracklist failed: %w", err)
 	}
 	if tracklist != nil {
-		return nil, fmt.Errorf("tracklist named %q already exists", tracklistImport.Name)
+		return nil, fmt.Errorf("tracklist named %q already exists", tracklistAdd.Name)
 	}
 
 	id, _ := uuid.NewV4()
 
 	tracklist = &datastore.Tracklist{
 		ID:      id.String(),
-		Name:    tracklistImport.Name,
-		Date:    tracklistImport.Date.Time,
-		URL:     tracklistImport.URL,
-		Artwork: tracklistImport.Artwork,
+		Name:    tracklistAdd.Name,
+		Date:    tracklistAdd.Date.Time,
+		URL:     tracklistAdd.URL,
+		Artwork: tracklistAdd.Artwork,
 		Created: time.Now().UTC(),
 		Updated: time.Now().UTC(),
 	}
@@ -120,7 +75,7 @@ func (s *Services) ImportTracklist(rid string, tracklistImport *TracklistImport)
 		return nil, fmt.Errorf("insert tracklist failed: %w", err)
 	}
 
-	for idx, data := range tracklistImport.Tracks {
+	for idx, data := range tracklistAdd.Tracks {
 		normalizedKey, err := tonality.ConvertKeyToNotation(data[3], tonality.CamelotKeys)
 		if err != nil {
 			return nil, fmt.Errorf("normalizing key to camelot key notation failed: %w", err)
@@ -134,9 +89,9 @@ func (s *Services) ImportTracklist(rid string, tracklistImport *TracklistImport)
 			Genre:  data[4],
 		}
 
-		track, err := s.ImportTrack(rid, tx, trackImport)
+		track, err := s.AddTrack(rid, tx, trackImport)
 		if err != nil {
-			return nil, fmt.Errorf("import track failed: %w", err)
+			return nil, fmt.Errorf("add track failed: %w", err)
 		}
 
 		id, _ := uuid.NewV4()
@@ -157,6 +112,21 @@ func (s *Services) ImportTracklist(rid string, tracklistImport *TracklistImport)
 	if err := tx.Commit(); err != nil {
 		tx.Rollback()
 		return nil, fmt.Errorf("tx commit failed: %w", err)
+	}
+
+	return NewTracklist(tracklist), nil
+}
+
+// GetTracklist gets a tracklist with the given ID.
+func (s *Services) GetTracklist(rid, id string) (*Tracklist, error) {
+	s.Logger.Printf("[%s] getting tracklist (id %s)", rid, id)
+
+	tracklist, err := s.DataStore.GetTracklistWithTracks(id)
+	if err != nil {
+		return nil, fmt.Errorf("get tracklist with tracks failed: %w", err)
+	}
+	if tracklist == nil {
+		return nil, nil
 	}
 
 	return NewTracklist(tracklist), nil
@@ -196,4 +166,33 @@ func (s *Services) UpdateTracklist(rid, id string, tracklistUpdate *TracklistUpd
 	}
 
 	return NewTracklist(tracklist), nil
+}
+
+// GetTracklistsByTrack gets all tracklists that include the given track by ID.
+func (s *Services) GetTracklistsByTrack(rid, id string, page, per int) ([]*Tracklist, int, error) {
+	s.Logger.Printf("[%s] getting tracklists by track (id %s, page: %d)", rid, id, page)
+
+	done := make(chan struct{})
+
+	var count int
+
+	go func() {
+		count, _ = s.DataStore.FindTracklistsByTrackIDCount(id)
+		close(done)
+	}()
+
+	tracklists, err := s.DataStore.FindTracklistsByTrackID(id)
+	if err != nil {
+		return nil, -1, fmt.Errorf("find tracklists by track id failed: %w", err)
+	}
+
+	var models []*Tracklist
+
+	for _, tracklist := range tracklists {
+		models = append(models, NewTracklist(tracklist))
+	}
+
+	<-done
+
+	return models, count, nil
 }

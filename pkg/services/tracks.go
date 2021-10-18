@@ -26,9 +26,9 @@ func (s *Services) GetTrack(rid, id string) (*Track, error) {
 	return NewTrack(track), nil
 }
 
-// ImportTrack imports the new track if it doesn't already exist.
-func (s *Services) ImportTrack(rid string, tx *sql.Tx, trackImport *TrackImport) (*Track, error) {
-	s.Logger.Printf("[%s] importing track (name %s)", rid, trackImport.Name)
+// AddTrack adds the new track if it doesn't already exist.
+func (s *Services) AddTrack(rid string, tx *sql.Tx, trackImport *TrackImport) (*Track, error) {
+	s.Logger.Printf("[%s] adding track (name %s)", rid, trackImport.Name)
 
 	track, err := s.DataStore.FindTrackByArtistAndName(trackImport.Artist, trackImport.Name)
 	if err != nil {

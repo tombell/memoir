@@ -37,14 +37,14 @@ func (s *Server) handlePostTracklists() http.HandlerFunc {
 			return
 		}
 
-		var tracklistImport services.TracklistImport
-		if err := json.Unmarshal(body, &tracklistImport); err != nil {
+		var tl services.TracklistAdd
+		if err := json.Unmarshal(body, &tl); err != nil {
 			s.services.Logger.Printf("[%s] error=%s\n", rid, err)
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
 
-		tracklist, err := s.services.ImportTracklist(rid, &tracklistImport)
+		tracklist, err := s.services.AddTracklist(rid, &tl)
 		if err != nil {
 			s.services.Logger.Printf("[%s] error=%s\n", rid, err)
 			http.Error(w, err.Error(), http.StatusInternalServerError)

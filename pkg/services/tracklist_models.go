@@ -7,8 +7,8 @@ import (
 	"github.com/tombell/memoir/pkg/datastore"
 )
 
-// TracklistImport contains data about a tracklist to import.
-type TracklistImport struct {
+// TracklistAdd contains data about a tracklist to add.
+type TracklistAdd struct {
 	Name    string        `json:"name"`
 	Date    jsondate.Date `json:"date"`
 	URL     string        `json:"url"`
