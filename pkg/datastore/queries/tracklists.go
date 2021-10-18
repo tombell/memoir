@@ -1,12 +1,6 @@
 package queries
 
 const (
-	// GetTracklistsCount ...
-	GetTracklistsCount = `
-		SELECT
-			count(id)
-		FROM tracklists`
-
 	// InsertTracklist ...
 	InsertTracklist = `
 		INSERT INTO tracklists (
