@@ -81,7 +81,7 @@ func (s *Services) AddTracklist(rid string, tracklistAdd *TracklistAdd) (*Trackl
 			return nil, fmt.Errorf("normalizing key to camelot key notation failed: %w", err)
 		}
 
-		trackImport := &TrackImport{
+		trackImport := &TrackAdd{
 			Name:   data[0],
 			Artist: data[1],
 			BPM:    data[2],

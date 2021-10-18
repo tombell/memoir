@@ -27,7 +27,7 @@ func (s *Services) GetTrack(rid, id string) (*Track, error) {
 }
 
 // AddTrack adds the new track if it doesn't already exist.
-func (s *Services) AddTrack(rid string, tx *sql.Tx, trackImport *TrackImport) (*Track, error) {
+func (s *Services) AddTrack(rid string, tx *sql.Tx, trackImport *TrackAdd) (*Track, error) {
 	s.Logger.Printf("[%s] adding track (name %s)", rid, trackImport.Name)
 
 	track, err := s.DataStore.GetTrackByArtistAndName(trackImport.Artist, trackImport.Name)

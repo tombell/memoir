@@ -6,15 +6,6 @@ import (
 	"github.com/tombell/memoir/pkg/datastore"
 )
 
-// TrackImport contains data about a track to import.
-type TrackImport struct {
-	Artist string
-	Name   string
-	BPM    string
-	Genre  string
-	Key    string
-}
-
 // Track contains data about a track, with optional played count and search
 // result highlighting.
 type Track struct {
@@ -32,6 +23,15 @@ type Track struct {
 
 	ArtistHighlighted string `json:"artistHighlighted,omitempty"`
 	NameHighlighted   string `json:"nameHighlighted,omitempty"`
+}
+
+// TrackAdd contains data about a track to import.
+type TrackAdd struct {
+	Artist string
+	Name   string
+	BPM    string
+	Genre  string
+	Key    string
 }
 
 // NewTrack returns a new Track with fields mapped from a track database record.
@@ -55,13 +55,13 @@ func NewTrackFromSearchResult(record *datastore.Track) *Track {
 	return &Track{
 		ID:                record.ID,
 		Artist:            record.Artist,
+		ArtistHighlighted: record.ArtistHighlighted,
 		Name:              record.Name,
+		NameHighlighted:   record.NameHighlighted,
 		Genre:             record.Genre,
 		BPM:               record.BPM,
 		Key:               record.Key,
 		Created:           record.Created,
 		Updated:           record.Updated,
-		ArtistHighlighted: record.ArtistHighlighted,
-		NameHighlighted:   record.NameHighlighted,
 	}
 }
