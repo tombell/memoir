@@ -51,7 +51,7 @@ func NewTrack(record *datastore.Track) *Track {
 
 // NewTrackFromSearchResult returns a new Track with fields mapped from a track
 // search result database record.
-func NewTrackFromSearchResult(record *datastore.TrackSearchResult) *Track {
+func NewTrackFromSearchResult(record *datastore.Track) *Track {
 	return &Track{
 		ID:                record.ID,
 		Artist:            record.Artist,

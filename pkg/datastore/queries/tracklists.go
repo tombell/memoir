@@ -13,11 +13,6 @@ const (
 			updated
 		) VALUES ($1, $2, $3, $4, $5, $6, $7)`
 
-	// DeleteTracklist ...
-	DeleteTracklist = `
-		DELETE FROM tracklists
-		WHERE id = $1`
-
 	// UpdateTracklist ...
 	UpdateTracklist = `
 		UPDATE tracklists
@@ -27,6 +22,12 @@ const (
 			date = $4
 		WHERE id = $1`
 
+	// GetTracklistsCount ...
+	GetTracklistsCount = `
+		SELECT
+			COUNT(id)
+		FROM tracklists`
+
 	// GetTracklists ...
 	GetTracklists = `
 		SELECT
@@ -35,7 +36,8 @@ const (
 		FROM tracklists tl
 		JOIN tracklist_tracks tt ON tt.tracklist_id = tl.id
 		GROUP BY tl.id
-		ORDER BY tl.date DESC`
+		ORDER BY tl.date DESC
+		OFFSET $1 LIMIT $2`
 
 	// FindTracklistByID ...
 	FindTracklistByID = `
@@ -97,8 +99,21 @@ const (
 		WHERE tl.name = $1
 		ORDER BY tt.track_number ASC`
 
-	// FindTracklistByTrackID ...
-	FindTracklistByTrackID = `
+	// FindTracklistsByTrackIDCount ...
+	FindTracklistsByTrackIDCount = `
+		SELECT
+			COUNT(tracklists.id)
+		FROM (
+			SELECT tl.id
+			FROM tracklists tl
+			JOIN tracklist_tracks tt ON tt.tracklist_id = tl.id
+			WHERE tt.track_id = $1
+			GROUP BY tl.id
+			ORDER BY tl.date DESC
+		) AS tracklists`
+
+	// FindTracklistsByTrackID ...
+	FindTracklistsByTrackID = `
 		SELECT tl.*, (
 			SELECT count(id)
 			FROM tracklist_tracks
