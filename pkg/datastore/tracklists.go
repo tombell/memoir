@@ -32,16 +32,16 @@ type TracklistUpdate struct {
 
 // AddTracklist adds a new tracklist into the database.
 func (s *Store) AddTracklist(tx *sql.Tx, tracklist *Tracklist) error {
-	_, err := tx.Exec(queries.InsertTracklist,
+	if _, err := tx.Exec(
+		queries.InsertTracklist,
 		tracklist.ID,
 		tracklist.Name,
 		tracklist.URL,
 		tracklist.Artwork,
 		tracklist.Date,
 		tracklist.Created,
-		tracklist.Updated)
-
-	if err != nil {
+		tracklist.Updated,
+	); err != nil {
 		return fmt.Errorf("tx exec failed: %w", err)
 	}
 
@@ -50,7 +50,13 @@ func (s *Store) AddTracklist(tx *sql.Tx, tracklist *Tracklist) error {
 
 // UpdateTracklist updates a tracklist in the database.
 func (s *Store) UpdateTracklist(tx *sql.Tx, tracklist *TracklistUpdate) error {
-	if _, err := tx.Exec(queries.UpdateTracklist, tracklist.ID, tracklist.Name, tracklist.URL, tracklist.Date); err != nil {
+	if _, err := tx.Exec(
+		queries.UpdateTracklist,
+		tracklist.ID,
+		tracklist.Name,
+		tracklist.URL,
+		tracklist.Date,
+	); err != nil {
 		return fmt.Errorf("tx exec failed: %w", err)
 	}
 
@@ -101,12 +107,10 @@ func (s *Store) GetTracklists(offset, limit int) ([]*Tracklist, error) {
 func (s *Store) GetTracklist(id string) (*Tracklist, error) {
 	var tracklist Tracklist
 
-	err := s.QueryRowx(queries.FindTracklistByID, id).StructScan(&tracklist)
-
-	switch {
-	case err == sql.ErrNoRows:
+	switch err := s.QueryRowx(queries.FindTracklistByID, id).StructScan(&tracklist); err {
+	case sql.ErrNoRows:
 		return nil, nil
-	case err != nil:
+	case nil:
 		return nil, fmt.Errorf("db query row failed: %w", err)
 	default:
 		return &tracklist, nil
@@ -127,7 +131,7 @@ func (s *Store) GetTracklistWithTracks(id string) (*Tracklist, error) {
 	for rows.Next() {
 		var track Track
 
-		err := rows.Scan(
+		if err := rows.Scan(
 			&tracklist.ID,
 			&tracklist.Name,
 			&tracklist.Date,
@@ -142,9 +146,8 @@ func (s *Store) GetTracklistWithTracks(id string) (*Tracklist, error) {
 			&track.BPM,
 			&track.Key,
 			&track.Created,
-			&track.Updated)
-
-		if err != nil {
+			&track.Updated,
+		); err != nil {
 			return nil, fmt.Errorf("rows scan failed: %w", err)
 		}
 
@@ -166,12 +169,10 @@ func (s *Store) GetTracklistWithTracks(id string) (*Tracklist, error) {
 func (s *Store) FindTracklistByName(name string) (*Tracklist, error) {
 	var tracklist Tracklist
 
-	err := s.QueryRowx(queries.FindTracklistByName, name).StructScan(&tracklist)
-
-	switch {
-	case err == sql.ErrNoRows:
+	switch err := s.QueryRowx(queries.FindTracklistByName, name).StructScan(&tracklist); err {
+	case sql.ErrNoRows:
 		return nil, nil
-	case err != nil:
+	case nil:
 		return nil, fmt.Errorf("db query row failed: %w", err)
 	default:
 		return &tracklist, nil
@@ -192,7 +193,7 @@ func (s *Store) FindTracklistWithTracksByName(name string) (*Tracklist, error) {
 	for rows.Next() {
 		var track Track
 
-		err := rows.Scan(
+		if err := rows.Scan(
 			&tracklist.ID,
 			&tracklist.Name,
 			&tracklist.Date,
@@ -207,9 +208,8 @@ func (s *Store) FindTracklistWithTracksByName(name string) (*Tracklist, error) {
 			&track.BPM,
 			&track.Key,
 			&track.Created,
-			&track.Updated)
-
-		if err != nil {
+			&track.Updated,
+		); err != nil {
 			return nil, fmt.Errorf("rows scan failed: %w", err)
 		}
 
