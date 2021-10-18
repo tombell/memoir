@@ -27,7 +27,7 @@ type Track struct {
 // AddTrack adds a new track into the database.
 func (s *Store) AddTrack(tx *sql.Tx, track *Track) error {
 	if _, err := tx.Exec(
-		queries.InsertTrack,
+		queries.AddTrack,
 		track.ID,
 		track.Artist,
 		track.Name,
@@ -47,7 +47,7 @@ func (s *Store) AddTrack(tx *sql.Tx, track *Track) error {
 func (s *Store) GetTrack(id string) (*Track, error) {
 	var track Track
 
-	switch err := s.QueryRowx(queries.FindTrackByID, id).StructScan(&track); err {
+	switch err := s.QueryRowx(queries.GetTrackByID, id).StructScan(&track); err {
 	case sql.ErrNoRows:
 		return nil, nil
 	case nil:
@@ -62,7 +62,7 @@ func (s *Store) GetTrack(id string) (*Track, error) {
 func (s *Store) GetTrackByArtistAndName(artist, name string) (*Track, error) {
 	var track Track
 
-	switch err := s.QueryRowx(queries.FindTrackByArtistAndName, artist, name).StructScan(&track); err {
+	switch err := s.QueryRowx(queries.GetTrackByArtistAndName, artist, name).StructScan(&track); err {
 	case sql.ErrNoRows:
 		return nil, nil
 	case nil:
@@ -75,7 +75,7 @@ func (s *Store) GetTrackByArtistAndName(artist, name string) (*Track, error) {
 // FindMostPlayedTracks finds the tracks that are most played, limiting it to
 // the given count in the database.
 func (s *Store) FindMostPlayedTracks(limit int) ([]*Track, error) {
-	rows, err := s.Queryx(queries.FindMostPlayedTracks, limit)
+	rows, err := s.Queryx(queries.GetMostPlayedTracks, limit)
 	defer rows.Close()
 	if err != nil {
 		return nil, fmt.Errorf("db query failed: %w", err)
@@ -103,7 +103,7 @@ func (s *Store) FindMostPlayedTracks(limit int) ([]*Track, error) {
 // FindTracksByQuery finds the tracks that have artists or names matching the
 // given query in the database.
 func (s *Store) FindTracksByQuery(query string) ([]*Track, error) {
-	rows, err := s.Queryx(queries.FindTracksByQuery, query)
+	rows, err := s.Queryx(queries.GetTracksByQuery, query)
 	defer rows.Close()
 	if err != nil {
 		return nil, fmt.Errorf("db query failed: %w", err)
