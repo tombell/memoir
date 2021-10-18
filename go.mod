@@ -1,8 +1,8 @@
 module github.com/tombell/memoir
 
 require (
-	github.com/aws/aws-sdk-go v1.41.4
-	github.com/gofrs/uuid v4.0.0+incompatible
+	github.com/aws/aws-sdk-go v1.41.5
+	github.com/gofrs/uuid v4.1.0+incompatible
 	github.com/jmoiron/sqlx v1.3.4
 	github.com/lib/pq v1.10.3
 	github.com/matryer/way v0.0.0-20180416093233-9632d0c407b0
