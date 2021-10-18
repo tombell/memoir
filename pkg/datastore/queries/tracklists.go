@@ -19,7 +19,8 @@ const (
 		SET
 			name = $2,
 			url = $3,
-			date = $4
+			date = $4,
+			updated = NOW()
 		WHERE id = $1`
 
 	// GetTracklistsCount gets the total number of tracklists.
