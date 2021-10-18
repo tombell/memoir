@@ -27,6 +27,12 @@ const (
 			date = $4
 		WHERE id = $1`
 
+	// GetTracklistsCount ...
+	GetTracklistsCount = `
+		SELECT
+			count(id)
+		FROM tracklists`
+
 	// GetTracklists ...
 	GetTracklists = `
 		SELECT
