@@ -26,7 +26,8 @@ type Track struct {
 
 // AddTrack adds a new track into the database.
 func (s *Store) AddTrack(tx *sql.Tx, track *Track) error {
-	_, err := tx.Exec(queries.InsertTrack,
+	if _, err := tx.Exec(
+		queries.InsertTrack,
 		track.ID,
 		track.Artist,
 		track.Name,
@@ -34,9 +35,8 @@ func (s *Store) AddTrack(tx *sql.Tx, track *Track) error {
 		track.BPM,
 		track.Key,
 		track.Created,
-		track.Updated)
-
-	if err != nil {
+		track.Updated,
+	); err != nil {
 		return fmt.Errorf("tx exec failed: %w", err)
 	}
 
@@ -47,29 +47,25 @@ func (s *Store) AddTrack(tx *sql.Tx, track *Track) error {
 func (s *Store) GetTrack(id string) (*Track, error) {
 	var track Track
 
-	err := s.QueryRowx(queries.FindTrackByID, id).StructScan(&track)
-
-	switch {
-	case err == sql.ErrNoRows:
+	switch err := s.QueryRowx(queries.FindTrackByID, id).StructScan(&track); err {
+	case sql.ErrNoRows:
 		return nil, nil
-	case err != nil:
+	case nil:
 		return nil, fmt.Errorf("query row failed: %w", err)
 	default:
 		return &track, nil
 	}
 }
 
-// FindTrackByArtistAndName finds a track with the given artist and name in the
+// GetTrackByArtistAndName finds a track with the given artist and name in the
 // database.
-func (s *Store) FindTrackByArtistAndName(artist, name string) (*Track, error) {
+func (s *Store) GetTrackByArtistAndName(artist, name string) (*Track, error) {
 	var track Track
 
-	err := s.QueryRowx(queries.FindTrackByArtistAndName, artist, name).StructScan(&track)
-
-	switch {
-	case err == sql.ErrNoRows:
+	switch err := s.QueryRowx(queries.FindTrackByArtistAndName, artist, name).StructScan(&track); err {
+	case sql.ErrNoRows:
 		return nil, nil
-	case err != nil:
+	case nil:
 		return nil, fmt.Errorf("query row failed: %w", err)
 	default:
 		return &track, nil
