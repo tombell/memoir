@@ -48,6 +48,7 @@ func (s *Server) handlePostTracklists() http.HandlerFunc {
 			return
 		}
 
+		w.WriteHeader(http.StatusCreated)
 		s.writeJSON(rid, w, tracklist)
 	}
 }
