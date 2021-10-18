@@ -44,7 +44,7 @@ func (s *Server) logging(h http.HandlerFunc) http.HandlerFunc {
 		h(rw, r)
 
 		s.services.Logger.Printf(
-			"[%s] method=%s path=%s status=%d size=%d elapsed=%s\n",
+			"[%s] method=%s path=%s status=%d size=%d elapsed=%s",
 			rid,
 			r.Method,
 			r.URL.Path,

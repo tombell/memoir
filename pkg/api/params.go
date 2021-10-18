@@ -17,7 +17,7 @@ func (s *Server) pageQueryParam(rid string, w http.ResponseWriter, r *http.Reque
 
 	n, err := strconv.Atoi(page)
 	if err != nil {
-		s.services.Logger.Printf("[%s] error=%s\n", rid, err)
+		s.services.Logger.Printf("[%s] error=%s", rid, err)
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return -1
 	}
