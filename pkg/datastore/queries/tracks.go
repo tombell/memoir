@@ -95,5 +95,6 @@ const (
 			WHERE fts_name_and_artist @@ q
 			ORDER BY rank DESC
 		) as searched_tracks
-		ORDER BY rank DESC`
+		ORDER BY rank DESC
+		LIMIT $2`
 )

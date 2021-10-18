@@ -80,10 +80,10 @@ func (s *Services) GetMostPlayedTracks(rid string, limit int) ([]*Track, error) 
 
 // SearchTracks searches for tracks that have artists and/or names matching the
 // query.
-func (s *Services) SearchTracks(rid, query string) ([]*Track, error) {
+func (s *Services) SearchTracks(rid, query string, limit int) ([]*Track, error) {
 	s.Logger.Printf("[%s] searching tracks (query %q)", rid, query)
 
-	tracks, err := s.DataStore.FindTracksByQuery(query)
+	tracks, err := s.DataStore.FindTracksByQuery(query, limit)
 	if err != nil {
 		return nil, fmt.Errorf("find tracks by query failed: %w", err)
 	}

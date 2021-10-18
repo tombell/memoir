@@ -102,8 +102,8 @@ func (s *Store) FindMostPlayedTracks(limit int) ([]*Track, error) {
 
 // FindTracksByQuery finds the tracks that have artists or names matching the
 // given query in the database.
-func (s *Store) FindTracksByQuery(query string) ([]*Track, error) {
-	rows, err := s.Queryx(queries.GetTracksByQuery, query)
+func (s *Store) FindTracksByQuery(query string, limit int) ([]*Track, error) {
+	rows, err := s.Queryx(queries.GetTracksByQuery, query, limit)
 	defer rows.Close()
 	if err != nil {
 		return nil, fmt.Errorf("db query failed: %w", err)

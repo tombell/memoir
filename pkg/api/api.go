@@ -14,6 +14,7 @@ const (
 	perPageTracklists     = 20
 	perPageTracks         = 10
 	mostPlayedTracksLimit = 10
+	searchResultsLimit    = 10
 )
 
 // Server represents an API server, with a router and service dependencies.

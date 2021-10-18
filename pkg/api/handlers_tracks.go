@@ -68,7 +68,7 @@ func (s *Server) handleSearchTracks() http.HandlerFunc {
 		rid := getRequestID(r)
 		q := searchQueryParam(r)
 
-		tracks, err := s.services.SearchTracks(rid, q)
+		tracks, err := s.services.SearchTracks(rid, q, searchResultsLimit)
 		if err != nil {
 			s.writeError(rid, w, err)
 			return
