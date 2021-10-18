@@ -239,7 +239,7 @@ func (s *Store) FindTracklistWithTracksByName(name string) (*Tracklist, error) {
 // FindTracklistsByTrackID finds all tracklists that contain the given track
 // in the database.
 func (s *Store) FindTracklistsByTrackID(id string) ([]*Tracklist, error) {
-	rows, err := s.Queryx(queries.FindTracklistByTrackID, id)
+	rows, err := s.Queryx(queries.FindTracklistsByTrackID, id)
 	defer rows.Close()
 	if err != nil {
 		return nil, fmt.Errorf("db query failed: %w", err)
