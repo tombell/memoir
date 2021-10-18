@@ -27,7 +27,7 @@ func (s *Server) routes() {
 	s.router.Handle("GET", "/tracks/:id/tracklists", use(s.handleGetTracklistsByTrack(), api...))
 	s.router.Handle("GET", "/tracks/:id", use(s.handleGetTrack(), api...))
 
-	// Uploads
+	// Artwork
 
-	s.router.Handle("POST", "/uploads/artwork", use(s.handlePostArtwork(), apiAuth...))
+	s.router.Handle("POST", "/artwork", use(s.handlePostArtwork(), apiAuth...))
 }
