@@ -20,7 +20,7 @@ func (s *Server) handleGetTracklists() http.HandlerFunc {
 			return
 		}
 
-		s.addPaginationHeaders(w, page, perPageTracklists, total)
+		s.addPaginationHeaders(w, perPageTracklists, page, total)
 		s.writeJSON(rid, w, tracklists)
 	}
 }
