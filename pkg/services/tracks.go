@@ -27,10 +27,10 @@ func (s *Services) GetTrack(rid, id string) (*Track, error) {
 }
 
 // AddTrack adds the new track if it doesn't already exist.
-func (s *Services) AddTrack(rid string, tx *sql.Tx, trackImport *TrackAdd) (*Track, error) {
-	s.Logger.Printf("[%s] adding track (name %s)", rid, trackImport.Name)
+func (s *Services) AddTrack(rid string, tx *sql.Tx, model *TrackAdd) (*Track, error) {
+	s.Logger.Printf("[%s] adding track (name %s)", rid, model.Name)
 
-	track, err := s.DataStore.GetTrackByArtistAndName(trackImport.Artist, trackImport.Name)
+	track, err := s.DataStore.GetTrackByArtistAndName(model.Artist, model.Name)
 	if err != nil {
 		tx.Rollback()
 		return nil, fmt.Errorf("find track failed: %w", err)
@@ -38,15 +38,15 @@ func (s *Services) AddTrack(rid string, tx *sql.Tx, trackImport *TrackAdd) (*Tra
 
 	if track == nil {
 		id, _ := uuid.NewV4()
-		bpm, _ := strconv.ParseFloat(trackImport.BPM, 64)
+		bpm, _ := strconv.ParseFloat(model.BPM, 64)
 
 		track = &datastore.Track{
 			ID:      id.String(),
-			Name:    trackImport.Name,
-			Artist:  trackImport.Artist,
+			Name:    model.Name,
+			Artist:  model.Artist,
 			BPM:     bpm,
-			Key:     trackImport.Key,
-			Genre:   trackImport.Genre,
+			Key:     model.Key,
+			Genre:   model.Genre,
 			Created: time.Now().UTC(),
 			Updated: time.Now().UTC(),
 		}

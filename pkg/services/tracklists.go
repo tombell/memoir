@@ -42,25 +42,25 @@ func (s *Services) GetTracklists(rid string, page, per int) ([]*Tracklist, int, 
 
 // AddTracklist imports a new tracklist, including any new tracks that have
 // not been imported before.
-func (s *Services) AddTracklist(rid string, tracklistAdd *TracklistAdd) (*Tracklist, error) {
-	s.Logger.Printf("[%s] adding tracklist (name %s)", rid, tracklistAdd.Name)
+func (s *Services) AddTracklist(rid string, model *TracklistAdd) (*Tracklist, error) {
+	s.Logger.Printf("[%s] adding tracklist (name %s)", rid, model.Name)
 
-	tracklist, err := s.DataStore.FindTracklistByName(tracklistAdd.Name)
+	tracklist, err := s.DataStore.FindTracklistByName(model.Name)
 	if err != nil {
 		return nil, fmt.Errorf("find tracklist failed: %w", err)
 	}
 	if tracklist != nil {
-		return nil, fmt.Errorf("tracklist named %q already exists", tracklistAdd.Name)
+		return nil, fmt.Errorf("tracklist named %q already exists", model.Name)
 	}
 
 	id, _ := uuid.NewV4()
 
 	tracklist = &datastore.Tracklist{
 		ID:      id.String(),
-		Name:    tracklistAdd.Name,
-		Date:    tracklistAdd.Date.Time,
-		URL:     tracklistAdd.URL,
-		Artwork: tracklistAdd.Artwork,
+		Name:    model.Name,
+		Date:    model.Date.Time,
+		URL:     model.URL,
+		Artwork: model.Artwork,
 		Created: time.Now().UTC(),
 		Updated: time.Now().UTC(),
 	}
@@ -75,7 +75,7 @@ func (s *Services) AddTracklist(rid string, tracklistAdd *TracklistAdd) (*Trackl
 		return nil, fmt.Errorf("insert tracklist failed: %w", err)
 	}
 
-	for idx, data := range tracklistAdd.Tracks {
+	for idx, data := range model.Tracks {
 		normalizedKey, err := tonality.ConvertKeyToNotation(data[3], tonality.CamelotKeys)
 		if err != nil {
 			return nil, fmt.Errorf("normalizing key to camelot key notation failed: %w", err)
@@ -133,7 +133,7 @@ func (s *Services) GetTracklist(rid, id string) (*Tracklist, error) {
 }
 
 // UpdateTracklist updates the information of a tracklist.
-func (s *Services) UpdateTracklist(rid, id string, tracklistUpdate *TracklistUpdate) (*Tracklist, error) {
+func (s *Services) UpdateTracklist(rid, id string, model *TracklistUpdate) (*Tracklist, error) {
 	s.Logger.Printf("[%s] updating tracklist (id %s)", rid, id)
 
 	tx, err := s.DataStore.Begin()
@@ -141,14 +141,7 @@ func (s *Services) UpdateTracklist(rid, id string, tracklistUpdate *TracklistUpd
 		return nil, fmt.Errorf("db begin failed: %w", err)
 	}
 
-	update := &datastore.TracklistUpdate{
-		ID:   id,
-		Name: tracklistUpdate.Name,
-		URL:  tracklistUpdate.URL,
-		Date: tracklistUpdate.Date.Time,
-	}
-
-	if err := s.DataStore.UpdateTracklist(tx, update); err != nil {
+	if err := s.DataStore.UpdateTracklist(tx, id, model.Name, model.URL, model.Date.Time); err != nil {
 		return nil, fmt.Errorf("update tracklist failed: %w", err)
 	}
 
