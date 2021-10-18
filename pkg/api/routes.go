@@ -24,8 +24,8 @@ func (s *Server) routes() {
 	s.router.Handle("GET", "/tracks/mostplayed", use(s.handleGetMostPlayedTracks(), api...))
 	s.router.Handle("GET", "/tracks/search", use(s.handleSearchTracks(), api...))
 
-	s.router.Handle("GET", "/tracks/:id", use(s.handleGetTrack(), api...))
 	s.router.Handle("GET", "/tracks/:id/tracklists", use(s.handleGetTracklistsByTrack(), api...))
+	s.router.Handle("GET", "/tracks/:id", use(s.handleGetTrack(), api...))
 
 	// Uploads
 

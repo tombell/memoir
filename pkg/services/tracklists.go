@@ -57,12 +57,21 @@ func (s *Services) GetTracklist(rid, id string) (*Tracklist, error) {
 }
 
 // GetTracklistsByTrack gets all tracklists that include the given track by ID.
-func (s *Services) GetTracklistsByTrack(rid, id string) ([]*Tracklist, error) {
-	s.Logger.Printf("[%s] getting tracklists by track (id %s)", rid, rid)
+func (s *Services) GetTracklistsByTrack(rid, id string, page, per int) ([]*Tracklist, int, error) {
+	s.Logger.Printf("[%s] getting tracklists by track (id %s, page: %d)", rid, id, page)
+
+	done := make(chan struct{})
+
+	var count int
+
+	go func() {
+		count, _ = s.DataStore.FindTracklistsByTrackIDCount(id)
+		close(done)
+	}()
 
 	tracklists, err := s.DataStore.FindTracklistsByTrackID(id)
 	if err != nil {
-		return nil, fmt.Errorf("find tracklists by track id failed: %w", err)
+		return nil, -1, fmt.Errorf("find tracklists by track id failed: %w", err)
 	}
 
 	var models []*Tracklist
@@ -71,7 +80,9 @@ func (s *Services) GetTracklistsByTrack(rid, id string) ([]*Tracklist, error) {
 		models = append(models, NewTracklist(tracklist))
 	}
 
-	return models, nil
+	<-done
+
+	return models, count, nil
 }
 
 // ImportTracklist imports a new tracklist, including any new tracks that have

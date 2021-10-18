@@ -30,19 +30,6 @@ type TracklistUpdate struct {
 	Date time.Time
 }
 
-// GetTracklistsCount returns the total number of tracklists.
-func (s *Store) GetTracklistsCount() (int, error) {
-	var count struct {
-		Count int
-	}
-
-	if err := s.DB.Get(&count, queries.GetTracklistsCount); err != nil {
-		return -1, fmt.Errorf("db get failed: %w", err)
-	}
-
-	return count.Count, nil
-}
-
 // AddTracklist adds a new tracklist into the database.
 func (s *Store) AddTracklist(tx *sql.Tx, tracklist *Tracklist) error {
 	_, err := tx.Exec(queries.InsertTracklist,
@@ -77,6 +64,19 @@ func (s *Store) UpdateTracklist(tx *sql.Tx, tracklist *TracklistUpdate) error {
 	}
 
 	return nil
+}
+
+// GetTracklistsCount returns the total number of tracklists.
+func (s *Store) GetTracklistsCount() (int, error) {
+	var count struct {
+		Count int
+	}
+
+	if err := s.DB.Get(&count, queries.GetTracklistsCount); err != nil {
+		return -1, fmt.Errorf("db get failed: %w", err)
+	}
+
+	return count.Count, nil
 }
 
 // GetTracklists gets the given amount of tracklists for the given offset.
@@ -234,6 +234,20 @@ func (s *Store) FindTracklistWithTracksByName(name string) (*Tracklist, error) {
 	}
 
 	return &tracklist, nil
+}
+
+// FindTracklistsByTrackIDCount returns the total number of tracklists
+// containing the given track ID.
+func (s *Store) FindTracklistsByTrackIDCount(id string) (int, error) {
+	var count struct {
+		Count int
+	}
+
+	if err := s.DB.Get(&count, queries.FindTracklistsByTrackIDCount, id); err != nil {
+		return -1, fmt.Errorf("db get failed: %w", err)
+	}
+
+	return count.Count, nil
 }
 
 // FindTracklistsByTrackID finds all tracklists that contain the given track
