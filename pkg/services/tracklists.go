@@ -58,7 +58,7 @@ func (s *Services) AddTracklist(rid string, model *TracklistAdd) (*Tracklist, er
 	tracklist = &datastore.Tracklist{
 		ID:      id.String(),
 		Name:    model.Name,
-		Date:    model.Date.Time,
+		Date:    model.Date,
 		URL:     model.URL,
 		Artwork: model.Artwork,
 		Created: time.Now().UTC(),
@@ -141,7 +141,7 @@ func (s *Services) UpdateTracklist(rid, id string, model *TracklistUpdate) (*Tra
 		return nil, fmt.Errorf("db begin failed: %w", err)
 	}
 
-	if err := s.DataStore.UpdateTracklist(tx, id, model.Name, model.URL, model.Date.Time); err != nil {
+	if err := s.DataStore.UpdateTracklist(tx, id, model.Name, model.URL, model.Date); err != nil {
 		return nil, fmt.Errorf("update tracklist failed: %w", err)
 	}
 
