@@ -69,9 +69,9 @@ const (
 		SELECT
 			id,
 			artist,
-			ts_headline(artist, q) as artist_highlighted,
+			ts_headline(artist, q, 'StartSel=<<, StopSel=>>') as artist_highlighted,
 			name,
-			ts_headline(name, q) as name_highlighted,
+			ts_headline(name, q, 'StartSel=<<, StopSel=>>') as name_highlighted,
 			genre,
 			bpm,
 			key,
