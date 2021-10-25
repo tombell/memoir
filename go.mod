@@ -1,7 +1,7 @@
 module github.com/tombell/memoir
 
 require (
-	github.com/aws/aws-sdk-go v1.41.9
+	github.com/aws/aws-sdk-go v1.41.10
 	github.com/gofrs/uuid v4.1.0+incompatible
 	github.com/jmoiron/sqlx v1.3.4
 	github.com/lib/pq v1.10.3
