@@ -51,9 +51,9 @@ func (s *Store) GetTrack(id string) (*Track, error) {
 	case sql.ErrNoRows:
 		return nil, nil
 	case nil:
-		return nil, fmt.Errorf("query row failed: %w", err)
-	default:
 		return &track, nil
+	default:
+		return nil, fmt.Errorf("query row failed: %w", err)
 	}
 }
 
@@ -66,9 +66,9 @@ func (s *Store) GetTrackByArtistAndName(artist, name string) (*Track, error) {
 	case sql.ErrNoRows:
 		return nil, nil
 	case nil:
-		return nil, fmt.Errorf("query row failed: %w", err)
-	default:
 		return &track, nil
+	default:
+		return nil, fmt.Errorf("query row failed: %w", err)
 	}
 }
 

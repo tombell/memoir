@@ -97,9 +97,9 @@ func (s *Store) GetTracklist(id string) (*Tracklist, error) {
 	case sql.ErrNoRows:
 		return nil, nil
 	case nil:
-		return nil, fmt.Errorf("db query row failed: %w", err)
-	default:
 		return &tracklist, nil
+	default:
+		return nil, fmt.Errorf("db query row failed: %w", err)
 	}
 }
 
@@ -159,9 +159,9 @@ func (s *Store) FindTracklistByName(name string) (*Tracklist, error) {
 	case sql.ErrNoRows:
 		return nil, nil
 	case nil:
-		return nil, fmt.Errorf("db query row failed: %w", err)
-	default:
 		return &tracklist, nil
+	default:
+		return nil, fmt.Errorf("db query row failed: %w", err)
 	}
 }
 
