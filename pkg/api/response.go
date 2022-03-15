@@ -7,8 +7,8 @@ import (
 	"strconv"
 )
 
-func (s *Server) addPaginationHeaders(w http.ResponseWriter, per, page, total int) {
-	pages := int(math.Ceil(float64(total) / float64(per)))
+func (s *Server) addPaginationHeaders(w http.ResponseWriter, limit, page, total int) {
+	pages := int(math.Ceil(float64(total) / float64(limit)))
 
 	w.Header().Add("Current-Page", strconv.Itoa(page))
 	w.Header().Add("Total-Pages", strconv.Itoa(pages))

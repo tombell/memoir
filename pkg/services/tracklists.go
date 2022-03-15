@@ -11,10 +11,10 @@ import (
 )
 
 // GetTracklists gets the given amount of tracklists for the given page.
-func (s *Services) GetTracklists(rid string, page, per int) ([]*Tracklist, int, error) {
+func (s *Services) GetTracklists(rid string, page, limit int) ([]*Tracklist, int, error) {
 	s.Logger.Printf("[%s] getting tracklists (page %d)", rid, page)
 
-	offset := per * (page - 1)
+	offset := limit * (page - 1)
 
 	done := make(chan struct{})
 
@@ -25,7 +25,7 @@ func (s *Services) GetTracklists(rid string, page, per int) ([]*Tracklist, int, 
 		close(done)
 	}()
 
-	tracklists, err := s.DataStore.GetTracklists(offset, per)
+	tracklists, err := s.DataStore.GetTracklists(offset, limit)
 	if err != nil {
 		return nil, -1, fmt.Errorf("get tracklists failed: %w", err)
 	}
@@ -163,7 +163,7 @@ func (s *Services) UpdateTracklist(rid, id string, model *TracklistUpdate) (*Tra
 }
 
 // GetTracklistsByTrack gets all tracklists that include the given track by ID.
-func (s *Services) GetTracklistsByTrack(rid, id string, page, per int) ([]*Tracklist, int, error) {
+func (s *Services) GetTracklistsByTrack(rid, id string, page, limit int) ([]*Tracklist, int, error) {
 	s.Logger.Printf("[%s] getting tracklists by track (id %s, page: %d)", rid, id, page)
 
 	done := make(chan struct{})
