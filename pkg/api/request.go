@@ -40,6 +40,6 @@ func (s *Server) idParam(rid string, w http.ResponseWriter, r *http.Request) str
 	return id
 }
 
-func searchQueryParam(r *http.Request) string {
+func searchParam(r *http.Request) string {
 	return r.URL.Query().Get("q")
 }

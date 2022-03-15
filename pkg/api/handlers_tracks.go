@@ -66,7 +66,7 @@ func (s *Server) handleGetMostPlayedTracks() http.HandlerFunc {
 func (s *Server) handleSearchTracks() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		rid := getRequestID(r)
-		q := searchQueryParam(r)
+		q := searchParam(r)
 
 		tracks, err := s.services.SearchTracks(rid, q, searchResultsLimit)
 		if err != nil {
