@@ -14,8 +14,8 @@ const (
 			updated
 		) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`
 
-	// GetTrackByID gets the track with the given ID.
-	GetTrackByID = `
+	// FindTrackByID gets the track with the given ID.
+	FindTrackByID = `
 		SELECT
 			id,
 			artist,
@@ -29,8 +29,8 @@ const (
 		WHERE id = $1
 		LIMIT 1`
 
-	// GetTrackByArtistAndName gets the track with the given artist and name.
-	GetTrackByArtistAndName = `
+	// FindTrackByArtistAndName gets the track with the given artist and name.
+	FindTrackByArtistAndName = `
 		SELECT
 			id,
 			artist,
@@ -45,8 +45,8 @@ const (
 		AND name = $2
 		LIMIT 1`
 
-	// GetMostPlayedTracks gets tracks which are in the most tracklists.
-	GetMostPlayedTracks = `
+	// FindMostPlayedTracks gets tracks which are in the most tracklists.
+	FindMostPlayedTracks = `
 		SELECT
 			t.id,
 			t.artist,
@@ -63,9 +63,9 @@ const (
 		ORDER BY played DESC
 		LIMIT $1`
 
-	// GetTracksByQuery gets the tracks where the artist and/or name matches the
+	// FindTracksByQuery gets the tracks where the artist and/or name matches the
 	// given query.
-	GetTracksByQuery = `
+	FindTracksByQuery = `
 		SELECT
 			id,
 			artist,

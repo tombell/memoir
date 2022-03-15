@@ -122,7 +122,7 @@ func (s *Services) AddTracklist(rid string, model *TracklistAdd) (*Tracklist, er
 func (s *Services) GetTracklist(rid, id string) (*Tracklist, error) {
 	s.Logger.Printf("[%s] getting tracklist (id %s)", rid, id)
 
-	tracklist, err := s.DataStore.GetTracklistWithTracks(id)
+	tracklist, err := s.DataStore.FindTracklistWithTracks(id)
 	if err != nil {
 		return nil, fmt.Errorf("get tracklist with tracks failed: %w", err)
 	}
@@ -151,7 +151,7 @@ func (s *Services) UpdateTracklist(rid, id string, model *TracklistUpdate) (*Tra
 		return nil, fmt.Errorf("tx commit failed: %w", err)
 	}
 
-	tracklist, err := s.DataStore.GetTracklistWithTracks(id)
+	tracklist, err := s.DataStore.FindTracklistWithTracks(id)
 	if err != nil {
 		return nil, fmt.Errorf("find tracklist failed: %w", err)
 	}

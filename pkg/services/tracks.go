@@ -15,7 +15,7 @@ import (
 func (s *Services) GetTrack(rid, id string) (*Track, error) {
 	s.Logger.Printf("[%s] getting track (id %s)", rid, id)
 
-	track, err := s.DataStore.GetTrack(id)
+	track, err := s.DataStore.FindTrack(id)
 	if err != nil {
 		return nil, fmt.Errorf("get track failed: %w", err)
 	}
@@ -30,7 +30,7 @@ func (s *Services) GetTrack(rid, id string) (*Track, error) {
 func (s *Services) AddTrack(rid string, tx *sql.Tx, model *TrackAdd) (*Track, error) {
 	s.Logger.Printf("[%s] adding track (name %s)", rid, model.Name)
 
-	track, err := s.DataStore.GetTrackByArtistAndName(model.Artist, model.Name)
+	track, err := s.DataStore.FindTrackByArtistAndName(model.Artist, model.Name)
 	if err != nil {
 		tx.Rollback()
 		return nil, fmt.Errorf("find track failed: %w", err)

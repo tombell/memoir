@@ -40,8 +40,8 @@ const (
 		ORDER BY tl.date DESC
 		OFFSET $1 LIMIT $2`
 
-	// GetTracklistByID gets the tracklist with the given ID.
-	GetTracklistByID = `
+	// FindTracklistByID gets the tracklist with the given ID.
+	FindTracklistByID = `
 		SELECT
 			id,
 			name,
@@ -52,9 +52,9 @@ const (
 		WHERE id = $1
 		LIMIT 1`
 
-	// GetTracklistWithTracksByID gets the tracklist with the given ID,
+	// FindTracklistWithTracksByID gets the tracklist with the given ID,
 	// including tracks.
-	GetTracklistWithTracksByID = `
+	FindTracklistWithTracksByID = `
 		SELECT
 			tl.*,
 			t.id as track_id,
@@ -71,8 +71,8 @@ const (
 		WHERE tl.id = $1
 		ORDER BY tt.track_number ASC`
 
-	// GetTracklistByName gets the tracklist with the given name.
-	GetTracklistByName = `
+	// FindTracklistByName gets the tracklist with the given name.
+	FindTracklistByName = `
 		SELECT
 			id,
 			name,
@@ -83,9 +83,9 @@ const (
 		WHERE name = $1
 		LIMIT 1`
 
-	// GetTracklistWithTracksByName gets the tracklist with the given name,
+	// FindTracklistWithTracksByName gets the tracklist with the given name,
 	// including tracks.
-	GetTracklistWithTracksByName = `
+	FindTracklistWithTracksByName = `
 		SELECT
 			tl.*,
 			t.id as track_id,
@@ -102,9 +102,9 @@ const (
 		WHERE tl.name = $1
 		ORDER BY tt.track_number ASC`
 
-	// GetTracklistsByTrackIDCount gets the total number of tracklists that
+	// FindTracklistsByTrackIDCount gets the total number of tracklists that
 	// contain the given track ID.
-	GetTracklistsByTrackIDCount = `
+	FindTracklistsByTrackIDCount = `
 		SELECT
 			COUNT(tracklists.id)
 		FROM (
@@ -116,9 +116,9 @@ const (
 			ORDER BY tl.date DESC
 		) AS tracklists`
 
-	// GetTracklistsByTrackID gets all the tracklists for a given offset and
+	// FindTracklistsByTrackID gets all the tracklists for a given offset and
 	// limit, that contain the given track ID.
-	GetTracklistsByTrackID = `
+	FindTracklistsByTrackID = `
 		SELECT tl.*, (
 			SELECT count(id)
 			FROM tracklist_tracks

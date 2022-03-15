@@ -43,11 +43,11 @@ func (s *Store) AddTrack(tx *sql.Tx, track *Track) error {
 	return nil
 }
 
-// GetTrack gets a track with the given ID from the database.
-func (s *Store) GetTrack(id string) (*Track, error) {
+// FindTrack gets a track with the given ID from the database.
+func (s *Store) FindTrack(id string) (*Track, error) {
 	var track Track
 
-	switch err := s.QueryRowx(queries.GetTrackByID, id).StructScan(&track); err {
+	switch err := s.QueryRowx(queries.FindTrackByID, id).StructScan(&track); err {
 	case sql.ErrNoRows:
 		return nil, nil
 	case nil:
@@ -57,12 +57,12 @@ func (s *Store) GetTrack(id string) (*Track, error) {
 	}
 }
 
-// GetTrackByArtistAndName finds a track with the given artist and name in the
+// FindTrackByArtistAndName finds a track with the given artist and name in the
 // database.
-func (s *Store) GetTrackByArtistAndName(artist, name string) (*Track, error) {
+func (s *Store) FindTrackByArtistAndName(artist, name string) (*Track, error) {
 	var track Track
 
-	switch err := s.QueryRowx(queries.GetTrackByArtistAndName, artist, name).StructScan(&track); err {
+	switch err := s.QueryRowx(queries.FindTrackByArtistAndName, artist, name).StructScan(&track); err {
 	case sql.ErrNoRows:
 		return nil, nil
 	case nil:
@@ -75,7 +75,7 @@ func (s *Store) GetTrackByArtistAndName(artist, name string) (*Track, error) {
 // FindMostPlayedTracks finds the tracks that are most played, limiting it to
 // the given count in the database.
 func (s *Store) FindMostPlayedTracks(limit int) ([]*Track, error) {
-	rows, err := s.Queryx(queries.GetMostPlayedTracks, limit)
+	rows, err := s.Queryx(queries.FindMostPlayedTracks, limit)
 	defer rows.Close()
 	if err != nil {
 		return nil, fmt.Errorf("db query failed: %w", err)
@@ -103,7 +103,7 @@ func (s *Store) FindMostPlayedTracks(limit int) ([]*Track, error) {
 // FindTracksByQuery finds the tracks that have artists or names matching the
 // given query in the database.
 func (s *Store) FindTracksByQuery(query string, limit int) ([]*Track, error) {
-	rows, err := s.Queryx(queries.GetTracksByQuery, query, limit)
+	rows, err := s.Queryx(queries.FindTracksByQuery, query, limit)
 	defer rows.Close()
 	if err != nil {
 		return nil, fmt.Errorf("db query failed: %w", err)
