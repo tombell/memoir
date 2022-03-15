@@ -9,7 +9,7 @@ import (
 	"github.com/matryer/way"
 )
 
-func (s *Server) pageQueryParam(rid string, w http.ResponseWriter, r *http.Request) int {
+func (s *Server) pageParam(rid string, w http.ResponseWriter, r *http.Request) int {
 	page := r.URL.Query().Get("page")
 	if page == "" {
 		page = "1"

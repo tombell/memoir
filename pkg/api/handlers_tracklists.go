@@ -12,7 +12,7 @@ import (
 func (s *Server) handleGetTracklists() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		rid := getRequestID(r)
-		page := s.pageQueryParam(rid, w, r)
+		page := s.pageParam(rid, w, r)
 
 		tracklists, total, err := s.services.GetTracklists(rid, page, perPageTracklists)
 		if err != nil {

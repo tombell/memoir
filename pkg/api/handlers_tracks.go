@@ -32,7 +32,7 @@ func (s *Server) handleGetTracklistsByTrack() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		rid := getRequestID(r)
 		id := s.idRouteParam(rid, w, r)
-		page := s.pageQueryParam(rid, w, r)
+		page := s.pageParam(rid, w, r)
 
 		if id == "" {
 			return
