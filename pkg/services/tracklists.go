@@ -30,7 +30,7 @@ func (s *Services) GetTracklists(rid string, page, per int) ([]*Tracklist, int, 
 		return nil, -1, fmt.Errorf("get tracklists failed: %w", err)
 	}
 
-	var models []*Tracklist
+	models := make([]*Tracklist, 0)
 
 	for _, tracklist := range tracklists {
 		models = append(models, NewTracklist(tracklist))
@@ -180,7 +180,7 @@ func (s *Services) GetTracklistsByTrack(rid, id string, page, per int) ([]*Track
 		return nil, -1, fmt.Errorf("find tracklists by track id failed: %w", err)
 	}
 
-	var models []*Tracklist
+	models := make([]*Tracklist, 0)
 
 	for _, tracklist := range tracklists {
 		models = append(models, NewTracklist(tracklist))
