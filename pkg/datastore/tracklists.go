@@ -235,8 +235,8 @@ func (s *Store) FindTracklistsByTrackIDCount(id string) (int, error) {
 
 // FindTracklistsByTrackID finds all tracklists that contain the given track
 // in the database.
-func (s *Store) FindTracklistsByTrackID(id string) ([]*Tracklist, error) {
-	rows, err := s.Queryx(queries.FindTracklistsByTrackID, id)
+func (s *Store) FindTracklistsByTrackID(id string, offset, limit int) ([]*Tracklist, error) {
+	rows, err := s.Queryx(queries.FindTracklistsByTrackID, id, offset, limit)
 	defer rows.Close()
 	if err != nil {
 		return nil, fmt.Errorf("db query failed: %w", err)

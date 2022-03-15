@@ -14,8 +14,6 @@ import (
 func (s *Services) GetTracklists(rid string, page, limit int) ([]*Tracklist, int, error) {
 	s.Logger.Printf("[%s] getting tracklists (page %d)", rid, page)
 
-	offset := limit * (page - 1)
-
 	done := make(chan struct{})
 
 	var count int
@@ -25,7 +23,7 @@ func (s *Services) GetTracklists(rid string, page, limit int) ([]*Tracklist, int
 		close(done)
 	}()
 
-	tracklists, err := s.DataStore.GetTracklists(offset, limit)
+	tracklists, err := s.DataStore.GetTracklists(limit*(page-1), limit)
 	if err != nil {
 		return nil, -1, fmt.Errorf("get tracklists failed: %w", err)
 	}
@@ -175,7 +173,7 @@ func (s *Services) GetTracklistsByTrack(rid, id string, page, limit int) ([]*Tra
 		close(done)
 	}()
 
-	tracklists, err := s.DataStore.FindTracklistsByTrackID(id)
+	tracklists, err := s.DataStore.FindTracklistsByTrackID(id, limit*(page-1), limit)
 	if err != nil {
 		return nil, -1, fmt.Errorf("find tracklists by track id failed: %w", err)
 	}
