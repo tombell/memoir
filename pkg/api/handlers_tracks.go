@@ -16,11 +16,11 @@ func (s *Server) handleGetTrack() http.HandlerFunc {
 
 		track, err := s.services.GetTrack(rid, id)
 		if err != nil {
-			s.writeError(rid, w, err)
+			s.writeInternalServerError(rid, w, err)
 			return
 		}
 		if track == nil {
-			s.writeNotFound(rid, w, fmt.Sprintf("could not find track with id: %s", id))
+			s.writeNotFound(rid, w, fmt.Sprintf("track with id: %s", id))
 			return
 		}
 
@@ -40,7 +40,7 @@ func (s *Server) handleGetTracklistsByTrack() http.HandlerFunc {
 
 		tracklists, total, err := s.services.GetTracklistsByTrack(rid, id, page, perPageTracklists)
 		if err != nil {
-			s.writeError(rid, w, err)
+			s.writeInternalServerError(rid, w, err)
 			return
 		}
 
@@ -55,7 +55,7 @@ func (s *Server) handleGetMostPlayedTracks() http.HandlerFunc {
 
 		tracks, err := s.services.GetMostPlayedTracks(rid, mostPlayedTracksLimit)
 		if err != nil {
-			s.writeError(rid, w, err)
+			s.writeInternalServerError(rid, w, err)
 			return
 		}
 
@@ -70,7 +70,7 @@ func (s *Server) handleSearchTracks() http.HandlerFunc {
 
 		tracks, err := s.services.SearchTracks(rid, q, searchResultsLimit)
 		if err != nil {
-			s.writeError(rid, w, err)
+			s.writeInternalServerError(rid, w, err)
 			return
 		}
 

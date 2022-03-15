@@ -33,7 +33,7 @@ func (s *Server) idParam(rid string, w http.ResponseWriter, r *http.Request) str
 	id := way.Param(r.Context(), "id")
 
 	if _, err := uuid.FromString(id); err != nil {
-		s.writeNotFound(rid, w, fmt.Sprintf("could not decode id: %s", id))
+		s.writeNotFound(rid, w, fmt.Sprintf("model with id: %s", id))
 		return ""
 	}
 
