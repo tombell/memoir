@@ -8,10 +8,6 @@ func (s *Server) routes() {
 
 	s.router.Handle("OPTIONS", "/...", use(s.handlePreflight(), s.cors))
 
-	// Health
-
-	s.router.Handle("GET", "/healthz", use(s.handleHealth(), s.logging, s.requestID))
-
 	// Tracklists
 
 	s.router.Handle("GET", "/tracklists", use(s.handleGetTracklists(), api...))
