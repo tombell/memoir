@@ -29,7 +29,7 @@ func (s *Server) pageParam(rid string, w http.ResponseWriter, r *http.Request) i
 	return n
 }
 
-func (s *Server) idRouteParam(rid string, w http.ResponseWriter, r *http.Request) string {
+func (s *Server) idParam(rid string, w http.ResponseWriter, r *http.Request) string {
 	id := way.Param(r.Context(), "id")
 
 	if _, err := uuid.FromString(id); err != nil {

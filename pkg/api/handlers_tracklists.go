@@ -56,7 +56,7 @@ func (s *Server) handlePostTracklists() http.HandlerFunc {
 func (s *Server) handleGetTracklist() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		rid := getRequestID(r)
-		id := s.idRouteParam(rid, w, r)
+		id := s.idParam(rid, w, r)
 
 		if id == "" {
 			return
@@ -79,7 +79,7 @@ func (s *Server) handleGetTracklist() http.HandlerFunc {
 func (s *Server) handlePatchTracklist() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		rid := getRequestID(r)
-		id := s.idRouteParam(rid, w, r)
+		id := s.idParam(rid, w, r)
 
 		if id == "" {
 			return
