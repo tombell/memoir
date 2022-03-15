@@ -69,7 +69,7 @@ func (s *Services) GetMostPlayedTracks(rid string, limit int) ([]*Track, error) 
 		return nil, fmt.Errorf("find most played tracks failed: %w", err)
 	}
 
-	var models []*Track
+	models := make([]*Track, 0)
 
 	for _, track := range tracks {
 		models = append(models, NewTrack(track))
@@ -88,7 +88,7 @@ func (s *Services) SearchTracks(rid, query string, limit int) ([]*Track, error) 
 		return nil, fmt.Errorf("find tracks by query failed: %w", err)
 	}
 
-	var models []*Track
+	models := make([]*Track, 0)
 
 	for _, track := range tracks {
 		models = append(models, NewTrackFromSearchResult(track))
