@@ -24,7 +24,7 @@ func (s *Server) writeNotFound(rid string, w http.ResponseWriter, msg string) {
 	w.WriteHeader(http.StatusNotFound)
 }
 
-func (s *Server) writeJSON(rid string, w http.ResponseWriter, model interface{}) {
+func (s *Server) writeJSON(rid string, w http.ResponseWriter, model any) {
 	resp, err := json.Marshal(model)
 	if err != nil {
 		s.writeInternalServerError(rid, w, err)
