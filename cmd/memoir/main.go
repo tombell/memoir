@@ -20,8 +20,7 @@ Commands:
 
 Special options:
   --help     Show this message, then exit
-  --version  Show the version number, then exit
-`
+  --version  Show the version number, then exit`
 
 var (
 	cfgpath = flag.String("config", ".env.dev.toml", "")
@@ -30,7 +29,7 @@ var (
 
 func main() {
 	flag.Usage = func() {
-		fmt.Fprintf(os.Stderr, helpText)
+		fmt.Fprintln(os.Stderr, helpText)
 		os.Exit(2)
 	}
 
