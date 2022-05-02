@@ -14,7 +14,7 @@ type Config struct {
 	Migrations string `toml:"migrations"`
 
 	API struct {
-		WriteKey string `toml:"write_key"`
+		Token string `toml:"token"`
 	} `toml:"api"`
 
 	AWS struct {

@@ -14,7 +14,7 @@ func (s *Server) auth(h http.HandlerFunc) http.HandlerFunc {
 			w.WriteHeader(http.StatusUnauthorized)
 		}
 
-		if key != s.services.Config.API.WriteKey {
+		if key != s.services.Config.API.Token {
 			s.services.Logger.Printf("[%s] error=invalid api key", rid)
 			w.WriteHeader(http.StatusForbidden)
 			return
