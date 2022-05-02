@@ -37,7 +37,7 @@ func (s *Server) handlePostTracklists() http.HandlerFunc {
 		}
 
 		var tl services.TracklistAdd
-		if err := json.Unmarshal(body, &tl); err != nil {
+		if err = json.Unmarshal(body, &tl); err != nil {
 			s.writeInternalServerError(rid, w, err)
 			return
 		}
@@ -93,7 +93,7 @@ func (s *Server) handlePatchTracklist() http.HandlerFunc {
 		}
 
 		var tracklistUpdate services.TracklistUpdate
-		if err := json.Unmarshal(body, &tracklistUpdate); err != nil {
+		if err = json.Unmarshal(body, &tracklistUpdate); err != nil {
 			s.writeInternalServerError(rid, w, err)
 			return
 		}
