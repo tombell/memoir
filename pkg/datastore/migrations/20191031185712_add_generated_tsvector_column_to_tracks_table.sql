@@ -1,4 +1,4 @@
--- UP
+-- migrate:up
 
 ALTER TABLE tracks
 ADD COLUMN fts_name_and_artist TSVECTOR
@@ -10,7 +10,7 @@ GENERATED ALWAYS AS (
 
 CREATE INDEX tracks_fts_name_and_artist_idx ON tracks USING GIN(fts_name_and_artist);
 
--- DOWN
+-- migrate:down
 
 DROP INDEX IF EXISTS tracks_fts_name_and_artist_idx;
 

@@ -1,4 +1,4 @@
--- UP
+-- migrate:up
 
 CREATE TABLE tracklists (
   id      UUID          PRIMARY KEY,
@@ -12,7 +12,7 @@ CREATE TABLE tracklists (
 
 CREATE INDEX tracklists_name_idx ON tracklists ((lower(name)));
 
--- DOWN
+-- migrate:down
 
 DROP INDEX IF EXISTS tracklists_name_idx;
 
