@@ -1,0 +1,15 @@
+version: "1"
+packages:
+  - name: "datastore"
+    path: "pkg/datastore"
+    queries: "pkg/datastore/queries/"
+    schema: "pkg/datastore/migrations/"
+    emit_empty_slices: true
+    emit_result_struct_pointers: true
+    emit_params_struct_pointers: true
+overrides:
+  - go_type: "string"
+    db_type: "uuid"
+  - go_type: "string"
+    db_type: "uuid"
+    nullable: true
