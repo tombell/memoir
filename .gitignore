@@ -17,3 +17,8 @@ dist/
 # Environment configuration files
 .env.toml
 .env.*.toml
+
+# sqlc generated files
+pkg/datastore/*.sql.go
+pkg/datastore/db.go
+pkg/datastore/models.go
