@@ -13,3 +13,6 @@ overrides:
   - go_type: "string"
     db_type: "uuid"
     nullable: true
+rename:
+  bpm: BPM
+  url: URL
