@@ -7,7 +7,7 @@ import (
 	"github.com/gofrs/uuid"
 	"github.com/tombell/tonality"
 
-	"github.com/tombell/memoir/pkg/datastore"
+	"github.com/tombell/memoir/internal/datastore"
 )
 
 // GetTracklists gets the given amount of tracklists for the given page.

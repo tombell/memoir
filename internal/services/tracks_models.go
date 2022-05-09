@@ -3,7 +3,7 @@ package services
 import (
 	"time"
 
-	"github.com/tombell/memoir/pkg/datastore"
+	"github.com/tombell/memoir/internal/datastore"
 )
 
 // Track contains data about a track, with optional played count and search

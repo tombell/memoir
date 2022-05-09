@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/tombell/memoir/pkg/datastore/queries"
+	"github.com/tombell/memoir/internal/datastore/queries"
 )
 
 // Track contains data about a track row in the database.

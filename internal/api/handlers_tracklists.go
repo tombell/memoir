@@ -6,7 +6,7 @@ import (
 	"io/ioutil"
 	"net/http"
 
-	"github.com/tombell/memoir/pkg/services"
+	"github.com/tombell/memoir/internal/services"
 )
 
 func (s *Server) handleGetTracklists() http.HandlerFunc {

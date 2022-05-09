@@ -4,7 +4,7 @@ import (
 	"database/sql"
 	"fmt"
 
-	"github.com/tombell/memoir/pkg/datastore/queries"
+	"github.com/tombell/memoir/internal/datastore/queries"
 )
 
 // TracklistTrack contains data about a tracklist_track row in the database.

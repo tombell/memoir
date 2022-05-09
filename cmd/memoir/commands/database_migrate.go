@@ -5,8 +5,9 @@ import (
 	"log"
 	"os"
 
-	"github.com/tombell/memoir/pkg/config"
 	"github.com/tombell/trek"
+
+	"github.com/tombell/memoir/internal/config"
 )
 
 const migrateHelpText = `usage: memoir-db migrate [<args>]

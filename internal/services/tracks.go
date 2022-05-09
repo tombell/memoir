@@ -8,7 +8,7 @@ import (
 
 	"github.com/gofrs/uuid"
 
-	"github.com/tombell/memoir/pkg/datastore"
+	"github.com/tombell/memoir/internal/datastore"
 )
 
 // GetTrack gets a track with the given ID.

@@ -3,7 +3,7 @@ package services
 import (
 	"time"
 
-	"github.com/tombell/memoir/pkg/datastore"
+	"github.com/tombell/memoir/internal/datastore"
 )
 
 // Tracklist contains data about a specific tracklist. It can contain optional

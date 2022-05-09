@@ -9,11 +9,11 @@ import (
 	"os/signal"
 	"time"
 
-	"github.com/tombell/memoir/pkg/api"
-	"github.com/tombell/memoir/pkg/config"
-	"github.com/tombell/memoir/pkg/datastore"
-	"github.com/tombell/memoir/pkg/filestore"
-	"github.com/tombell/memoir/pkg/services"
+	"github.com/tombell/memoir/internal/api"
+	"github.com/tombell/memoir/internal/config"
+	"github.com/tombell/memoir/internal/datastore"
+	"github.com/tombell/memoir/internal/filestore"
+	"github.com/tombell/memoir/internal/services"
 )
 
 const runHelpText = `usage: memoir run [<args>]
