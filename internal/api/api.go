@@ -17,14 +17,12 @@ const (
 	searchResultsLimit    = 10
 )
 
-// Server represents an API server, with a router and service dependencies.
 type Server struct {
 	services *services.Services
 	router   *way.Router
 	server   *http.Server
 }
 
-// New returns an initialised API server with the given services.
 func New(services *services.Services) *Server {
 	return &Server{
 		services: services,
@@ -32,8 +30,6 @@ func New(services *services.Services) *Server {
 	}
 }
 
-// Start initialises the API server, and begins listening on the configured
-// network address.
 func (s *Server) Start() error {
 	s.routes()
 
@@ -49,7 +45,6 @@ func (s *Server) Start() error {
 	return s.server.ListenAndServe()
 }
 
-// Shutdown shuts the running API server down.
 func (s *Server) Shutdown(ctx context.Context) error {
 	if s.server == nil {
 		return nil

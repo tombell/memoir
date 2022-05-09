@@ -10,7 +10,6 @@ import (
 	"github.com/tombell/memoir/internal/datastore"
 )
 
-// GetTracklists gets the given amount of tracklists for the given page.
 func (s *Services) GetTracklists(rid string, page, limit int) ([]*Tracklist, int, error) {
 	s.Logger.Printf("[%s] getting tracklists (page %d)", rid, page)
 
@@ -39,8 +38,6 @@ func (s *Services) GetTracklists(rid string, page, limit int) ([]*Tracklist, int
 	return models, count, nil
 }
 
-// AddTracklist imports a new tracklist, including any new tracks that have
-// not been imported before.
 func (s *Services) AddTracklist(rid string, model *TracklistAdd) (*Tracklist, error) {
 	s.Logger.Printf("[%s] adding tracklist (name %s)", rid, model.Name)
 
@@ -116,7 +113,6 @@ func (s *Services) AddTracklist(rid string, model *TracklistAdd) (*Tracklist, er
 	return NewTracklist(tracklist), nil
 }
 
-// GetTracklist gets a tracklist with the given ID.
 func (s *Services) GetTracklist(rid, id string) (*Tracklist, error) {
 	s.Logger.Printf("[%s] getting tracklist (id %s)", rid, id)
 
@@ -131,7 +127,6 @@ func (s *Services) GetTracklist(rid, id string) (*Tracklist, error) {
 	return NewTracklist(tracklist), nil
 }
 
-// UpdateTracklist updates the information of a tracklist.
 func (s *Services) UpdateTracklist(rid, id string, model *TracklistUpdate) (*Tracklist, error) {
 	s.Logger.Printf("[%s] updating tracklist (id %s)", rid, id)
 
@@ -160,7 +155,6 @@ func (s *Services) UpdateTracklist(rid, id string, model *TracklistUpdate) (*Tra
 	return NewTracklist(tracklist), nil
 }
 
-// GetTracklistsByTrack gets all tracklists that include the given track by ID.
 func (s *Services) GetTracklistsByTrack(rid, id string, page, limit int) ([]*Tracklist, int, error) {
 	s.Logger.Printf("[%s] getting tracklists by track (id %s, page: %d)", rid, id, page)
 

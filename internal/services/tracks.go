@@ -11,7 +11,6 @@ import (
 	"github.com/tombell/memoir/internal/datastore"
 )
 
-// GetTrack gets a track with the given ID.
 func (s *Services) GetTrack(rid, id string) (*Track, error) {
 	s.Logger.Printf("[%s] getting track (id %s)", rid, id)
 
@@ -26,7 +25,6 @@ func (s *Services) GetTrack(rid, id string) (*Track, error) {
 	return NewTrack(track), nil
 }
 
-// AddTrack adds the new track if it doesn't already exist.
 func (s *Services) AddTrack(rid string, tx *sql.Tx, model *TrackAdd) (*Track, error) {
 	s.Logger.Printf("[%s] adding track (name %s)", rid, model.Name)
 
@@ -60,7 +58,6 @@ func (s *Services) AddTrack(rid string, tx *sql.Tx, model *TrackAdd) (*Track, er
 	return NewTrack(track), nil
 }
 
-// GetMostPlayedTracks gets the tracks that have been played most in tracklists.
 func (s *Services) GetMostPlayedTracks(rid string, limit int) ([]*Track, error) {
 	s.Logger.Printf("[%s] getting most played tracks (limit %d)", rid, limit)
 
@@ -78,8 +75,6 @@ func (s *Services) GetMostPlayedTracks(rid string, limit int) ([]*Track, error) 
 	return models, nil
 }
 
-// SearchTracks searches for tracks that have artists and/or names matching the
-// query.
 func (s *Services) SearchTracks(rid, query string, limit int) ([]*Track, error) {
 	s.Logger.Printf("[%s] searching tracks (query %q)", rid, query)
 

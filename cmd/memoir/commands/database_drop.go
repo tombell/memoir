@@ -18,7 +18,6 @@ Special options:
   --help    Show this message, then exit
 `
 
-// DatabaseDrop ...
 func DatabaseDrop(logger *log.Logger) {
 	cmd := flag.NewFlagSet("drop", flag.ExitOnError)
 	cmd.Usage = usageText(dropHelpText)

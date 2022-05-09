@@ -18,7 +18,6 @@ Special options:
   --help    Show this message, then exit
 `
 
-// DatabaseCreateCommand ...
 func DatabaseCreateCommand(logger *log.Logger) {
 	cmd := flag.NewFlagSet("create", flag.ExitOnError)
 	cmd.Usage = usageText(createHelpText)

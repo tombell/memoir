@@ -7,7 +7,6 @@ import (
 	"github.com/tombell/memoir/internal/datastore/queries"
 )
 
-// TracklistTrack contains data about a tracklist_track row in the database.
 type TracklistTrack struct {
 	ID          string
 	TracklistID string
@@ -15,7 +14,6 @@ type TracklistTrack struct {
 	TrackNumber int
 }
 
-// AddTracklistTrack adds a new tracklist to track mapping into the database.
 func (s *Store) AddTracklistTrack(tx *sql.Tx, tt *TracklistTrack) error {
 	_, err := tx.Exec(
 		queries.AddTracklistTrack,

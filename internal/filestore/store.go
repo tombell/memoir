@@ -12,12 +12,10 @@ import (
 	"github.com/aws/aws-sdk-go/service/s3"
 )
 
-// Store is a file store backed by S3.
 type Store struct {
 	svc *s3.S3
 }
 
-// New returns an initialised Store storage layer.
 func New(key, secret, region string) *Store {
 	creds := credentials.NewStaticCredentials(key, secret, "")
 	cfg := aws.NewConfig().WithCredentials(creds).WithRegion(region)
@@ -26,7 +24,6 @@ func New(key, secret, region string) *Store {
 	return &Store{s3.New(sess)}
 }
 
-// Exists checks if the object with the given key exists in the Store bucket.
 func (s *Store) Exists(bucket, key string) (bool, error) {
 	input := &s3.GetObjectInput{
 		Bucket: aws.String(bucket),
@@ -47,7 +44,6 @@ func (s *Store) Exists(bucket, key string) (bool, error) {
 	return true, nil
 }
 
-// Put uploads an object with the given key to the Store bucket.
 func (s *Store) Put(bucket, key string, r io.ReadSeeker) error {
 	var buf [512]byte
 

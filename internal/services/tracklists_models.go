@@ -6,8 +6,6 @@ import (
 	"github.com/tombell/memoir/internal/datastore"
 )
 
-// Tracklist contains data about a specific tracklist. It can contain optional
-// track count and list of associated tracks.
 type Tracklist struct {
 	ID      string    `json:"id"`
 	Name    string    `json:"name"`
@@ -22,7 +20,6 @@ type Tracklist struct {
 	TrackCount int      `json:"trackCount"`
 }
 
-// TracklistAdd contains data about a tracklist to add.
 type TracklistAdd struct {
 	Name    string     `json:"name"`
 	Date    time.Time  `json:"date"`
@@ -31,15 +28,12 @@ type TracklistAdd struct {
 	Tracks  [][]string `json:"tracks"`
 }
 
-// TracklistUpdate contains data about a tracklist to update.
 type TracklistUpdate struct {
 	Name string    `json:"name"`
 	Date time.Time `json:"date"`
 	URL  string    `json:"url"`
 }
 
-// NewTracklist returns a new Tracklist with fields mapped from a database
-// record.
 func NewTracklist(record *datastore.Tracklist) *Tracklist {
 	tracklist := &Tracklist{
 		ID:         record.ID,

@@ -25,7 +25,6 @@ Special options:
   --help    Show this message, then exit
 `
 
-// RunCommand ...
 func RunCommand(logger *log.Logger) {
 	cmd := flag.NewFlagSet("migrate", flag.ExitOnError)
 	cmd.Usage = usageText(runHelpText)

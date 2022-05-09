@@ -8,7 +8,6 @@ import (
 	"github.com/tombell/memoir/internal/datastore/queries"
 )
 
-// Tracklist contains data about a tracklist row in the database.
 type Tracklist struct {
 	ID      string
 	Name    string
@@ -22,7 +21,6 @@ type Tracklist struct {
 	Tracks     []*Track
 }
 
-// AddTracklist adds a new tracklist into the database.
 func (s *Store) AddTracklist(tx *sql.Tx, tracklist *Tracklist) error {
 	if _, err := tx.Exec(
 		queries.AddTracklist,
@@ -40,7 +38,6 @@ func (s *Store) AddTracklist(tx *sql.Tx, tracklist *Tracklist) error {
 	return nil
 }
 
-// UpdateTracklist updates a tracklist in the database.
 func (s *Store) UpdateTracklist(tx *sql.Tx, id, name, url string, date time.Time) error {
 	if _, err := tx.Exec(
 		queries.UpdateTracklist,
@@ -55,7 +52,6 @@ func (s *Store) UpdateTracklist(tx *sql.Tx, id, name, url string, date time.Time
 	return nil
 }
 
-// GetTracklistsCount returns the total number of tracklists.
 func (s *Store) GetTracklistsCount() (int, error) {
 	var count struct {
 		Count int
@@ -68,7 +64,6 @@ func (s *Store) GetTracklistsCount() (int, error) {
 	return count.Count, nil
 }
 
-// GetTracklists gets the given amount of tracklists for the given offset.
 func (s *Store) GetTracklists(offset, limit int) ([]*Tracklist, error) {
 	rows, err := s.Queryx(queries.GetTracklists, offset, limit)
 	defer rows.Close()
@@ -95,7 +90,6 @@ func (s *Store) GetTracklists(offset, limit int) ([]*Tracklist, error) {
 	return tracklists, nil
 }
 
-// FindTracklist gets a tracklist with the given ID from the database.
 func (s *Store) FindTracklist(id string) (*Tracklist, error) {
 	var tracklist Tracklist
 
@@ -109,8 +103,6 @@ func (s *Store) FindTracklist(id string) (*Tracklist, error) {
 	}
 }
 
-// FindTracklistWithTracks gets a tracklist with the given ID, and associated
-// tracks from the database.
 func (s *Store) FindTracklistWithTracks(id string) (*Tracklist, error) {
 	rows, err := s.Queryx(queries.FindTracklistWithTracksByID, id)
 	defer rows.Close()
@@ -157,7 +149,6 @@ func (s *Store) FindTracklistWithTracks(id string) (*Tracklist, error) {
 	return &tracklist, nil
 }
 
-// FindTracklistByName finds a tracklist with the given name in the database.
 func (s *Store) FindTracklistByName(name string) (*Tracklist, error) {
 	var tracklist Tracklist
 
@@ -171,8 +162,6 @@ func (s *Store) FindTracklistByName(name string) (*Tracklist, error) {
 	}
 }
 
-// FindTracklistWithTracksByName find a tracklist with the given name, and
-// associated tracks in the database.
 func (s *Store) FindTracklistWithTracksByName(name string) (*Tracklist, error) {
 	rows, err := s.Queryx(queries.FindTracklistWithTracksByName, name)
 	defer rows.Close()
@@ -219,8 +208,6 @@ func (s *Store) FindTracklistWithTracksByName(name string) (*Tracklist, error) {
 	return &tracklist, nil
 }
 
-// FindTracklistsByTrackIDCount returns the total number of tracklists
-// containing the given track ID.
 func (s *Store) FindTracklistsByTrackIDCount(id string) (int, error) {
 	var count struct {
 		Count int
@@ -233,8 +220,6 @@ func (s *Store) FindTracklistsByTrackIDCount(id string) (int, error) {
 	return count.Count, nil
 }
 
-// FindTracklistsByTrackID finds all tracklists that contain the given track
-// in the database.
 func (s *Store) FindTracklistsByTrackID(id string, offset, limit int) ([]*Tracklist, error) {
 	rows, err := s.Queryx(queries.FindTracklistsByTrackID, id, offset, limit)
 	defer rows.Close()

@@ -8,7 +8,6 @@ import (
 	"github.com/tombell/memoir/internal/datastore/queries"
 )
 
-// Track contains data about a track row in the database.
 type Track struct {
 	ID                string
 	Artist            string
@@ -24,7 +23,6 @@ type Track struct {
 	Played int
 }
 
-// AddTrack adds a new track into the database.
 func (s *Store) AddTrack(tx *sql.Tx, track *Track) error {
 	if _, err := tx.Exec(
 		queries.AddTrack,
@@ -43,7 +41,6 @@ func (s *Store) AddTrack(tx *sql.Tx, track *Track) error {
 	return nil
 }
 
-// FindTrack gets a track with the given ID from the database.
 func (s *Store) FindTrack(id string) (*Track, error) {
 	var track Track
 
@@ -57,8 +54,6 @@ func (s *Store) FindTrack(id string) (*Track, error) {
 	}
 }
 
-// FindTrackByArtistAndName finds a track with the given artist and name in the
-// database.
 func (s *Store) FindTrackByArtistAndName(artist, name string) (*Track, error) {
 	var track Track
 
@@ -72,8 +67,6 @@ func (s *Store) FindTrackByArtistAndName(artist, name string) (*Track, error) {
 	}
 }
 
-// FindMostPlayedTracks finds the tracks that are most played, limiting it to
-// the given count in the database.
 func (s *Store) FindMostPlayedTracks(limit int) ([]*Track, error) {
 	rows, err := s.Queryx(queries.FindMostPlayedTracks, limit)
 	defer rows.Close()
@@ -100,8 +93,6 @@ func (s *Store) FindMostPlayedTracks(limit int) ([]*Track, error) {
 	return tracks, nil
 }
 
-// FindTracksByQuery finds the tracks that have artists or names matching the
-// given query in the database.
 func (s *Store) FindTracksByQuery(query string, limit int) ([]*Track, error) {
 	rows, err := s.Queryx(queries.FindTracksByQuery, query, limit)
 	defer rows.Close()

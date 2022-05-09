@@ -1,7 +1,6 @@
 package queries
 
 const (
-	// AddTrack adds the given arguments as a new track.
 	AddTrack = `
 		INSERT INTO tracks (
 			id,
@@ -14,7 +13,6 @@ const (
 			updated
 		) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`
 
-	// FindTrackByID gets the track with the given ID.
 	FindTrackByID = `
 		SELECT
 			id,
@@ -29,7 +27,6 @@ const (
 		WHERE id = $1
 		LIMIT 1`
 
-	// FindTrackByArtistAndName gets the track with the given artist and name.
 	FindTrackByArtistAndName = `
 		SELECT
 			id,
@@ -45,7 +42,6 @@ const (
 		AND name = $2
 		LIMIT 1`
 
-	// FindMostPlayedTracks gets tracks which are in the most tracklists.
 	FindMostPlayedTracks = `
 		SELECT
 			t.id,
@@ -63,8 +59,6 @@ const (
 		ORDER BY played DESC
 		LIMIT $1`
 
-	// FindTracksByQuery gets the tracks where the artist and/or name matches the
-	// given query.
 	FindTracksByQuery = `
 		SELECT
 			id,

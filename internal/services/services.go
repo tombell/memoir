@@ -8,7 +8,6 @@ import (
 	"github.com/tombell/memoir/internal/filestore"
 )
 
-// Services contains shared dependencies required by service methods.
 type Services struct {
 	Config    *config.Config
 	DataStore *datastore.Store

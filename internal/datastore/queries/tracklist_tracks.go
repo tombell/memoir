@@ -1,8 +1,6 @@
 package queries
 
 const (
-	// AddTracklistTrack adds the given attributes as a new tracklist to track
-	// mapping.
 	AddTracklistTrack = `
 		INSERT INTO tracklist_tracks (
 			id,
