@@ -69,10 +69,10 @@ func (s *Store) FindTrackByArtistAndName(artist, name string) (*Track, error) {
 
 func (s *Store) FindMostPlayedTracks(limit int) ([]*Track, error) {
 	rows, err := s.Queryx(queries.FindMostPlayedTracks, limit)
-	defer rows.Close()
 	if err != nil {
 		return nil, fmt.Errorf("db query failed: %w", err)
 	}
+	defer rows.Close()
 
 	var tracks []*Track
 
@@ -95,10 +95,10 @@ func (s *Store) FindMostPlayedTracks(limit int) ([]*Track, error) {
 
 func (s *Store) FindTracksByQuery(query string, limit int) ([]*Track, error) {
 	rows, err := s.Queryx(queries.FindTracksByQuery, query, limit)
-	defer rows.Close()
 	if err != nil {
 		return nil, fmt.Errorf("db query failed: %w", err)
 	}
+	defer rows.Close()
 
 	var tracks []*Track
 

@@ -57,7 +57,7 @@ func (s *Store) GetTracklistsCount() (int, error) {
 		Count int
 	}
 
-	if err := s.DB.Get(&count, queries.GetTracklistsCount); err != nil {
+	if err := s.Get(&count, queries.GetTracklistsCount); err != nil {
 		return -1, fmt.Errorf("db get failed: %w", err)
 	}
 
@@ -66,10 +66,10 @@ func (s *Store) GetTracklistsCount() (int, error) {
 
 func (s *Store) GetTracklists(offset, limit int) ([]*Tracklist, error) {
 	rows, err := s.Queryx(queries.GetTracklists, offset, limit)
-	defer rows.Close()
 	if err != nil {
 		return nil, fmt.Errorf("db query failed: %w", err)
 	}
+	defer rows.Close()
 
 	var tracklists []*Tracklist
 
@@ -105,10 +105,10 @@ func (s *Store) FindTracklist(id string) (*Tracklist, error) {
 
 func (s *Store) FindTracklistWithTracks(id string) (*Tracklist, error) {
 	rows, err := s.Queryx(queries.FindTracklistWithTracksByID, id)
-	defer rows.Close()
 	if err != nil {
 		return nil, fmt.Errorf("db query failed: %w", err)
 	}
+	defer rows.Close()
 
 	var tracklist Tracklist
 
@@ -164,10 +164,10 @@ func (s *Store) FindTracklistByName(name string) (*Tracklist, error) {
 
 func (s *Store) FindTracklistWithTracksByName(name string) (*Tracklist, error) {
 	rows, err := s.Queryx(queries.FindTracklistWithTracksByName, name)
-	defer rows.Close()
 	if err != nil {
 		return nil, fmt.Errorf("db query failed: %w", err)
 	}
+	defer rows.Close()
 
 	var tracklist Tracklist
 
@@ -213,7 +213,7 @@ func (s *Store) FindTracklistsByTrackIDCount(id string) (int, error) {
 		Count int
 	}
 
-	if err := s.DB.Get(&count, queries.FindTracklistsByTrackIDCount, id); err != nil {
+	if err := s.Get(&count, queries.FindTracklistsByTrackIDCount, id); err != nil {
 		return -1, fmt.Errorf("db get failed: %w", err)
 	}
 
@@ -222,10 +222,10 @@ func (s *Store) FindTracklistsByTrackIDCount(id string) (int, error) {
 
 func (s *Store) FindTracklistsByTrackID(id string, offset, limit int) ([]*Tracklist, error) {
 	rows, err := s.Queryx(queries.FindTracklistsByTrackID, id, offset, limit)
-	defer rows.Close()
 	if err != nil {
 		return nil, fmt.Errorf("db query failed: %w", err)
 	}
+	defer rows.Close()
 
 	var tracklists []*Tracklist
 
