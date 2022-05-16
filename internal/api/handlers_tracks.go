@@ -3,11 +3,13 @@ package api
 import (
 	"fmt"
 	"net/http"
+
+	"github.com/tombell/mw"
 )
 
 func (s *Server) handleGetTrack() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		rid := getRequestID(r)
+		rid := mw.FindRequestID(r)
 		id := s.idParam(rid, w, r)
 
 		if id == "" {
@@ -30,7 +32,7 @@ func (s *Server) handleGetTrack() http.HandlerFunc {
 
 func (s *Server) handleGetTracklistsByTrack() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		rid := getRequestID(r)
+		rid := mw.FindRequestID(r)
 		id := s.idParam(rid, w, r)
 		page := s.pageParam(rid, w, r)
 
@@ -51,7 +53,7 @@ func (s *Server) handleGetTracklistsByTrack() http.HandlerFunc {
 
 func (s *Server) handleGetMostPlayedTracks() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		rid := getRequestID(r)
+		rid := mw.FindRequestID(r)
 
 		tracks, err := s.services.GetMostPlayedTracks(rid, mostPlayedTracksLimit)
 		if err != nil {
@@ -65,7 +67,7 @@ func (s *Server) handleGetMostPlayedTracks() http.HandlerFunc {
 
 func (s *Server) handleSearchTracks() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		rid := getRequestID(r)
+		rid := mw.FindRequestID(r)
 		q := searchParam(r)
 
 		tracks, err := s.services.SearchTracks(rid, q, searchResultsLimit)

@@ -6,12 +6,14 @@ import (
 	"io/ioutil"
 	"net/http"
 
+	"github.com/tombell/mw"
+
 	"github.com/tombell/memoir/internal/services"
 )
 
 func (s *Server) handleGetTracklists() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		rid := getRequestID(r)
+		rid := mw.FindRequestID(r)
 		page := s.pageParam(rid, w, r)
 
 		tracklists, total, err := s.services.GetTracklists(rid, page, perPageTracklists)
@@ -27,7 +29,7 @@ func (s *Server) handleGetTracklists() http.HandlerFunc {
 
 func (s *Server) handlePostTracklists() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		rid := getRequestID(r)
+		rid := mw.FindRequestID(r)
 
 		body, err := ioutil.ReadAll(r.Body)
 		defer r.Body.Close()
@@ -55,7 +57,7 @@ func (s *Server) handlePostTracklists() http.HandlerFunc {
 
 func (s *Server) handleGetTracklist() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		rid := getRequestID(r)
+		rid := mw.FindRequestID(r)
 		id := s.idParam(rid, w, r)
 
 		if id == "" {
@@ -78,7 +80,7 @@ func (s *Server) handleGetTracklist() http.HandlerFunc {
 
 func (s *Server) handlePatchTracklist() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		rid := getRequestID(r)
+		rid := mw.FindRequestID(r)
 		id := s.idParam(rid, w, r)
 
 		if id == "" {

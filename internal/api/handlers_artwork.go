@@ -2,11 +2,13 @@ package api
 
 import (
 	"net/http"
+
+	"github.com/tombell/mw"
 )
 
 func (s *Server) handlePostArtwork() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		rid := getRequestID(r)
+		rid := mw.FindRequestID(r)
 
 		file, header, err := r.FormFile("artwork")
 		if err != nil {
