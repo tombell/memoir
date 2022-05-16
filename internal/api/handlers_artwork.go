@@ -17,7 +17,7 @@ func (s *Server) handlePostArtwork() http.HandlerFunc {
 		}
 		defer file.Close()
 
-		uploaded, err := s.services.UploadArtwork(rid, file, header.Filename)
+		uploaded, err := s.Services.UploadArtwork(rid, file, header.Filename)
 		if err != nil {
 			s.writeInternalServerError(rid, w, err)
 			return

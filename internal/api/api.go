@@ -18,14 +18,15 @@ const (
 )
 
 type Server struct {
-	services *services.Services
-	router   *way.Router
-	server   *http.Server
+	*services.Services
+
+	router *way.Router
+	server *http.Server
 }
 
 func New(services *services.Services) *Server {
 	return &Server{
-		services: services,
+		Services: services,
 		router:   way.NewRouter(),
 	}
 }
@@ -34,13 +35,13 @@ func (s *Server) Start() error {
 	s.routes()
 
 	s.server = &http.Server{
-		Addr:         s.services.Config.Address,
+		Addr:         s.Config.Address,
 		Handler:      s.router,
 		ReadTimeout:  5 * time.Second,
 		WriteTimeout: 10 * time.Second,
 	}
 
-	s.services.Logger.Printf("starting api server (%s) ...", s.services.Config.Address)
+	s.Logger.Printf("starting api server (%s) ...", s.Config.Address)
 
 	return s.server.ListenAndServe()
 }
@@ -50,7 +51,7 @@ func (s *Server) Shutdown(ctx context.Context) error {
 		return nil
 	}
 
-	s.services.Logger.Println("shutting down api server...")
+	s.Logger.Println("shutting down api server...")
 
 	return s.server.Shutdown(ctx)
 }

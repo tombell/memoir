@@ -13,14 +13,14 @@ func requestID() string {
 func (s *Server) routes() {
 	api := []mw.Middleware{
 		mw.CORS(),
-		mw.Logging(s.services.Logger),
+		mw.Logging(s.Logger),
 		mw.RequestID(requestID),
 	}
 
 	apiAuth := []mw.Middleware{
 		mw.CORS(),
-		mw.Auth(s.services.Logger, s.services.Config.API.Token),
-		mw.Logging(s.services.Logger),
+		mw.Auth(s.Logger, s.Config.API.Token),
+		mw.Logging(s.Logger),
 		mw.RequestID(requestID),
 	}
 
