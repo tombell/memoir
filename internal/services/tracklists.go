@@ -8,9 +8,10 @@ import (
 	"github.com/tombell/tonality"
 
 	"github.com/tombell/memoir/internal/datastore"
+	"github.com/tombell/memoir/internal/services/models"
 )
 
-func (s *Services) GetTracklists(rid string, page, limit int) ([]*Tracklist, int, error) {
+func (s *Services) GetTracklists(rid string, page, limit int) ([]*models.Tracklist, int, error) {
 	s.Logger.Printf("[%s] getting tracklists (page %d)", rid, page)
 
 	done := make(chan struct{})
@@ -27,18 +28,18 @@ func (s *Services) GetTracklists(rid string, page, limit int) ([]*Tracklist, int
 		return nil, -1, fmt.Errorf("get tracklists failed: %w", err)
 	}
 
-	models := make([]*Tracklist, 0)
+	m := make([]*models.Tracklist, 0)
 
 	for _, tracklist := range tracklists {
-		models = append(models, NewTracklist(tracklist))
+		m = append(m, models.NewTracklist(tracklist))
 	}
 
 	<-done
 
-	return models, count, nil
+	return m, count, nil
 }
 
-func (s *Services) AddTracklist(rid string, model *TracklistAdd) (*Tracklist, error) {
+func (s *Services) AddTracklist(rid string, model *models.TracklistAdd) (*models.Tracklist, error) {
 	s.Logger.Printf("[%s] adding tracklist (name %s)", rid, model.Name)
 
 	tracklist, err := s.DataStore.FindTracklistByName(model.Name)
@@ -77,7 +78,7 @@ func (s *Services) AddTracklist(rid string, model *TracklistAdd) (*Tracklist, er
 			return nil, fmt.Errorf("normalizing key to camelot key notation failed: %w", err)
 		}
 
-		trackImport := &TrackAdd{
+		trackImport := &models.TrackAdd{
 			Name:   data[0],
 			Artist: data[1],
 			BPM:    data[2],
@@ -110,24 +111,10 @@ func (s *Services) AddTracklist(rid string, model *TracklistAdd) (*Tracklist, er
 		return nil, fmt.Errorf("tx commit failed: %w", err)
 	}
 
-	return NewTracklist(tracklist), nil
+	return models.NewTracklist(tracklist), nil
 }
 
-func (s *Services) GetTracklist(rid, id string) (*Tracklist, error) {
-	s.Logger.Printf("[%s] getting tracklist (id %s)", rid, id)
-
-	tracklist, err := s.DataStore.FindTracklistWithTracks(id)
-	if err != nil {
-		return nil, fmt.Errorf("get tracklist with tracks failed: %w", err)
-	}
-	if tracklist == nil {
-		return nil, nil
-	}
-
-	return NewTracklist(tracklist), nil
-}
-
-func (s *Services) UpdateTracklist(rid, id string, model *TracklistUpdate) (*Tracklist, error) {
+func (s *Services) UpdateTracklist(rid, id string, model *models.TracklistUpdate) (*models.Tracklist, error) {
 	s.Logger.Printf("[%s] updating tracklist (id %s)", rid, id)
 
 	tx, err := s.DataStore.Begin()
@@ -152,10 +139,24 @@ func (s *Services) UpdateTracklist(rid, id string, model *TracklistUpdate) (*Tra
 		return nil, fmt.Errorf("tracklist %q exist", id)
 	}
 
-	return NewTracklist(tracklist), nil
+	return models.NewTracklist(tracklist), nil
 }
 
-func (s *Services) GetTracklistsByTrack(rid, id string, page, limit int) ([]*Tracklist, int, error) {
+func (s *Services) GetTracklist(rid, id string) (*models.Tracklist, error) {
+	s.Logger.Printf("[%s] getting tracklist (id %s)", rid, id)
+
+	tracklist, err := s.DataStore.FindTracklistWithTracks(id)
+	if err != nil {
+		return nil, fmt.Errorf("get tracklist with tracks failed: %w", err)
+	}
+	if tracklist == nil {
+		return nil, nil
+	}
+
+	return models.NewTracklist(tracklist), nil
+}
+
+func (s *Services) GetTracklistsByTrack(rid, id string, page, limit int) ([]*models.Tracklist, int, error) {
 	s.Logger.Printf("[%s] getting tracklists by track (id %s, page: %d)", rid, id, page)
 
 	done := make(chan struct{})
@@ -172,13 +173,13 @@ func (s *Services) GetTracklistsByTrack(rid, id string, page, limit int) ([]*Tra
 		return nil, -1, fmt.Errorf("find tracklists by track id failed: %w", err)
 	}
 
-	models := make([]*Tracklist, 0)
+	m := make([]*models.Tracklist, 0)
 
 	for _, tracklist := range tracklists {
-		models = append(models, NewTracklist(tracklist))
+		m = append(m, models.NewTracklist(tracklist))
 	}
 
 	<-done
 
-	return models, count, nil
+	return m, count, nil
 }

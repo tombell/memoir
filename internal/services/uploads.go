@@ -5,9 +5,11 @@ import (
 	"fmt"
 	"io"
 	"path/filepath"
+
+	"github.com/tombell/memoir/internal/services/models"
 )
 
-func (s *Services) UploadArtwork(rid string, r io.ReadSeeker, filename string) (*UploadedItem, error) {
+func (s *Services) UploadArtwork(rid string, r io.ReadSeeker, filename string) (*models.UploadedItem, error) {
 	s.Logger.Printf("[%s] uploading artwork %s", rid, filename)
 
 	ext := filepath.Ext(filename)
@@ -30,7 +32,7 @@ func (s *Services) UploadArtwork(rid string, r io.ReadSeeker, filename string) (
 		}
 	}
 
-	return &UploadedItem{Key: key}, nil
+	return &models.UploadedItem{Key: key}, nil
 }
 
 func (s *Services) generateObjectKey(r io.Reader, ext string) (string, error) {

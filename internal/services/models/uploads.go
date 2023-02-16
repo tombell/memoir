@@ -1,4 +1,4 @@
-package services
+package models
 
 type UploadedItem struct {
 	Key string `json:"key"`

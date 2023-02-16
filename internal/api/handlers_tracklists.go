@@ -8,7 +8,7 @@ import (
 
 	"github.com/tombell/mw"
 
-	"github.com/tombell/memoir/internal/services"
+	"github.com/tombell/memoir/internal/services/models"
 )
 
 func (s *Server) handleGetTracklists() http.HandlerFunc {
@@ -38,7 +38,7 @@ func (s *Server) handlePostTracklists() http.HandlerFunc {
 			return
 		}
 
-		var tl services.TracklistAdd
+		var tl models.TracklistAdd
 		if err = json.Unmarshal(body, &tl); err != nil {
 			s.writeInternalServerError(rid, w, err)
 			return
@@ -94,7 +94,7 @@ func (s *Server) handlePatchTracklist() http.HandlerFunc {
 			return
 		}
 
-		var tracklistUpdate services.TracklistUpdate
+		var tracklistUpdate models.TracklistUpdate
 		if err = json.Unmarshal(body, &tracklistUpdate); err != nil {
 			s.writeInternalServerError(rid, w, err)
 			return

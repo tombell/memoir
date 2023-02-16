@@ -9,9 +9,10 @@ import (
 	"github.com/gofrs/uuid"
 
 	"github.com/tombell/memoir/internal/datastore"
+	"github.com/tombell/memoir/internal/services/models"
 )
 
-func (s *Services) GetTrack(rid, id string) (*Track, error) {
+func (s *Services) GetTrack(rid, id string) (*models.Track, error) {
 	s.Logger.Printf("[%s] getting track (id %s)", rid, id)
 
 	track, err := s.DataStore.FindTrack(id)
@@ -22,10 +23,10 @@ func (s *Services) GetTrack(rid, id string) (*Track, error) {
 		return nil, nil
 	}
 
-	return NewTrack(track), nil
+	return models.NewTrack(track), nil
 }
 
-func (s *Services) AddTrack(rid string, tx *sql.Tx, model *TrackAdd) (*Track, error) {
+func (s *Services) AddTrack(rid string, tx *sql.Tx, model *models.TrackAdd) (*models.Track, error) {
 	s.Logger.Printf("[%s] adding track (name %s)", rid, model.Name)
 
 	track, err := s.DataStore.FindTrackByArtistAndName(model.Artist, model.Name)
@@ -55,10 +56,10 @@ func (s *Services) AddTrack(rid string, tx *sql.Tx, model *TrackAdd) (*Track, er
 		}
 	}
 
-	return NewTrack(track), nil
+	return models.NewTrack(track), nil
 }
 
-func (s *Services) GetMostPlayedTracks(rid string, limit int) ([]*Track, error) {
+func (s *Services) GetMostPlayedTracks(rid string, limit int) ([]*models.Track, error) {
 	s.Logger.Printf("[%s] getting most played tracks (limit %d)", rid, limit)
 
 	tracks, err := s.DataStore.FindMostPlayedTracks(limit)
@@ -66,16 +67,16 @@ func (s *Services) GetMostPlayedTracks(rid string, limit int) ([]*Track, error) 
 		return nil, fmt.Errorf("find most played tracks failed: %w", err)
 	}
 
-	models := make([]*Track, 0)
+	m := make([]*models.Track, 0)
 
 	for _, track := range tracks {
-		models = append(models, NewTrack(track))
+		m = append(m, models.NewTrack(track))
 	}
 
-	return models, nil
+	return m, nil
 }
 
-func (s *Services) SearchTracks(rid, query string, limit int) ([]*Track, error) {
+func (s *Services) SearchTracks(rid, query string, limit int) ([]*models.Track, error) {
 	s.Logger.Printf("[%s] searching tracks (query %q)", rid, query)
 
 	tracks, err := s.DataStore.FindTracksByQuery(query, limit)
@@ -83,11 +84,11 @@ func (s *Services) SearchTracks(rid, query string, limit int) ([]*Track, error) 
 		return nil, fmt.Errorf("find tracks by query failed: %w", err)
 	}
 
-	models := make([]*Track, 0)
+	m := make([]*models.Track, 0)
 
 	for _, track := range tracks {
-		models = append(models, NewTrackFromSearchResult(track))
+		m = append(m, models.NewTrackFromSearchResult(track))
 	}
 
-	return models, nil
+	return m, nil
 }
