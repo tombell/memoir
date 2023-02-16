@@ -18,10 +18,6 @@ func (rw *responseWriter) WriteHeader(s int) {
 }
 
 func (rw *responseWriter) Write(b []byte) (int, error) {
-	if rw.status == 0 {
-		rw.WriteHeader(http.StatusOK)
-	}
-
 	size, err := rw.ResponseWriter.Write(b)
 	rw.size += size
 	return size, err
