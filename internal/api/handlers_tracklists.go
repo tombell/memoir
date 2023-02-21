@@ -12,7 +12,7 @@ func (s *Server) handleGetTracklists() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		page := s.pageParam(w, r)
 
-		tracklists, total, err := s.Services.GetTracklists(page, perPageTracklists)
+		tracklists, total, err := s.GetTracklists(page, perPageTracklists)
 		if err != nil {
 			s.writeInternalServerError(w, err)
 			return
@@ -38,7 +38,7 @@ func (s *Server) handlePostTracklists() http.HandlerFunc {
 			return
 		}
 
-		tracklist, err := s.Services.AddTracklist(&tl)
+		tracklist, err := s.AddTracklist(&tl)
 		if err != nil {
 			s.writeInternalServerError(w, err)
 			return
@@ -57,7 +57,7 @@ func (s *Server) handleGetTracklist() http.HandlerFunc {
 			return
 		}
 
-		tracklist, err := s.Services.GetTracklist(id)
+		tracklist, err := s.GetTracklist(id)
 		if err != nil {
 			s.writeInternalServerError(w, err)
 			return
@@ -92,7 +92,7 @@ func (s *Server) handlePatchTracklist() http.HandlerFunc {
 			return
 		}
 
-		tracklist, err := s.Services.UpdateTracklist(id, &tracklistUpdate)
+		tracklist, err := s.UpdateTracklist(id, &tracklistUpdate)
 		if err != nil {
 			s.writeInternalServerError(w, err)
 			return
