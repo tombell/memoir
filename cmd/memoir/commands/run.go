@@ -3,11 +3,12 @@ package commands
 import (
 	"context"
 	"flag"
-	"log"
 	"net/http"
 	"os"
 	"os/signal"
 	"time"
+
+	"github.com/charmbracelet/log"
 
 	"github.com/tombell/memoir/internal/api"
 	"github.com/tombell/memoir/internal/config"
@@ -25,7 +26,7 @@ Special options:
   --help    Show this message, then exit
 `
 
-func RunCommand(logger *log.Logger) {
+func RunCommand(logger log.Logger) {
 	cmd := flag.NewFlagSet("migrate", flag.ExitOnError)
 	cmd.Usage = usageText(runHelpText)
 
@@ -33,12 +34,12 @@ func RunCommand(logger *log.Logger) {
 
 	cfg, err := config.Load(*cfgpath)
 	if err != nil {
-		logger.Fatalf("error: config load failed: %s", err)
+		logger.Fatal("config load failed", "err", err)
 	}
 
 	ds, err := datastore.New(cfg.DB)
 	if err != nil {
-		logger.Fatalf("error: datastore initialise failed: %s", err)
+		logger.Fatal("datastore initialise failed", "err", err)
 	}
 	defer ds.Close()
 
@@ -54,11 +55,11 @@ func RunCommand(logger *log.Logger) {
 	go func() {
 		if err := srv.Start(); err != nil {
 			if err == http.ErrServerClosed {
-				logger.Println("api server shutdown finished")
+				logger.Info("api server shutdown finished")
 				return
 			}
 
-			logger.Fatalf("error: starting api server failed: %s", err)
+			logger.Fatal("starting api server failed", "err", err)
 		}
 	}()
 
@@ -70,6 +71,6 @@ func RunCommand(logger *log.Logger) {
 	defer cancel()
 
 	if err := srv.Shutdown(ctx); err != nil {
-		logger.Fatalf("error: server shutdown failed: %s", err)
+		logger.Fatal("server shutdown failed", "err", err)
 	}
 }

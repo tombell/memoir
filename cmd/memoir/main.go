@@ -3,8 +3,9 @@ package main
 import (
 	"flag"
 	"fmt"
-	"log"
 	"os"
+
+	"github.com/charmbracelet/log"
 
 	"github.com/tombell/memoir/cmd/memoir/commands"
 )
@@ -28,23 +29,23 @@ var (
 )
 
 func main() {
+	logger := log.New(log.WithOutput(os.Stderr))
+
 	flag.Usage = func() {
-		fmt.Fprintln(os.Stderr, helpText)
+		logger.Print(helpText)
 		os.Exit(2)
 	}
 
 	flag.Parse()
 
 	if *version {
-		fmt.Fprintf(os.Stdout, "memoir %s (%s)\n", Version, Commit)
+		logger.Print(fmt.Sprintf("memoir %s (%s)", Version, Commit))
 		os.Exit(0)
 	}
 
 	if len(os.Args) < 2 {
 		flag.Usage()
 	}
-
-	logger := log.New(os.Stderr, "", 0)
 
 	switch os.Args[1] {
 	case "run":
@@ -56,7 +57,8 @@ func main() {
 	case "db:migrate":
 		commands.DatabaseMigrate(logger)
 	case "db:rollback":
+		commands.DatabaseRollback(logger)
 	default:
-		logger.Fatalf("error: %q is not a valid command", os.Args[1])
+		logger.Fatal("invalid sub-command", "cmd", os.Args[1])
 	}
 }

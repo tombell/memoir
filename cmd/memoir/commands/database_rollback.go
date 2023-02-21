@@ -2,9 +2,9 @@ package commands
 
 import (
 	"flag"
-	"log"
 	"os"
 
+	"github.com/charmbracelet/log"
 	"github.com/tombell/trek"
 
 	"github.com/tombell/memoir/internal/config"
@@ -20,7 +20,7 @@ Special options:
   --help    Show this message, then exit
 `
 
-func DatabaseRollback(logger *log.Logger) {
+func DatabaseRollback(logger log.Logger) {
 	cmd := flag.NewFlagSet("rollback", flag.ExitOnError)
 	cmd.Usage = usageText(rollbackHelpText)
 
@@ -28,7 +28,7 @@ func DatabaseRollback(logger *log.Logger) {
 	steps := cmd.Int("steps", 1, "")
 
 	if err := cmd.Parse(os.Args[2:]); err != nil {
-		logger.Fatalf("error: cmd parse failed: %s", err)
+		logger.Fatal("cmd parse failed", "err", err)
 	}
 
 	if !cmd.Parsed() {
@@ -37,10 +37,10 @@ func DatabaseRollback(logger *log.Logger) {
 
 	cfg, err := config.Load(*cfgpath)
 	if err != nil {
-		logger.Fatalf("error: config load failed: %s", err)
+		logger.Fatal("config load failed", "err", err)
 	}
 
 	if err := trek.Rollback("postgres", cfg.DB, cfg.Migrations, *steps); err != nil {
-		logger.Fatalf("error: trek rollback failed: %s", err)
+		logger.Fatal("trek migrate failed", "err", err)
 	}
 }
