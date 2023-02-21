@@ -1,7 +1,6 @@
 package api
 
 import (
-	"fmt"
 	"net/http"
 	"strconv"
 
@@ -9,7 +8,7 @@ import (
 	"github.com/matryer/way"
 )
 
-func (s *Server) pageParam(rid string, w http.ResponseWriter, r *http.Request) int {
+func (s *Server) pageParam(w http.ResponseWriter, r *http.Request) int {
 	page := r.URL.Query().Get("page")
 	if page == "" {
 		page = "1"
@@ -17,7 +16,7 @@ func (s *Server) pageParam(rid string, w http.ResponseWriter, r *http.Request) i
 
 	n, err := strconv.Atoi(page)
 	if err != nil {
-		s.Logger.Printf("[%s] error=%s", rid, err)
+		s.Logger.Error("converting page from string to int failed", "err", err)
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return -1
 	}
@@ -29,11 +28,11 @@ func (s *Server) pageParam(rid string, w http.ResponseWriter, r *http.Request) i
 	return n
 }
 
-func (s *Server) idParam(rid string, w http.ResponseWriter, r *http.Request) string {
+func (s *Server) idParam(w http.ResponseWriter, r *http.Request) string {
 	id := way.Param(r.Context(), "id")
 
 	if _, err := uuid.FromString(id); err != nil {
-		s.writeNotFound(rid, w, fmt.Sprintf("model with id: %s", id))
+		s.writeNotFound(w, r)
 		return ""
 	}
 

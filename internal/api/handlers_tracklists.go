@@ -2,86 +2,78 @@ package api
 
 import (
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
 	"net/http"
-
-	"github.com/tombell/mw"
 
 	"github.com/tombell/memoir/internal/services/models"
 )
 
 func (s *Server) handleGetTracklists() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		rid := mw.FindRequestID(r)
-		page := s.pageParam(rid, w, r)
+		page := s.pageParam(w, r)
 
-		tracklists, total, err := s.Services.GetTracklists(rid, page, perPageTracklists)
+		tracklists, total, err := s.Services.GetTracklists(page, perPageTracklists)
 		if err != nil {
-			s.writeInternalServerError(rid, w, err)
+			s.writeInternalServerError(w, err)
 			return
 		}
 
 		s.addPaginationHeaders(w, perPageTracklists, page, total)
-		s.writeJSON(rid, w, tracklists)
+		s.writeJSON(w, tracklists)
 	}
 }
 
 func (s *Server) handlePostTracklists() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		rid := mw.FindRequestID(r)
-
 		body, err := ioutil.ReadAll(r.Body)
 		defer r.Body.Close()
 		if err != nil {
-			s.writeInternalServerError(rid, w, err)
+			s.writeInternalServerError(w, err)
 			return
 		}
 
 		var tl models.TracklistAdd
 		if err = json.Unmarshal(body, &tl); err != nil {
-			s.writeInternalServerError(rid, w, err)
+			s.writeInternalServerError(w, err)
 			return
 		}
 
-		tracklist, err := s.Services.AddTracklist(rid, &tl)
+		tracklist, err := s.Services.AddTracklist(&tl)
 		if err != nil {
-			s.writeInternalServerError(rid, w, err)
+			s.writeInternalServerError(w, err)
 			return
 		}
 
 		w.WriteHeader(http.StatusCreated)
-		s.writeJSON(rid, w, tracklist)
+		s.writeJSON(w, tracklist)
 	}
 }
 
 func (s *Server) handleGetTracklist() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		rid := mw.FindRequestID(r)
-		id := s.idParam(rid, w, r)
+		id := s.idParam(w, r)
 
 		if id == "" {
 			return
 		}
 
-		tracklist, err := s.Services.GetTracklist(rid, id)
+		tracklist, err := s.Services.GetTracklist(id)
 		if err != nil {
-			s.writeInternalServerError(rid, w, err)
+			s.writeInternalServerError(w, err)
 			return
 		}
 		if tracklist == nil {
-			s.writeNotFound(rid, w, fmt.Sprintf("find tracklist with id: %s", id))
+			s.writeNotFound(w, r)
 			return
 		}
 
-		s.writeJSON(rid, w, tracklist)
+		s.writeJSON(w, tracklist)
 	}
 }
 
 func (s *Server) handlePatchTracklist() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		rid := mw.FindRequestID(r)
-		id := s.idParam(rid, w, r)
+		id := s.idParam(w, r)
 
 		if id == "" {
 			return
@@ -90,22 +82,22 @@ func (s *Server) handlePatchTracklist() http.HandlerFunc {
 		body, err := ioutil.ReadAll(r.Body)
 		defer r.Body.Close()
 		if err != nil {
-			s.writeInternalServerError(rid, w, err)
+			s.writeInternalServerError(w, err)
 			return
 		}
 
 		var tracklistUpdate models.TracklistUpdate
 		if err = json.Unmarshal(body, &tracklistUpdate); err != nil {
-			s.writeInternalServerError(rid, w, err)
+			s.writeInternalServerError(w, err)
 			return
 		}
 
-		tracklist, err := s.Services.UpdateTracklist(rid, id, &tracklistUpdate)
+		tracklist, err := s.Services.UpdateTracklist(id, &tracklistUpdate)
 		if err != nil {
-			s.writeInternalServerError(rid, w, err)
+			s.writeInternalServerError(w, err)
 			return
 		}
 
-		s.writeJSON(rid, w, tracklist)
+		s.writeJSON(w, tracklist)
 	}
 }

@@ -41,7 +41,7 @@ func (s *Server) Start() error {
 		WriteTimeout: 10 * time.Second,
 	}
 
-	s.Logger.Printf("starting api server (%s) ...", s.Config.Address)
+	s.Logger.Info("starting api server", "addr", s.Config.Address)
 
 	return s.server.ListenAndServe()
 }
@@ -51,7 +51,7 @@ func (s *Server) Shutdown(ctx context.Context) error {
 		return nil
 	}
 
-	s.Logger.Println("shutting down api server...")
+	s.Logger.Info("shutting down api server")
 
 	return s.server.Shutdown(ctx)
 }
