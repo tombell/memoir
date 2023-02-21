@@ -1,7 +1,7 @@
 package services
 
 import (
-	"log"
+	"github.com/charmbracelet/log"
 
 	"github.com/tombell/memoir/internal/config"
 	"github.com/tombell/memoir/internal/datastore"
@@ -12,5 +12,5 @@ type Services struct {
 	Config    *config.Config
 	DataStore *datastore.Store
 	FileStore *filestore.Store
-	Logger    *log.Logger
+	Logger    log.Logger
 }

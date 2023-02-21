@@ -9,8 +9,8 @@ import (
 	"github.com/tombell/memoir/internal/services/models"
 )
 
-func (s *Services) UploadArtwork(rid string, r io.ReadSeeker, filename string) (*models.UploadedItem, error) {
-	s.Logger.Printf("[%s] uploading artwork %s", rid, filename)
+func (s *Services) UploadArtwork(r io.ReadSeeker, filename string) (*models.UploadedItem, error) {
+	s.Logger.Info("uploading artwork", "filename", filename)
 
 	ext := filepath.Ext(filename)
 

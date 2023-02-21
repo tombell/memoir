@@ -12,8 +12,8 @@ import (
 	"github.com/tombell/memoir/internal/services/models"
 )
 
-func (s *Services) GetTrack(rid, id string) (*models.Track, error) {
-	s.Logger.Printf("[%s] getting track (id %s)", rid, id)
+func (s *Services) GetTrack(id string) (*models.Track, error) {
+	s.Logger.Info("getting track", "id", id)
 
 	track, err := s.DataStore.FindTrack(id)
 	if err != nil {
@@ -26,8 +26,8 @@ func (s *Services) GetTrack(rid, id string) (*models.Track, error) {
 	return models.NewTrack(track), nil
 }
 
-func (s *Services) AddTrack(rid string, tx *sql.Tx, model *models.TrackAdd) (*models.Track, error) {
-	s.Logger.Printf("[%s] adding track (name %s)", rid, model.Name)
+func (s *Services) AddTrack(tx *sql.Tx, model *models.TrackAdd) (*models.Track, error) {
+	s.Logger.Info("adding track", "name", model.Name)
 
 	track, err := s.DataStore.FindTrackByArtistAndName(model.Artist, model.Name)
 	if err != nil {
@@ -59,8 +59,8 @@ func (s *Services) AddTrack(rid string, tx *sql.Tx, model *models.TrackAdd) (*mo
 	return models.NewTrack(track), nil
 }
 
-func (s *Services) GetMostPlayedTracks(rid string, limit int) ([]*models.Track, error) {
-	s.Logger.Printf("[%s] getting most played tracks (limit %d)", rid, limit)
+func (s *Services) GetMostPlayedTracks(limit int) ([]*models.Track, error) {
+	s.Logger.Info("getting most played tracks", "limit", limit)
 
 	tracks, err := s.DataStore.FindMostPlayedTracks(limit)
 	if err != nil {
@@ -76,8 +76,8 @@ func (s *Services) GetMostPlayedTracks(rid string, limit int) ([]*models.Track, 
 	return m, nil
 }
 
-func (s *Services) SearchTracks(rid, query string, limit int) ([]*models.Track, error) {
-	s.Logger.Printf("[%s] searching tracks (query %q)", rid, query)
+func (s *Services) SearchTracks(query string, limit int) ([]*models.Track, error) {
+	s.Logger.Info("searching tracks", "query", query)
 
 	tracks, err := s.DataStore.FindTracksByQuery(query, limit)
 	if err != nil {
