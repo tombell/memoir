@@ -1,4 +1,4 @@
-# github.com/aws/aws-sdk-go v1.44.203
+# github.com/aws/aws-sdk-go v1.44.205
 ## explicit; go 1.11
 github.com/aws/aws-sdk-go/aws
 github.com/aws/aws-sdk-go/aws/arn
@@ -49,8 +49,18 @@ github.com/aws/aws-sdk-go/service/sso
 github.com/aws/aws-sdk-go/service/sso/ssoiface
 github.com/aws/aws-sdk-go/service/sts
 github.com/aws/aws-sdk-go/service/sts/stsiface
-# github.com/davecgh/go-spew v1.1.1
-## explicit
+# github.com/aymanbagabas/go-osc52 v1.2.1
+## explicit; go 1.16
+github.com/aymanbagabas/go-osc52
+# github.com/charmbracelet/lipgloss v0.6.0
+## explicit; go 1.15
+github.com/charmbracelet/lipgloss
+# github.com/charmbracelet/log v0.1.0
+## explicit; go 1.15
+github.com/charmbracelet/log
+# github.com/go-logfmt/logfmt v0.6.0
+## explicit; go 1.17
+github.com/go-logfmt/logfmt
 # github.com/gofrs/uuid v4.4.0+incompatible
 ## explicit
 github.com/gofrs/uuid
@@ -66,12 +76,33 @@ github.com/jmoiron/sqlx/reflectx
 github.com/lib/pq
 github.com/lib/pq/oid
 github.com/lib/pq/scram
+# github.com/lucasb-eyer/go-colorful v1.2.0
+## explicit; go 1.12
+github.com/lucasb-eyer/go-colorful
 # github.com/matryer/way v0.0.0-20180416093233-9632d0c407b0
 ## explicit
 github.com/matryer/way
+# github.com/mattn/go-isatty v0.0.17
+## explicit; go 1.15
+github.com/mattn/go-isatty
+# github.com/mattn/go-runewidth v0.0.14
+## explicit; go 1.9
+github.com/mattn/go-runewidth
+# github.com/muesli/reflow v0.3.0
+## explicit; go 1.13
+github.com/muesli/reflow/ansi
+github.com/muesli/reflow/truncate
+github.com/muesli/reflow/wordwrap
+github.com/muesli/reflow/wrap
+# github.com/muesli/termenv v0.14.0
+## explicit; go 1.13
+github.com/muesli/termenv
 # github.com/pelletier/go-toml v1.9.5
 ## explicit; go 1.12
 github.com/pelletier/go-toml
+# github.com/rivo/uniseg v0.4.4
+## explicit; go 1.18
+github.com/rivo/uniseg
 # github.com/tombell/mw v0.0.2
 ## explicit; go 1.18
 github.com/tombell/mw
@@ -81,5 +112,10 @@ github.com/tombell/tonality
 # github.com/tombell/trek v0.0.7
 ## explicit; go 1.13
 github.com/tombell/trek
+# golang.org/x/sys v0.5.0
+## explicit; go 1.17
+golang.org/x/sys/internal/unsafeheader
+golang.org/x/sys/unix
+golang.org/x/sys/windows
 # gopkg.in/yaml.v2 v2.3.0
 ## explicit

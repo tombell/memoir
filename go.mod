@@ -1,7 +1,8 @@
 module github.com/tombell/memoir
 
 require (
-	github.com/aws/aws-sdk-go v1.44.203
+	github.com/aws/aws-sdk-go v1.44.205
+	github.com/charmbracelet/log v0.1.0
 	github.com/gofrs/uuid v4.4.0+incompatible
 	github.com/jmoiron/sqlx v1.3.5
 	github.com/lib/pq v1.10.7
@@ -13,8 +14,17 @@ require (
 )
 
 require (
-	github.com/davecgh/go-spew v1.1.1 // indirect
+	github.com/aymanbagabas/go-osc52 v1.2.1 // indirect
+	github.com/charmbracelet/lipgloss v0.6.0 // indirect
+	github.com/go-logfmt/logfmt v0.6.0 // indirect
 	github.com/jmespath/go-jmespath v0.4.0 // indirect
+	github.com/lucasb-eyer/go-colorful v1.2.0 // indirect
+	github.com/mattn/go-isatty v0.0.17 // indirect
+	github.com/mattn/go-runewidth v0.0.14 // indirect
+	github.com/muesli/reflow v0.3.0 // indirect
+	github.com/muesli/termenv v0.14.0 // indirect
+	github.com/rivo/uniseg v0.4.4 // indirect
+	golang.org/x/sys v0.5.0 // indirect
 	gopkg.in/yaml.v2 v2.3.0 // indirect
 )
 
