@@ -14,20 +14,20 @@ func (s *Server) addPaginationHeaders(w http.ResponseWriter, limit, page, total 
 	w.Header().Add("Total-Pages", strconv.Itoa(pages))
 }
 
-func (s *Server) writeInternalServerError(rid string, w http.ResponseWriter, err error) {
-	s.Logger.Printf("[%s] error=%s", rid, err)
+func (s *Server) writeInternalServerError(w http.ResponseWriter, err error) {
+	s.Logger.Error("internal service error", "err", err)
 	http.Error(w, err.Error(), http.StatusInternalServerError)
 }
 
-func (s *Server) writeNotFound(rid string, w http.ResponseWriter, msg string) {
-	s.Logger.Printf("[%s] could not find %s", rid, msg)
+func (s *Server) writeNotFound(w http.ResponseWriter, r *http.Request) {
+	s.Logger.Error("not found", "path", r.URL.Path)
 	w.WriteHeader(http.StatusNotFound)
 }
 
-func (s *Server) writeJSON(rid string, w http.ResponseWriter, model any) {
+func (s *Server) writeJSON(w http.ResponseWriter, model any) {
 	resp, err := json.Marshal(model)
 	if err != nil {
-		s.writeInternalServerError(rid, w, err)
+		s.writeInternalServerError(w, err)
 		return
 	}
 
