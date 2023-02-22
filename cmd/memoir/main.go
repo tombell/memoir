@@ -21,7 +21,8 @@ Commands:
 
 Special options:
   --help     Show this message, then exit
-  --version  Show the version number, then exit`
+  --version  Show the version number, then exit
+`
 
 var (
 	cfgpath = flag.String("config", ".env.dev.toml", "")
@@ -29,23 +30,24 @@ var (
 )
 
 func main() {
-	logger := log.New(log.WithOutput(os.Stderr))
 
 	flag.Usage = func() {
-		logger.Print(helpText)
+		fmt.Fprintf(os.Stderr, helpText)
 		os.Exit(2)
 	}
 
 	flag.Parse()
 
 	if *version {
-		logger.Print(fmt.Sprintf("memoir %s (%s)", Version, Commit))
+		fmt.Fprintf(os.Stderr, fmt.Sprintf("memoir %s (%s)\n", Version, Commit))
 		os.Exit(0)
 	}
 
 	if len(os.Args) < 2 {
 		flag.Usage()
 	}
+
+	logger := log.New(log.WithOutput(os.Stderr), log.WithTimestamp())
 
 	switch os.Args[1] {
 	case "run":
