@@ -7,6 +7,11 @@ import (
 	"strconv"
 )
 
+type Error struct {
+	Err string `json:"err"`
+	Msg string `json:"msg"`
+}
+
 func (s *Server) addPaginationHeaders(w http.ResponseWriter, limit, page, total int) {
 	pages := int(math.Ceil(float64(total) / float64(limit)))
 
@@ -16,14 +21,18 @@ func (s *Server) addPaginationHeaders(w http.ResponseWriter, limit, page, total 
 
 func (s *Server) writeInternalServerError(w http.ResponseWriter, err error) {
 	s.Logger.Error("internal-server-error", "err", err)
-	// TODO: add nice JSON error responses
-	http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+
+	model := Error{Err: err.Error(), Msg: "internal service error"}
+
+	s.writeJSON(w, model, http.StatusInternalServerError)
 }
 
 func (s *Server) writeBadRequest(w http.ResponseWriter, err error) {
 	s.Logger.Error("bad-request", "err", err)
-	// TODO: add nice JSON error responses
-	http.Error(w, "Bad Request", http.StatusBadRequest)
+
+	model := Error{Err: err.Error(), Msg: "bad request"}
+
+	s.writeJSON(w, model, http.StatusBadRequest)
 }
 
 func (s *Server) writeNotFound(w http.ResponseWriter, r *http.Request) {
