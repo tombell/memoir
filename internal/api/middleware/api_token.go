@@ -12,13 +12,13 @@ func APIToken(logger log.Logger, token string) Middleware {
 			key := r.Header.Get("API-Token")
 
 			if key == "" {
-				logger.Error("missing api token")
+				logger.Error("api-token", "reason", "missing")
 				w.WriteHeader(http.StatusUnauthorized)
 				return
 			}
 
 			if key != token {
-				logger.Error("invalid api token")
+				logger.Error("api-token", "reason", "invalid")
 				w.WriteHeader(http.StatusForbidden)
 				return
 			}

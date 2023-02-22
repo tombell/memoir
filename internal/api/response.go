@@ -15,12 +15,12 @@ func (s *Server) addPaginationHeaders(w http.ResponseWriter, limit, page, total 
 }
 
 func (s *Server) writeInternalServerError(w http.ResponseWriter, err error) {
-	s.Logger.Error("internal service error", "err", err)
+	s.Logger.Error("internal-server-error", "err", err)
 	http.Error(w, err.Error(), http.StatusInternalServerError)
 }
 
 func (s *Server) writeNotFound(w http.ResponseWriter, r *http.Request) {
-	s.Logger.Error("not found", "path", r.URL.Path)
+	s.Logger.Error("not-found", "path", r.URL.Path)
 	w.WriteHeader(http.StatusNotFound)
 }
 

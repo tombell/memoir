@@ -16,7 +16,7 @@ func (s *Server) pageParam(w http.ResponseWriter, r *http.Request) int {
 
 	n, err := strconv.Atoi(page)
 	if err != nil {
-		s.Logger.Error("converting page from string to int failed", "err", err)
+		s.Logger.Error("covert-page-number", "err", err)
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return -1
 	}
