@@ -47,7 +47,14 @@ func main() {
 		flag.Usage()
 	}
 
-	logger := log.New(log.WithOutput(os.Stderr), log.WithTimestamp())
+	logger := log.New(
+		log.WithOutput(os.Stderr),
+		log.WithTimestamp(),
+	)
+
+	if os.Getenv("LOG_LEVEL") == "debug" {
+		logger.SetLevel(log.DebugLevel)
+	}
 
 	switch os.Args[1] {
 	case "run":
