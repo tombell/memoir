@@ -14,10 +14,13 @@ func (s *Services) UploadArtwork(r io.ReadSeeker, filename string) (*models.Uplo
 
 	ext := filepath.Ext(filename)
 
-	key, err := s.generateObjectKey(r, ext)
-	if err != nil {
-		return nil, fmt.Errorf("generate filename failed: %w", err)
+	h := md5.New()
+
+	if _, err := io.Copy(h, r); err != nil {
+		return nil, fmt.Errorf("io copy failed: %w", err)
 	}
+
+	key := fmt.Sprintf("%x%s", h.Sum(nil), ext)
 
 	exists, err := s.FileStore.Exists(s.Config.AWS.Bucket, key)
 	if err != nil {
@@ -33,14 +36,4 @@ func (s *Services) UploadArtwork(r io.ReadSeeker, filename string) (*models.Uplo
 	}
 
 	return &models.UploadedItem{Key: key}, nil
-}
-
-func (s *Services) generateObjectKey(r io.Reader, ext string) (string, error) {
-	h := md5.New()
-
-	if _, err := io.Copy(h, r); err != nil {
-		return "", fmt.Errorf("io copy failed: %w", err)
-	}
-
-	return fmt.Sprintf("%x%s", h.Sum(nil), ext), nil
 }
