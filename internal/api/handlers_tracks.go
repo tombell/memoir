@@ -40,7 +40,17 @@ func (s *Server) handleGetTracklistsByTrack() http.HandlerFunc {
 			return
 		}
 
-		tracklists, total, err := s.GetTracklistsByTrack(id, page, perPageTracklists)
+		track, err := s.GetTrack(id)
+		if err != nil {
+			s.writeInternalServerError(w, err)
+			return
+		}
+		if track == nil {
+			s.writeNotFound(w, r)
+			return
+		}
+
+		tracklists, total, err := s.GetTracklistsByTrack(track.ID, page, perPageTracklists)
 		if err != nil {
 			s.writeInternalServerError(w, err)
 			return
