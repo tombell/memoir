@@ -16,7 +16,14 @@ func (s *Server) addPaginationHeaders(w http.ResponseWriter, limit, page, total 
 
 func (s *Server) writeInternalServerError(w http.ResponseWriter, err error) {
 	s.Logger.Error("internal-server-error", "err", err)
-	http.Error(w, err.Error(), http.StatusInternalServerError)
+	// TODO: add nice JSON error responses
+	http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+}
+
+func (s *Server) writeBadRequest(w http.ResponseWriter, err error) {
+	s.Logger.Error("bad-request", "err", err)
+	// TODO: add nice JSON error responses
+	http.Error(w, "Bad Request", http.StatusBadRequest)
 }
 
 func (s *Server) writeNotFound(w http.ResponseWriter, r *http.Request) {

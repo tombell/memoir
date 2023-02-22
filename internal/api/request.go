@@ -8,7 +8,7 @@ import (
 	"github.com/matryer/way"
 )
 
-func (s *Server) pageParam(w http.ResponseWriter, r *http.Request) int {
+func (s *Server) pageParam(w http.ResponseWriter, r *http.Request) (int, error) {
 	page := r.URL.Query().Get("page")
 	if page == "" {
 		page = "1"
@@ -16,27 +16,24 @@ func (s *Server) pageParam(w http.ResponseWriter, r *http.Request) int {
 
 	n, err := strconv.Atoi(page)
 	if err != nil {
-		s.Logger.Error("covert-page-number", "err", err)
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		return -1
+		return -1, err
 	}
 
 	if n < 1 {
 		n = 1
 	}
 
-	return n
+	return n, nil
 }
 
-func (s *Server) idParam(w http.ResponseWriter, r *http.Request) string {
+func (s *Server) idParam(w http.ResponseWriter, r *http.Request) (string, error) {
 	id := way.Param(r.Context(), "id")
 
 	if _, err := uuid.FromString(id); err != nil {
-		s.writeNotFound(w, r)
-		return ""
+		return "", err
 	}
 
-	return id
+	return id, nil
 }
 
 func searchParam(r *http.Request) string {

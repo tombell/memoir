@@ -6,9 +6,9 @@ import (
 
 func (s *Server) handleGetTrack() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		id := s.idParam(w, r)
-
-		if id == "" {
+		id, err := s.idParam(w, r)
+		if err != nil {
+			s.writeBadRequest(w, err)
 			return
 		}
 
@@ -28,10 +28,15 @@ func (s *Server) handleGetTrack() http.HandlerFunc {
 
 func (s *Server) handleGetTracklistsByTrack() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		id := s.idParam(w, r)
-		page := s.pageParam(w, r)
+		id, err := s.idParam(w, r)
+		if err != nil {
+			s.writeBadRequest(w, err)
+			return
+		}
 
-		if id == "" {
+		page, err := s.pageParam(w, r)
+		if err != nil {
+			s.writeBadRequest(w, err)
 			return
 		}
 

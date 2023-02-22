@@ -10,7 +10,11 @@ import (
 
 func (s *Server) handleGetTracklists() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		page := s.pageParam(w, r)
+		page, err := s.pageParam(w, r)
+		if err != nil {
+			s.writeBadRequest(w, err)
+			return
+		}
 
 		tracklists, total, err := s.GetTracklists(page, perPageTracklists)
 		if err != nil {
@@ -51,9 +55,9 @@ func (s *Server) handlePostTracklists() http.HandlerFunc {
 
 func (s *Server) handleGetTracklist() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		id := s.idParam(w, r)
-
-		if id == "" {
+		id, err := s.idParam(w, r)
+		if err != nil {
+			s.writeBadRequest(w, err)
 			return
 		}
 
@@ -73,9 +77,9 @@ func (s *Server) handleGetTracklist() http.HandlerFunc {
 
 func (s *Server) handlePatchTracklist() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		id := s.idParam(w, r)
-
-		if id == "" {
+		id, err := s.idParam(w, r)
+		if err != nil {
+			s.writeBadRequest(w, err)
 			return
 		}
 
