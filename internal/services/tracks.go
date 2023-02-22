@@ -13,7 +13,7 @@ import (
 )
 
 func (s *Services) GetTrack(id string) (*models.Track, error) {
-	s.Logger.Info("getting track", "id", id)
+	s.Logger.Info("get-track", "id", id)
 
 	track, err := s.DataStore.FindTrack(id)
 	if err != nil {
@@ -27,7 +27,7 @@ func (s *Services) GetTrack(id string) (*models.Track, error) {
 }
 
 func (s *Services) AddTrack(tx *sql.Tx, model *models.TrackAdd) (*models.Track, error) {
-	s.Logger.Info("adding track", "name", model.Name)
+	s.Logger.Info("add-track", "name", model.Name)
 
 	track, err := s.DataStore.FindTrackByArtistAndName(model.Artist, model.Name)
 	if err != nil {
@@ -60,7 +60,7 @@ func (s *Services) AddTrack(tx *sql.Tx, model *models.TrackAdd) (*models.Track, 
 }
 
 func (s *Services) GetMostPlayedTracks(limit int) ([]*models.Track, error) {
-	s.Logger.Info("getting most played tracks", "limit", limit)
+	s.Logger.Info("get-most-played-tracks", "limit", limit)
 
 	tracks, err := s.DataStore.FindMostPlayedTracks(limit)
 	if err != nil {
@@ -77,7 +77,7 @@ func (s *Services) GetMostPlayedTracks(limit int) ([]*models.Track, error) {
 }
 
 func (s *Services) SearchTracks(query string, limit int) ([]*models.Track, error) {
-	s.Logger.Info("searching tracks", "query", query)
+	s.Logger.Info("search-tracks", "query", query)
 
 	tracks, err := s.DataStore.FindTracksByQuery(query, limit)
 	if err != nil {

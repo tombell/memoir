@@ -10,7 +10,7 @@ import (
 )
 
 func (s *Services) UploadArtwork(r io.ReadSeeker, filename string) (*models.UploadedItem, error) {
-	s.Logger.Info("uploading artwork", "filename", filename)
+	s.Logger.Info("upload-artwork", "filename", filename)
 
 	ext := filepath.Ext(filename)
 

@@ -12,7 +12,7 @@ import (
 )
 
 func (s *Services) GetTracklists(page, limit int) ([]*models.Tracklist, int, error) {
-	s.Logger.Info("getting tracklists", "page", page)
+	s.Logger.Info("get-tracklists", "page", page)
 
 	done := make(chan struct{})
 
@@ -40,7 +40,7 @@ func (s *Services) GetTracklists(page, limit int) ([]*models.Tracklist, int, err
 }
 
 func (s *Services) AddTracklist(model *models.TracklistAdd) (*models.Tracklist, error) {
-	s.Logger.Info("adding tracklist", "name", model.Name)
+	s.Logger.Info("add-tracklist", "name", model.Name)
 
 	tracklist, err := s.DataStore.FindTracklistByName(model.Name)
 	if err != nil {
@@ -115,7 +115,7 @@ func (s *Services) AddTracklist(model *models.TracklistAdd) (*models.Tracklist, 
 }
 
 func (s *Services) UpdateTracklist(id string, model *models.TracklistUpdate) (*models.Tracklist, error) {
-	s.Logger.Info("updating tracklist", "id", id)
+	s.Logger.Info("update-tracklist", "id", id)
 
 	tx, err := s.DataStore.Begin()
 	if err != nil {
@@ -143,7 +143,7 @@ func (s *Services) UpdateTracklist(id string, model *models.TracklistUpdate) (*m
 }
 
 func (s *Services) GetTracklist(id string) (*models.Tracklist, error) {
-	s.Logger.Info("getting tracklist", "id", id)
+	s.Logger.Info("get-tracklist", "id", id)
 
 	tracklist, err := s.DataStore.FindTracklistWithTracks(id)
 	if err != nil {
@@ -157,7 +157,7 @@ func (s *Services) GetTracklist(id string) (*models.Tracklist, error) {
 }
 
 func (s *Services) GetTracklistsByTrack(id string, page, limit int) ([]*models.Tracklist, int, error) {
-	s.Logger.Info("getting tracklists by track", "id", id, "page", page)
+	s.Logger.Info("get-tracklists-by-track", "id", id, "page", page)
 
 	done := make(chan struct{})
 
