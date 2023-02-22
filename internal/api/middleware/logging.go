@@ -15,6 +15,7 @@ type responseWriter struct {
 
 func (rw *responseWriter) WriteHeader(s int) {
 	rw.status = s
+	rw.ResponseWriter.WriteHeader(s)
 }
 
 func (rw *responseWriter) Write(b []byte) (int, error) {
