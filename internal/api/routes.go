@@ -1,8 +1,6 @@
 package api
 
 import (
-	"net/http"
-
 	"github.com/gofrs/uuid"
 
 	"github.com/tombell/memoir/internal/api/middleware"
@@ -42,5 +40,5 @@ func (s *Server) routes() {
 
 	s.router.Handle("POST", "/artwork", middleware.Use(s.handlePostArtwork(), apiAuth...))
 
-	s.router.NotFound = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) { s.writeNotFound(w, r) })
+	s.router.NotFound = middleware.Use(s.handleNotFOund(), api...)
 }

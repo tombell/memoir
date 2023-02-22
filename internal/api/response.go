@@ -20,7 +20,6 @@ func (s *Server) writeInternalServerError(w http.ResponseWriter, err error) {
 }
 
 func (s *Server) writeNotFound(w http.ResponseWriter, r *http.Request) {
-	s.Logger.Error("not-found", "path", r.URL.Path)
 	w.WriteHeader(http.StatusNotFound)
 }
 
