@@ -8,18 +8,22 @@ import (
 )
 
 type responseWriter struct {
-	http.ResponseWriter
-	status int
-	size   int
+	responseWriter http.ResponseWriter
+	status         int
+	size           int
+}
+
+func (rw *responseWriter) Header() http.Header {
+	return rw.responseWriter.Header()
 }
 
 func (rw *responseWriter) WriteHeader(s int) {
 	rw.status = s
-	rw.ResponseWriter.WriteHeader(s)
+	rw.responseWriter.WriteHeader(s)
 }
 
 func (rw *responseWriter) Write(b []byte) (int, error) {
-	size, err := rw.ResponseWriter.Write(b)
+	size, err := rw.responseWriter.Write(b)
 	rw.size += size
 	return size, err
 }
@@ -37,7 +41,7 @@ func Logging(logger log.Logger) Middleware {
 				r.URL.Path,
 			)
 
-			rw := &responseWriter{ResponseWriter: w}
+			rw := &responseWriter{responseWriter: w}
 
 			h(rw, r)
 
