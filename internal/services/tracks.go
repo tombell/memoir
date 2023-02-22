@@ -1,7 +1,6 @@
 package services
 
 import (
-	"database/sql"
 	"fmt"
 	"strconv"
 	"time"
@@ -26,7 +25,7 @@ func (s *Services) GetTrack(id string) (*models.Track, error) {
 	return models.NewTrack(track), nil
 }
 
-func (s *Services) AddTrack(tx *sql.Tx, model *models.TrackAdd) (*models.Track, error) {
+func (s *Services) AddTrack(tx *datastore.Tx, model *models.TrackAdd) (*models.Track, error) {
 	s.Logger.Info("add-track", "name", model.Name)
 
 	track, err := s.DataStore.FindTrackByArtistAndName(model.Artist, model.Name)

@@ -23,7 +23,7 @@ type Track struct {
 	Played int
 }
 
-func (s *Store) AddTrack(tx *sql.Tx, track *Track) error {
+func (s *Store) AddTrack(tx *Tx, track *Track) error {
 	if _, err := tx.Exec(
 		queries.AddTrack,
 		track.ID,

@@ -37,11 +37,11 @@ func RunCommand(logger log.Logger) {
 		logger.Fatal("config load failed", "err", err)
 	}
 
-	ds, err := datastore.New(cfg.DB)
+	ds, err := datastore.New(cfg.DB, logger)
 	if err != nil {
 		logger.Fatal("datastore initialise failed", "err", err)
 	}
-	defer ds.Close()
+	defer ds.DB.Close()
 
 	fs := filestore.New(cfg.AWS.Key, cfg.AWS.Secret, cfg.AWS.Region)
 

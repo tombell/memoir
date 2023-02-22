@@ -21,7 +21,7 @@ type Tracklist struct {
 	Tracks     []*Track
 }
 
-func (s *Store) AddTracklist(tx *sql.Tx, tracklist *Tracklist) error {
+func (s *Store) AddTracklist(tx *Tx, tracklist *Tracklist) error {
 	if _, err := tx.Exec(
 		queries.AddTracklist,
 		tracklist.ID,
@@ -38,7 +38,7 @@ func (s *Store) AddTracklist(tx *sql.Tx, tracklist *Tracklist) error {
 	return nil
 }
 
-func (s *Store) UpdateTracklist(tx *sql.Tx, id, name, url string, date time.Time) error {
+func (s *Store) UpdateTracklist(tx *Tx, id, name, url string, date time.Time) error {
 	if _, err := tx.Exec(
 		queries.UpdateTracklist,
 		id,
@@ -57,7 +57,7 @@ func (s *Store) GetTracklistsCount() (int, error) {
 		Count int
 	}
 
-	if err := s.Get(&count, queries.GetTracklistsCount); err != nil {
+	if err := s.DB.Get(&count, queries.GetTracklistsCount); err != nil {
 		return -1, fmt.Errorf("db get failed: %w", err)
 	}
 
@@ -213,7 +213,7 @@ func (s *Store) FindTracklistsByTrackIDCount(id string) (int, error) {
 		Count int
 	}
 
-	if err := s.Get(&count, queries.FindTracklistsByTrackIDCount, id); err != nil {
+	if err := s.DB.Get(&count, queries.FindTracklistsByTrackIDCount, id); err != nil {
 		return -1, fmt.Errorf("db get failed: %w", err)
 	}
 
