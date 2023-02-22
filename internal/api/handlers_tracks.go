@@ -22,7 +22,7 @@ func (s *Server) handleGetTrack() http.HandlerFunc {
 			return
 		}
 
-		s.writeJSON(w, track)
+		s.writeJSON(w, track, http.StatusOK)
 	}
 }
 
@@ -57,7 +57,7 @@ func (s *Server) handleGetTracklistsByTrack() http.HandlerFunc {
 		}
 
 		s.addPaginationHeaders(w, perPageTracklists, page, total)
-		s.writeJSON(w, tracklists)
+		s.writeJSON(w, tracklists, http.StatusOK)
 	}
 }
 
@@ -69,7 +69,7 @@ func (s *Server) handleGetMostPlayedTracks() http.HandlerFunc {
 			return
 		}
 
-		s.writeJSON(w, tracks)
+		s.writeJSON(w, tracks, http.StatusOK)
 	}
 }
 
@@ -83,6 +83,6 @@ func (s *Server) handleSearchTracks() http.HandlerFunc {
 			return
 		}
 
-		s.writeJSON(w, tracks)
+		s.writeJSON(w, tracks, http.StatusOK)
 	}
 }

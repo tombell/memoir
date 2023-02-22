@@ -23,7 +23,7 @@ func (s *Server) handleGetTracklists() http.HandlerFunc {
 		}
 
 		s.addPaginationHeaders(w, perPageTracklists, page, total)
-		s.writeJSON(w, tracklists)
+		s.writeJSON(w, tracklists, http.StatusOK)
 	}
 }
 
@@ -48,8 +48,7 @@ func (s *Server) handlePostTracklists() http.HandlerFunc {
 			return
 		}
 
-		w.WriteHeader(http.StatusCreated)
-		s.writeJSON(w, tracklist)
+		s.writeJSON(w, tracklist, http.StatusCreated)
 	}
 }
 
@@ -71,7 +70,7 @@ func (s *Server) handleGetTracklist() http.HandlerFunc {
 			return
 		}
 
-		s.writeJSON(w, tracklist)
+		s.writeJSON(w, tracklist, http.StatusOK)
 	}
 }
 
@@ -102,6 +101,6 @@ func (s *Server) handlePatchTracklist() http.HandlerFunc {
 			return
 		}
 
-		s.writeJSON(w, tracklist)
+		s.writeJSON(w, tracklist, http.StatusOK)
 	}
 }

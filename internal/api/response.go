@@ -30,7 +30,7 @@ func (s *Server) writeNotFound(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusNotFound)
 }
 
-func (s *Server) writeJSON(w http.ResponseWriter, model any) {
+func (s *Server) writeJSON(w http.ResponseWriter, model any, status int) {
 	resp, err := json.Marshal(model)
 	if err != nil {
 		s.writeInternalServerError(w, err)
@@ -38,6 +38,7 @@ func (s *Server) writeJSON(w http.ResponseWriter, model any) {
 	}
 
 	w.Header().Add("Content-Type", "application/json")
-	w.WriteHeader(http.StatusOK)
+
+	w.WriteHeader(status)
 	w.Write(resp)
 }

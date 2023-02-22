@@ -13,12 +13,17 @@ func (s *Server) handlePostArtwork() http.HandlerFunc {
 		}
 		defer file.Close()
 
-		uploaded, err := s.UploadArtwork(file, header.Filename)
+		uploaded, exists, err := s.UploadArtwork(file, header.Filename)
 		if err != nil {
 			s.writeInternalServerError(w, err)
 			return
 		}
 
-		s.writeJSON(w, uploaded)
+		status := http.StatusCreated
+		if exists {
+			status = http.StatusOK
+		}
+
+		s.writeJSON(w, uploaded, status)
 	}
 }
