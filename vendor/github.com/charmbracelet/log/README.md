@@ -28,8 +28,20 @@ readable logging with batteries included.
 
 ## Usage
 
+Use `go get` to download the dependency.
+
+```bash
+go get github.com/charmbracelet/log@latest
+```
+
+Then, `import` it in your Go files:
+
+```go
+import "github.com/charmbracelet/log"
+```
+
 The Charm logger comes with a global package-wise logger with timestamps turned
-on and the logging level set to `info`.
+on, and the logging level set to `info`.
 
 ```go
 log.Debug("Cookie 🍪") // won't print anything
@@ -68,6 +80,42 @@ if butter {
 
 <img width="300" src="https://vhs.charm.sh/vhs-3QQdzOW4Zc0bN2tOhAest9.gif" alt="Made with VHS">
 
+### Levels
+
+Log offers multiple levels to filter your logs on. Available levels are:
+
+```go
+log.DebugLevel
+log.WarnLevel
+log.ErrorLevel
+log.FatalLevel
+```
+
+Use `log.SetLevel` or create a new logger with the `log.WithLevel` option to
+set the level.
+
+Use the corresponding function to log a message:
+
+```go
+err := errors.New("Baking error 101")
+log.Debug(err)
+log.Warn(err)
+log.Error(err)
+log.Fatal(err) // this calls os.Exit(1)
+log.Print(err) // prints regardless of log level
+```
+
+### Structured
+
+All the functions above take a message and key-value pairs of anything. The
+message can also be of type any.
+
+```go
+ingredients := []string{"flour", "butter", "sugar", "chocolate"}
+log.Debug("Available ingredients", "ingredients", ingredients)
+// DEBUG Available ingredients ingredients="[flour butter sugar chocolate]"
+```
+
 ### Options
 
 You can customize the logger with options. Use `log.WithCaller()` to enable
@@ -82,7 +130,7 @@ time.Sleep(10 * time.Minute)
 logger.Info("Finished baking")
 ```
 
-<img width="700" src="https://vhs.charm.sh/vhs-483r6n6t37vTPG0w9TrFCY.gif" alt="Made with VHS">
+<img width="700" src="https://vhs.charm.sh/vhs-6oSCJcQ5EmFKKELcskJhLo.gif" alt="Made with VHS">
 
 Use `log.SetFormatter()` or `log.WithFormatter()` to change the output format.
 Available options are:
@@ -102,7 +150,6 @@ Set the logger level and options.
 logger.SetReportTimestamp(false)
 logger.SetReportCaller(false)
 logger.SetLevel(log.DebugLevel)
-logger.Debug("Preparing batch 2...")
 ```
 
 ### Sub-logger
@@ -111,10 +158,11 @@ Create sub-loggers with their specific fields.
 
 ```go
 batch2 := logger.With("batch", 2, "chocolateChips", true)
+batch2.Debug("Preparing batch 2...")
 batch2.Debug("Adding chocolate chips")
 ```
 
-<img width="700" src="https://vhs.charm.sh/vhs-75gIsLW8dN7DOahsxsKG4v.gif" alt="Made with VHS">
+<img width="700" src="https://vhs.charm.sh/vhs-650Sw3rnwplHzwdfYNUp8n.gif" alt="Made with VHS">
 
 ### Format Messages
 
@@ -164,7 +212,7 @@ Some Go libraries, especially the ones in the standard library, will only accept
 the [standard logger][stdlog] interface. For instance, the HTTP Server from
 `net/http` will only take a `*log.Logger` for its `ErrorLog` field.
 
-For this, you can use the standard log adapter which simply wraps the logger in
+For this, you can use the standard log adapter, which simply wraps the logger in
 a `*log.Logger` interface.
 
 ```go
