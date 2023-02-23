@@ -3,6 +3,7 @@ package datastore
 import (
 	"database/sql"
 
+	"github.com/charmbracelet/lipgloss"
 	"github.com/charmbracelet/log"
 )
 
@@ -13,7 +14,10 @@ type Tx struct {
 }
 
 func (tx *Tx) Exec(query string, args ...interface{}) (sql.Result, error) {
+	oldStyle := log.ValueStyle
+	log.ValueStyle = lipgloss.NewStyle().Foreground(lipgloss.AdaptiveColor{Light: "208", Dark: "192"})
 	tx.logger.Debug("db", formatQueryArgs(query, args)...)
+	log.ValueStyle = oldStyle
 	return tx.Tx.Exec(query, args...)
 }
 
