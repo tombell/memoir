@@ -7,8 +7,6 @@ TESTFLAGS=-cover
 
 PLATFORMS:=darwin linux
 
-all: dev
-
 dev:
 	@echo building dist/memoir
 	@go build ${MODFLAGS} ${LDFLAGS} -o dist/memoir ./cmd/memoir
@@ -37,11 +35,5 @@ test:
 clean:
 	@rm -fr dist
 
-.PHONY: all          \
-        dev          \
-        prod         \
-        $(PLATFORMS) \
-        run          \
-        watch        \
-        test         \
-        clean        \
+.DEFAULT_GOAL := dev
+.PHONY: dev prod $(PLATFORMS) run watch test clean
