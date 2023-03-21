@@ -47,9 +47,9 @@ func main() {
 		flag.Usage()
 	}
 
-	logger := log.New(
-		log.WithOutput(os.Stderr),
-		log.WithTimestamp(),
+	logger := log.NewWithOptions(
+		os.Stderr,
+		log.Options{},
 	)
 
 	if os.Getenv("LOG_LEVEL") == "debug" {

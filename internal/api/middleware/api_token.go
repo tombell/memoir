@@ -6,7 +6,7 @@ import (
 	"github.com/charmbracelet/log"
 )
 
-func APIToken(logger log.Logger, token string) Middleware {
+func APIToken(token string, logger *log.Logger) Middleware {
 	return func(h http.HandlerFunc) http.HandlerFunc {
 		return func(w http.ResponseWriter, r *http.Request) {
 			key := r.Header.Get("API-Token")

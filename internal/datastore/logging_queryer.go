@@ -9,7 +9,7 @@ import (
 )
 
 type loggingQueryer struct {
-	logger  log.Logger
+	logger  *log.Logger
 	queryer sqlx.Queryer
 }
 

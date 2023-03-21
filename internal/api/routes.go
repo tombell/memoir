@@ -20,7 +20,7 @@ func (s *Server) routes() {
 
 	apiAuth := []middleware.Middleware{
 		middleware.CORS(),
-		middleware.APIToken(s.Logger, s.Config.API.Token),
+		middleware.APIToken(s.Config.API.Token, s.Logger),
 		middleware.Logging(s.Logger),
 		middleware.RequestID(requestID, s.Logger),
 	}

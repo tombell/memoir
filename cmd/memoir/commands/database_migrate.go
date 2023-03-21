@@ -19,7 +19,7 @@ Special options:
   --help    Show this message, then exit
 `
 
-func DatabaseMigrate(logger log.Logger) {
+func DatabaseMigrate(logger *log.Logger) {
 	cmd := flag.NewFlagSet("migrate", flag.ExitOnError)
 	cmd.Usage = usageText(migrateHelpText)
 

@@ -20,7 +20,7 @@ Special options:
   --help    Show this message, then exit
 `
 
-func DatabaseRollback(logger log.Logger) {
+func DatabaseRollback(logger *log.Logger) {
 	cmd := flag.NewFlagSet("rollback", flag.ExitOnError)
 	cmd.Usage = usageText(rollbackHelpText)
 

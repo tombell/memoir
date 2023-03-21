@@ -19,7 +19,7 @@ Special options:
   --help    Show this message, then exit
 `
 
-func DatabaseCreateCommand(logger log.Logger) {
+func DatabaseCreateCommand(logger *log.Logger) {
 	cmd := flag.NewFlagSet("create", flag.ExitOnError)
 	cmd.Usage = usageText(createHelpText)
 

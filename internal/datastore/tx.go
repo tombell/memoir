@@ -10,7 +10,7 @@ import (
 type Tx struct {
 	*sql.Tx
 
-	logger log.Logger
+	logger *log.Logger
 }
 
 func (tx *Tx) Exec(query string, args ...interface{}) (sql.Result, error) {

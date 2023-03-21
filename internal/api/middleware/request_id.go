@@ -11,7 +11,7 @@ type RequestIDGenerator func() string
 
 const requestIDContextKey ContextKey = "request-id"
 
-func RequestID(generator RequestIDGenerator, logger log.Logger) Middleware {
+func RequestID(generator RequestIDGenerator, logger *log.Logger) Middleware {
 	return func(h http.HandlerFunc) http.HandlerFunc {
 		return func(w http.ResponseWriter, r *http.Request) {
 			id := generator()

@@ -20,10 +20,10 @@ type Store struct {
 
 	DB *sqlx.DB
 
-	logger log.Logger
+	logger *log.Logger
 }
 
-func New(dsn string, logger log.Logger) (*Store, error) {
+func New(dsn string, logger *log.Logger) (*Store, error) {
 	sqlx.NameMapper = func(s string) string {
 		snake := matchFirstCapRegexp.ReplaceAllString(s, "${1}_${2}")
 		snake = matchAllCapRegexp.ReplaceAllString(snake, "${1}_${2}")
