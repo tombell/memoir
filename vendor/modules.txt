@@ -1,7 +1,8 @@
-# github.com/aws/aws-sdk-go v1.44.244
+# github.com/aws/aws-sdk-go v1.44.317
 ## explicit; go 1.11
 github.com/aws/aws-sdk-go/aws
 github.com/aws/aws-sdk-go/aws/arn
+github.com/aws/aws-sdk-go/aws/auth/bearer
 github.com/aws/aws-sdk-go/aws/awserr
 github.com/aws/aws-sdk-go/aws/awsutil
 github.com/aws/aws-sdk-go/aws/client
@@ -47,6 +48,7 @@ github.com/aws/aws-sdk-go/private/protocol/xml/xmlutil
 github.com/aws/aws-sdk-go/service/s3
 github.com/aws/aws-sdk-go/service/sso
 github.com/aws/aws-sdk-go/service/sso/ssoiface
+github.com/aws/aws-sdk-go/service/ssooidc
 github.com/aws/aws-sdk-go/service/sts
 github.com/aws/aws-sdk-go/service/sts/stsiface
 # github.com/aymanbagabas/go-osc52/v2 v2.0.1
@@ -55,7 +57,7 @@ github.com/aymanbagabas/go-osc52/v2
 # github.com/charmbracelet/lipgloss v0.7.1
 ## explicit; go 1.17
 github.com/charmbracelet/lipgloss
-# github.com/charmbracelet/log v0.2.1
+# github.com/charmbracelet/log v0.2.3
 ## explicit; go 1.17
 github.com/charmbracelet/log
 # github.com/go-logfmt/logfmt v0.6.0
@@ -71,7 +73,7 @@ github.com/jmespath/go-jmespath
 ## explicit; go 1.10
 github.com/jmoiron/sqlx
 github.com/jmoiron/sqlx/reflectx
-# github.com/lib/pq v1.10.8
+# github.com/lib/pq v1.10.9
 ## explicit; go 1.13
 github.com/lib/pq
 github.com/lib/pq/oid
@@ -82,10 +84,10 @@ github.com/lucasb-eyer/go-colorful
 # github.com/matryer/way v0.0.0-20180416093233-9632d0c407b0
 ## explicit
 github.com/matryer/way
-# github.com/mattn/go-isatty v0.0.18
+# github.com/mattn/go-isatty v0.0.19
 ## explicit; go 1.15
 github.com/mattn/go-isatty
-# github.com/mattn/go-runewidth v0.0.14
+# github.com/mattn/go-runewidth v0.0.15
 ## explicit; go 1.9
 github.com/mattn/go-runewidth
 # github.com/muesli/reflow v0.3.0
@@ -94,7 +96,7 @@ github.com/muesli/reflow/ansi
 github.com/muesli/reflow/truncate
 github.com/muesli/reflow/wordwrap
 github.com/muesli/reflow/wrap
-# github.com/muesli/termenv v0.15.1
+# github.com/muesli/termenv v0.15.2
 ## explicit; go 1.17
 github.com/muesli/termenv
 # github.com/pelletier/go-toml v1.9.5
@@ -109,7 +111,7 @@ github.com/tombell/tonality
 # github.com/tombell/trek v0.0.7
 ## explicit; go 1.13
 github.com/tombell/trek
-# golang.org/x/sys v0.7.0
+# golang.org/x/sys v0.11.0
 ## explicit; go 1.17
 golang.org/x/sys/internal/unsafeheader
 golang.org/x/sys/unix
