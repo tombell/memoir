@@ -1,4 +1,4 @@
-# github.com/aws/aws-sdk-go v1.45.20
+# github.com/aws/aws-sdk-go v1.45.24
 ## explicit; go 1.11
 github.com/aws/aws-sdk-go/aws
 github.com/aws/aws-sdk-go/aws/arn
@@ -57,7 +57,7 @@ github.com/aymanbagabas/go-osc52/v2
 # github.com/charmbracelet/lipgloss v0.8.0
 ## explicit; go 1.17
 github.com/charmbracelet/lipgloss
-# github.com/charmbracelet/log v0.2.4
+# github.com/charmbracelet/log v0.2.5
 ## explicit; go 1.17
 github.com/charmbracelet/log
 # github.com/go-logfmt/logfmt v0.6.0
@@ -111,9 +111,8 @@ github.com/tombell/tonality
 # github.com/tombell/trek v0.0.7
 ## explicit; go 1.13
 github.com/tombell/trek
-# golang.org/x/sys v0.12.0
+# golang.org/x/sys v0.13.0
 ## explicit; go 1.17
-golang.org/x/sys/internal/unsafeheader
 golang.org/x/sys/unix
 golang.org/x/sys/windows
 # gopkg.in/yaml.v2 v2.3.0
