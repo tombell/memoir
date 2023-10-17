@@ -8,6 +8,9 @@ import (
 var files embed.FS
 
 func query(filename string) string {
-	data, _ := files.ReadFile(filename)
+	data, err := files.ReadFile(filename)
+	if err != nil {
+		panic(err)
+	}
 	return string(data)
 }
