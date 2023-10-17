@@ -2,7 +2,7 @@ package api
 
 import (
 	"encoding/json"
-	"io/ioutil"
+	"io"
 	"net/http"
 
 	"github.com/tombell/memoir/internal/services/models"
@@ -29,7 +29,7 @@ func (s *Server) handleGetTracklists() http.HandlerFunc {
 
 func (s *Server) handlePostTracklists() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		body, err := ioutil.ReadAll(r.Body)
+		body, err := io.ReadAll(r.Body)
 		defer r.Body.Close()
 		if err != nil {
 			s.writeInternalServerError(w, err)
@@ -82,7 +82,7 @@ func (s *Server) handlePatchTracklist() http.HandlerFunc {
 			return
 		}
 
-		body, err := ioutil.ReadAll(r.Body)
+		body, err := io.ReadAll(r.Body)
 		defer r.Body.Close()
 		if err != nil {
 			s.writeInternalServerError(w, err)
