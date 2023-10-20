@@ -4,7 +4,7 @@ import (
 	"embed"
 )
 
-//go:embed */*.sql
+//go:embed sql/*.sql
 var files embed.FS
 
 func query(filename string) string {
