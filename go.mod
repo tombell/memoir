@@ -1,7 +1,7 @@
 module github.com/tombell/memoir
 
 require (
-	github.com/aws/aws-sdk-go v1.45.27
+	github.com/aws/aws-sdk-go v1.46.1
 	github.com/charmbracelet/lipgloss v0.9.1
 	github.com/charmbracelet/log v0.2.5
 	github.com/gofrs/uuid v4.4.0+incompatible
