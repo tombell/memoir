@@ -30,7 +30,6 @@ var (
 )
 
 func main() {
-
 	flag.Usage = func() {
 		fmt.Fprintf(os.Stderr, helpText)
 		os.Exit(2)

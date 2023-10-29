@@ -12,5 +12,4 @@ func Use(h http.HandlerFunc, middleware ...Middleware) http.HandlerFunc {
 	}
 
 	return h
-
 }

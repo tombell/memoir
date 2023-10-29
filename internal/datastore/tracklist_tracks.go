@@ -21,7 +21,6 @@ func (s *Store) AddTracklistTrack(tx *Tx, tt *TracklistTrack) error {
 		tt.TrackID,
 		tt.TrackNumber,
 	)
-
 	if err != nil {
 		return fmt.Errorf("tx exec failed: %w", err)
 	}
