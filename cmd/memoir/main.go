@@ -56,7 +56,7 @@ func main() {
 	}
 
 	switch os.Args[1] {
-	case "run":
+	case "run", "r":
 		commands.RunCommand(logger)
 	case "db:create":
 		commands.DatabaseCreateCommand(logger)
