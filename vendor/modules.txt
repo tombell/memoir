@@ -1,4 +1,4 @@
-# github.com/aws/aws-sdk-go v1.47.0
+# github.com/aws/aws-sdk-go v1.49.13
 ## explicit; go 1.19
 github.com/aws/aws-sdk-go/aws
 github.com/aws/aws-sdk-go/aws/arn
@@ -57,8 +57,8 @@ github.com/aymanbagabas/go-osc52/v2
 # github.com/charmbracelet/lipgloss v0.9.1
 ## explicit; go 1.17
 github.com/charmbracelet/lipgloss
-# github.com/charmbracelet/log v0.2.5
-## explicit; go 1.17
+# github.com/charmbracelet/log v0.3.1
+## explicit; go 1.19
 github.com/charmbracelet/log
 # github.com/go-logfmt/logfmt v0.6.0
 ## explicit; go 1.17
@@ -111,8 +111,15 @@ github.com/tombell/tonality
 # github.com/tombell/trek v0.0.7
 ## explicit; go 1.13
 github.com/tombell/trek
-# golang.org/x/sys v0.13.0
-## explicit; go 1.17
+# golang.org/x/exp v0.0.0-20231226003508-02704c960a9b
+## explicit; go 1.20
+golang.org/x/exp/constraints
+golang.org/x/exp/slices
+golang.org/x/exp/slog
+golang.org/x/exp/slog/internal
+golang.org/x/exp/slog/internal/buffer
+# golang.org/x/sys v0.15.0
+## explicit; go 1.18
 golang.org/x/sys/unix
 golang.org/x/sys/windows
 # gopkg.in/yaml.v2 v2.3.0

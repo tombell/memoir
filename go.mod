@@ -1,9 +1,9 @@
 module github.com/tombell/memoir
 
 require (
-	github.com/aws/aws-sdk-go v1.47.0
+	github.com/aws/aws-sdk-go v1.49.13
 	github.com/charmbracelet/lipgloss v0.9.1
-	github.com/charmbracelet/log v0.2.5
+	github.com/charmbracelet/log v0.3.1
 	github.com/gofrs/uuid v4.4.0+incompatible
 	github.com/jmoiron/sqlx v1.3.5
 	github.com/lib/pq v1.10.9
@@ -23,7 +23,8 @@ require (
 	github.com/muesli/reflow v0.3.0 // indirect
 	github.com/muesli/termenv v0.15.2 // indirect
 	github.com/rivo/uniseg v0.4.4 // indirect
-	golang.org/x/sys v0.13.0 // indirect
+	golang.org/x/exp v0.0.0-20231226003508-02704c960a9b // indirect
+	golang.org/x/sys v0.15.0 // indirect
 	gopkg.in/yaml.v2 v2.3.0 // indirect
 )
 

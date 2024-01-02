@@ -34,6 +34,7 @@ readable logging with batteries included.
 - Leveled logging.
 - Text, JSON, and Logfmt formatters.
 - Store and retrieve logger in and from context.
+- Slog handler.
 - Standard log adapter.
 
 ## Usage
@@ -167,7 +168,7 @@ logger := log.NewWithOptions(os.Stderr, log.Options{
     ReportCaller: true,
     ReportTimestamp: true,
     TimeFormat: time.Kitchen,
-    Prefix: "Baking 🍪 "
+    Prefix: "Baking 🍪 ",
 })
 logger.Info("Starting oven!", "degree", 375)
 time.Sleep(10 * time.Minute)
@@ -306,6 +307,17 @@ startOven(400) // INFO <cookies/oven.go:123> Starting oven degree=400
 This will use the _caller_ function (`startOven`) line number instead of the
 logging function (`log.Info`) to report the source location.
 
+### Slog Handler
+
+You can use Log as an [`log/slog`](https://pkg.go.dev/log/slog) handler. Just
+pass a logger instance to Slog and you're good to go.
+
+```go
+handler := log.New(os.Stderr)
+logger := slog.New(handler)
+logger.Error("meow?")
+```
+
 ### Standard Log Adapter
 
 Some Go libraries, especially the ones in the standard library, will only accept
@@ -329,6 +341,16 @@ stdlog.Printf("Failed to make bake request, %s", fmt.Errorf("temperature is too 
 // ERROR http: Failed to make bake request, temperature is too low
 ```
 
+## Gum
+
+<img src="https://vhs.charm.sh/vhs-6jupuFM0s2fXiUrBE0I1vU.gif" width="600" alt="Running gum log with debug and error levels" />
+
+Log integrates with [Gum][gum] to log messages to output. Use `gum log [flags]
+[message]` to handle logging in your shell scripts. See
+[charmbracelet/gum](https://github.com/charmbracelet/gum#log) for more
+information.
+
+[gum]: https://github.com/charmbracelet/gum
 [lipgloss]: https://github.com/charmbracelet/lipgloss
 [stdlog]: https://pkg.go.dev/log
 
