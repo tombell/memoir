@@ -29,8 +29,10 @@ func (q *loggingQueryer) QueryRowx(query string, args ...any) *sqlx.Row {
 }
 
 func (q *loggingQueryer) logQuery(query string, args ...any) {
-	oldStyle := log.ValueStyle
-	log.ValueStyle = lipgloss.NewStyle().Foreground(lipgloss.AdaptiveColor{Light: "208", Dark: "192"})
+	oldStyle := log.DefaultStyles()
+	newStyle := log.DefaultStyles()
+	newStyle.Value = lipgloss.NewStyle().Foreground(lipgloss.AdaptiveColor{Light: "208", Dark: "192"})
+	q.logger.SetStyles(newStyle)
 	q.logger.Debug("db", formatQueryArgs(query, args)...)
-	log.ValueStyle = oldStyle
+	q.logger.SetStyles(oldStyle)
 }

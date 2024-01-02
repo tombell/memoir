@@ -14,10 +14,12 @@ type Tx struct {
 }
 
 func (tx *Tx) Exec(query string, args ...interface{}) (sql.Result, error) {
-	oldStyle := log.ValueStyle
-	log.ValueStyle = lipgloss.NewStyle().Foreground(lipgloss.AdaptiveColor{Light: "208", Dark: "192"})
+	oldStyle := log.DefaultStyles()
+	newStyle := log.DefaultStyles()
+	newStyle.Value = lipgloss.NewStyle().Foreground(lipgloss.AdaptiveColor{Light: "208", Dark: "192"})
+	tx.logger.SetStyles(newStyle)
 	tx.logger.Debug("db", formatQueryArgs(query, args)...)
-	log.ValueStyle = oldStyle
+	tx.logger.SetStyles(oldStyle)
 	return tx.Tx.Exec(query, args...)
 }
 
