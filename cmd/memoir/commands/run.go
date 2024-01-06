@@ -27,7 +27,7 @@ Special options:
 `
 
 func RunCommand(logger *log.Logger) {
-	cmd := flag.NewFlagSet("migrate", flag.ExitOnError)
+	cmd := flag.NewFlagSet("run", flag.ExitOnError)
 	cmd.Usage = usageText(runHelpText)
 
 	cfgpath := cmd.String("config", ".env.dev.toml", "")
