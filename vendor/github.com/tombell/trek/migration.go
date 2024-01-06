@@ -119,9 +119,9 @@ func (m *Migration) readContents() error {
 	for scanner.Scan() {
 		line := scanner.Text()
 
-		if strings.HasPrefix(strings.ToLower(strings.TrimSpace(line)), "-- up") {
+		if strings.HasPrefix(strings.ToLower(strings.TrimSpace(line)), "-- migrate:up") {
 			up = true
-		} else if strings.HasPrefix(strings.ToLower(strings.TrimSpace(line)), "-- down") {
+		} else if strings.HasPrefix(strings.ToLower(strings.TrimSpace(line)), "-- migrate:down") {
 			up = false
 		} else {
 			if up {
