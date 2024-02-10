@@ -68,7 +68,7 @@ func Rollback(driverName, dsn, migrationsPath string, steps int) error {
 
 func getDriver(driver string) (Driver, error) {
 	switch driver {
-	case "postgres":
+	case "postgres", "pgx":
 		return &PostgresDriver{}, nil
 	case "sqlite3":
 		return &SQLiteDriver{}, nil
