@@ -5,6 +5,7 @@ import (
 	"os"
 
 	"github.com/charmbracelet/log"
+	_ "github.com/jackc/pgx/v5/stdlib"
 	"github.com/tombell/trek"
 
 	"github.com/tombell/memoir/internal/config"
@@ -40,7 +41,7 @@ func DatabaseRollback(logger *log.Logger) {
 		logger.Fatal("config load failed", "err", err)
 	}
 
-	if err := trek.Rollback("postgres", cfg.DB, cfg.Migrations, *steps); err != nil {
+	if err := trek.Rollback("pgx", cfg.DB, cfg.Migrations, *steps); err != nil {
 		logger.Fatal("trek migrate failed", "err", err)
 	}
 }
