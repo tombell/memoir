@@ -5,12 +5,11 @@ import (
 	"fmt"
 	"io"
 	"path/filepath"
-
-	"github.com/tombell/memoir/internal/services/models"
 )
 
-func (s *Services) UploadArtwork(r io.ReadSeeker, filename string) (*models.UploadedItem, bool, error) {
-	s.Logger.Info("upload-artwork", "filename", filename)
+func (s *Services) UploadArtwork(r io.ReadSeeker, filename string) (*UploadedItem, bool, error) {
+	s.Logger.Info("upload-artwork:started", "filename", filename)
+	s.Logger.Info("upload-artwork:finished", "filename", filename)
 
 	ext := filepath.Ext(filename)
 
@@ -24,7 +23,7 @@ func (s *Services) UploadArtwork(r io.ReadSeeker, filename string) (*models.Uplo
 
 	exists, err := s.FileStore.Exists(s.Config.AWS.Bucket, key)
 	if err != nil {
-		return nil, false, fmt.Errorf("check upload exists failed: %w", err)
+		return nil, false, fmt.Errorf("filestore exists failed: %w", err)
 	}
 
 	r.Seek(0, io.SeekStart)
@@ -35,5 +34,5 @@ func (s *Services) UploadArtwork(r io.ReadSeeker, filename string) (*models.Uplo
 		}
 	}
 
-	return &models.UploadedItem{Key: key}, exists, nil
+	return &UploadedItem{Key: key}, exists, nil
 }
