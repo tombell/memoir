@@ -2,9 +2,9 @@ package commands
 
 import (
 	"flag"
+	"log/slog"
 	"os"
 
-	"github.com/charmbracelet/log"
 	_ "github.com/jackc/pgx/v5/stdlib"
 	"github.com/tombell/trek"
 
@@ -20,14 +20,15 @@ Special options:
   --help    Show this message, then exit
 `
 
-func DatabaseMigrate(logger *log.Logger) {
+func DatabaseMigrate(logger *slog.Logger) {
 	cmd := flag.NewFlagSet("migrate", flag.ExitOnError)
 	cmd.Usage = usageText(migrateHelpText)
 
 	cfgpath := cmd.String("config", ".env.dev.toml", "")
 
 	if err := cmd.Parse(os.Args[2:]); err != nil {
-		logger.Fatal("cmd parse failed", "err", err)
+		logger.Error("cmd parse failed", "err", err)
+		return
 	}
 
 	if !cmd.Parsed() {
@@ -36,10 +37,11 @@ func DatabaseMigrate(logger *log.Logger) {
 
 	cfg, err := config.Load(*cfgpath)
 	if err != nil {
-		logger.Fatal("config load failed", "err", err)
+		logger.Error("config load failed", "err", err)
+		return
 	}
 
 	if err := trek.Migrate("pgx", cfg.DB, cfg.Migrations); err != nil {
-		logger.Fatal("trek migrate failed", "err", err)
+		logger.Error("trek migrate failed", "err", err)
 	}
 }

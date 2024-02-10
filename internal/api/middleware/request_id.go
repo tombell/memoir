@@ -2,34 +2,27 @@ package middleware
 
 import (
 	"context"
+	"log/slog"
 	"net/http"
-
-	"github.com/charmbracelet/log"
 )
 
-type RequestIDGenerator func() string
+const RequestIDContextKey ContextKey = "request-id"
 
-const requestIDContextKey ContextKey = "request-id"
-
-func RequestID(generator RequestIDGenerator, logger *log.Logger) Middleware {
+func RequestID(generator func() string, logger *slog.Logger) Middleware {
 	return func(h http.HandlerFunc) http.HandlerFunc {
 		return func(w http.ResponseWriter, r *http.Request) {
 			id := generator()
 
 			w.Header().Add("Request-ID", id)
 
-			ctx := context.WithValue(r.Context(), requestIDContextKey, id)
+			ctx := context.WithValue(r.Context(), RequestIDContextKey, id)
 			r = r.WithContext(ctx)
 
-			logger.SetPrefix(id)
+			// TODO: figure out best way to use .With and update the logger for
+			// the entire request
+			// logger = logger.With("request-id", id)
 
 			h(w, r)
-
-			logger.SetPrefix("")
 		}
 	}
-}
-
-func FindRequestID(r *http.Request) string {
-	return r.Context().Value(requestIDContextKey).(string)
 }

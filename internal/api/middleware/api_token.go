@@ -1,12 +1,11 @@
 package middleware
 
 import (
+	"log/slog"
 	"net/http"
-
-	"github.com/charmbracelet/log"
 )
 
-func APIToken(token string, logger *log.Logger) Middleware {
+func APIToken(token string, logger *slog.Logger) Middleware {
 	return func(h http.HandlerFunc) http.HandlerFunc {
 		return func(w http.ResponseWriter, r *http.Request) {
 			key := r.Header.Get("API-Token")

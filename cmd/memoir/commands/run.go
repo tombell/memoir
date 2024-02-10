@@ -3,12 +3,12 @@ package commands
 import (
 	"context"
 	"flag"
+	"log/slog"
 	"net/http"
 	"os"
 	"os/signal"
 	"time"
 
-	"github.com/charmbracelet/log"
 	"github.com/jackc/pgx/v5/pgxpool"
 
 	"github.com/tombell/memoir/internal/api"
@@ -27,7 +27,7 @@ Special options:
   --help    Show this message, then exit
 `
 
-func RunCommand(logger *log.Logger) {
+func RunCommand(logger *slog.Logger) {
 	cmd := flag.NewFlagSet("run", flag.ExitOnError)
 	cmd.Usage = usageText(runHelpText)
 
@@ -35,12 +35,12 @@ func RunCommand(logger *log.Logger) {
 
 	cfg, err := config.Load(*cfgpath)
 	if err != nil {
-		logger.Fatal("config load failed", "err", err)
+		logger.Error("config load failed", "err", err)
 	}
 
 	dbpool, err := pgxpool.New(context.Background(), cfg.DB)
 	if err != nil {
-		logger.Fatal("datastore initialise failed", "err", err)
+		logger.Error("datastore initialise failed", "err", err)
 	}
 	defer dbpool.Close()
 
@@ -58,7 +58,7 @@ func RunCommand(logger *log.Logger) {
 				return
 			}
 
-			logger.Fatal("starting api server failed", "err", err)
+			logger.Error("starting api server failed", "err", err)
 		}
 	}()
 
@@ -70,6 +70,6 @@ func RunCommand(logger *log.Logger) {
 	defer cancel()
 
 	if err := srv.Shutdown(ctx); err != nil {
-		logger.Fatal("server shutdown failed", "err", err)
+		logger.Error("server shutdown failed", "err", err)
 	}
 }

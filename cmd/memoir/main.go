@@ -3,9 +3,8 @@ package main
 import (
 	"flag"
 	"fmt"
+	"log/slog"
 	"os"
-
-	"github.com/charmbracelet/log"
 
 	"github.com/tombell/memoir/cmd/memoir/commands"
 )
@@ -46,14 +45,7 @@ func main() {
 		flag.Usage()
 	}
 
-	logger := log.NewWithOptions(
-		os.Stderr,
-		log.Options{},
-	)
-
-	if os.Getenv("LOG_LEVEL") == "debug" {
-		logger.SetLevel(log.DebugLevel)
-	}
+	logger := slog.New(slog.NewTextHandler(os.Stderr, nil))
 
 	switch os.Args[1] {
 	case "run", "r":
@@ -67,6 +59,6 @@ func main() {
 	case "db:rollback":
 		commands.DatabaseRollback(logger)
 	default:
-		logger.Fatal("invalid sub-command", "cmd", os.Args[1])
+		logger.Error("invalid sub-command", "cmd", os.Args[1])
 	}
 }

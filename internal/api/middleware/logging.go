@@ -1,10 +1,9 @@
 package middleware
 
 import (
+	"log/slog"
 	"net/http"
 	"time"
-
-	"github.com/charmbracelet/log"
 )
 
 type responseWriter struct {
@@ -24,7 +23,7 @@ func (rw *responseWriter) Write(b []byte) (int, error) {
 	return size, err
 }
 
-func Logging(logger *log.Logger) Middleware {
+func Logging(logger *slog.Logger) Middleware {
 	return func(h http.HandlerFunc) http.HandlerFunc {
 		return func(w http.ResponseWriter, r *http.Request) {
 			start := time.Now().UTC()
