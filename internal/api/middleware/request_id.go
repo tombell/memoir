@@ -8,19 +8,18 @@ import (
 
 const RequestIDContextKey ContextKey = "request-id"
 
-func RequestID(generator func() string, logger *slog.Logger) Middleware {
+func RequestID(generate func() string) Middleware {
 	return func(h http.HandlerFunc) http.HandlerFunc {
 		return func(w http.ResponseWriter, r *http.Request) {
-			id := generator()
+			rid := generate()
+			ctx := context.WithValue(r.Context(), RequestIDContextKey, rid)
 
-			w.Header().Add("Request-ID", id)
+			logger, _ := r.Context().Value(LoggerContextKey).(*slog.Logger)
+			logger = logger.With("rid", rid)
+			ctx = context.WithValue(ctx, LoggerContextKey, logger)
 
-			ctx := context.WithValue(r.Context(), RequestIDContextKey, id)
+			w.Header().Add("Request-ID", rid)
 			r = r.WithContext(ctx)
-
-			// TODO: figure out best way to use .With and update the logger for
-			// the entire request
-			// logger = logger.With("request-id", id)
 
 			h(w, r)
 		}

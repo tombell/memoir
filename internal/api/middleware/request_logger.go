@@ -23,9 +23,11 @@ func (rw *responseWriter) Write(b []byte) (int, error) {
 	return size, err
 }
 
-func Logging(logger *slog.Logger) Middleware {
+func RequestLogger() Middleware {
 	return func(h http.HandlerFunc) http.HandlerFunc {
 		return func(w http.ResponseWriter, r *http.Request) {
+			logger, _ := r.Context().Value(LoggerContextKey).(*slog.Logger)
+
 			start := time.Now().UTC()
 
 			logger.Info(
