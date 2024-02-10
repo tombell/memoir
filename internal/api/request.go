@@ -6,7 +6,6 @@ import (
 	"strconv"
 
 	"github.com/google/uuid"
-	"github.com/matryer/way"
 )
 
 func pageParam(w http.ResponseWriter, r *http.Request) (int32, error) {
@@ -28,7 +27,7 @@ func pageParam(w http.ResponseWriter, r *http.Request) (int32, error) {
 }
 
 func idParam(w http.ResponseWriter, r *http.Request) (string, error) {
-	id := way.Param(r.Context(), "id")
+	id := r.PathValue("id")
 
 	if _, err := uuid.Parse(id); err != nil {
 		return "", errors.New("invalid id parameter")

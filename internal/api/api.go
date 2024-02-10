@@ -6,8 +6,6 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/matryer/way"
-
 	"github.com/tombell/memoir/internal/config"
 	"github.com/tombell/memoir/internal/services"
 )
@@ -20,7 +18,7 @@ const (
 )
 
 type Server struct {
-	router *way.Router
+	router *http.ServeMux
 	server *http.Server
 }
 
@@ -29,7 +27,7 @@ func New(
 	config *config.Config,
 	services *services.Services,
 ) *Server {
-	router := way.NewRouter()
+	router := http.NewServeMux()
 	server := &Server{router: router}
 
 	server.server = &http.Server{

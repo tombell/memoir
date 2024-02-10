@@ -85,9 +85,6 @@ github.com/jackc/puddle/v2/internal/genstack
 # github.com/jmespath/go-jmespath v0.4.0
 ## explicit; go 1.14
 github.com/jmespath/go-jmespath
-# github.com/matryer/way v0.0.0-20180416093233-9632d0c407b0
-## explicit
-github.com/matryer/way
 # github.com/pelletier/go-toml v1.9.5
 ## explicit; go 1.12
 github.com/pelletier/go-toml
