@@ -5,15 +5,16 @@ import (
 	"errors"
 	"fmt"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/google/uuid"
 	"github.com/jackc/pgerrcode"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgconn"
+
 	"github.com/tombell/memoir/internal/datastore"
 	"github.com/tombell/memoir/internal/trackstore"
-	"github.com/tombell/tonality"
 )
 
 type Tracklist struct {
@@ -155,12 +156,6 @@ func (s *Store) AddTracklist(model *AddTracklistParams) (*Tracklist, error) {
 	}
 
 	for idx, data := range model.Tracks {
-		normalizedKey, err := tonality.ConvertKeyToNotation(data[3], tonality.CamelotKeys)
-		if err != nil {
-			tx.Rollback(context.Background())
-			return nil, fmt.Errorf("normalizing key to camelot key notation failed: %w", err)
-		}
-
 		row, err := queries.GetTrackByArtistAndName(context.Background(), datastore.GetTrackByArtistAndNameParams{
 			Artist: data[1],
 			Name:   data[0],
@@ -180,7 +175,7 @@ func (s *Store) AddTracklist(model *AddTracklistParams) (*Tracklist, error) {
 				Name:    data[0],
 				Artist:  data[1],
 				BPM:     bpm,
-				Key:     normalizedKey,
+				Key:     strings.ToUpper(data[3]),
 				Genre:   data[4],
 				Created: time.Now().UTC(),
 				Updated: time.Now().UTC(),
