@@ -13,6 +13,7 @@ func main() {
 
 	if len(os.Args) < 2 {
 		flag.Usage()
+		return
 	}
 
 	logger := slog.New(slog.NewTextHandler(os.Stderr, nil))
