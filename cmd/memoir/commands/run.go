@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/charmbracelet/log"
+	"github.com/jackc/pgx/v5/pgxpool"
 
 	"github.com/tombell/memoir/internal/api"
 	"github.com/tombell/memoir/internal/config"
@@ -37,19 +38,17 @@ func RunCommand(logger *log.Logger) {
 		logger.Fatal("config load failed", "err", err)
 	}
 
-	ds, err := datastore.New(cfg.DB, logger)
+	dbpool, err := pgxpool.New(context.Background(), cfg.DB)
 	if err != nil {
 		logger.Fatal("datastore initialise failed", "err", err)
 	}
-	defer ds.DB.Close()
-
-	fs := filestore.New(cfg.AWS.Key, cfg.AWS.Secret, cfg.AWS.Region)
+	defer dbpool.Close()
 
 	srv := api.New(&services.Services{
-		Logger:    logger,
 		Config:    cfg,
-		DataStore: ds,
-		FileStore: fs,
+		DataStore: datastore.NewStore(dbpool),
+		FileStore: filestore.New(cfg.AWS.Key, cfg.AWS.Secret, cfg.AWS.Region),
+		Logger:    logger,
 	})
 
 	go func() {
