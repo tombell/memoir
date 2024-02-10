@@ -1,8 +1,6 @@
 package api
 
 import (
-	"encoding/json"
-	"io"
 	"net/http"
 
 	"github.com/tombell/memoir/internal/trackliststore"
@@ -23,7 +21,10 @@ func handleGetTracklists(tracklistStore *trackliststore.Store) http.HandlerFunc 
 		}
 
 		addPaginationHeaders(w, perPageTracklists, page, total)
-		writeJSON(w, tracklists, http.StatusOK)
+
+		if err := encode(w, r, http.StatusOK, tracklists); err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+		}
 	}
 }
 
@@ -41,30 +42,25 @@ func handleGetTracklist(tracklistStore *trackliststore.Store) http.HandlerFunc {
 			return
 		}
 		if tracklist == nil {
-			writeNotFound(w, r)
+			w.WriteHeader(http.StatusNotFound)
 			return
 		}
 
-		writeJSON(w, tracklist, http.StatusOK)
+		if err := encode(w, r, http.StatusOK, tracklist); err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+		}
 	}
 }
 
 func handleAddTracklist(tracklistStore *trackliststore.Store) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		body, err := io.ReadAll(r.Body)
-		defer r.Body.Close()
+		params, err := decode[trackliststore.AddTracklistParams](r)
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}
 
-		var tl trackliststore.AddTracklistParams
-		if err = json.Unmarshal(body, &tl); err != nil {
-			w.WriteHeader(http.StatusInternalServerError)
-			return
-		}
-
-		tracklist, err := tracklistStore.AddTracklist(&tl)
+		tracklist, err := tracklistStore.AddTracklist(&params)
 		if err != nil {
 
 			w.WriteHeader(http.StatusInternalServerError)
@@ -75,7 +71,9 @@ func handleAddTracklist(tracklistStore *trackliststore.Store) http.HandlerFunc {
 			return
 		}
 
-		writeJSON(w, tracklist, http.StatusCreated)
+		if err := encode(w, r, http.StatusOK, tracklist); err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+		}
 	}
 }
 
@@ -87,25 +85,20 @@ func handleUpdateTracklist(tracklistStore *trackliststore.Store) http.HandlerFun
 			return
 		}
 
-		body, err := io.ReadAll(r.Body)
-		defer r.Body.Close()
+		params, err := decode[trackliststore.UpdateTracklistParams](r)
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}
 
-		var tracklistUpdate trackliststore.UpdateTracklistParams
-		if err = json.Unmarshal(body, &tracklistUpdate); err != nil {
-			w.WriteHeader(http.StatusBadRequest)
-			return
-		}
-
-		tracklist, err := tracklistStore.UpdateTracklist(id, &tracklistUpdate)
+		tracklist, err := tracklistStore.UpdateTracklist(id, &params)
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}
 
-		writeJSON(w, tracklist, http.StatusOK)
+		if err := encode(w, r, http.StatusOK, tracklist); err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+		}
 	}
 }

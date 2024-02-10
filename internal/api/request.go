@@ -1,12 +1,23 @@
 package api
 
 import (
+	"encoding/json"
 	"errors"
+	"fmt"
 	"net/http"
 	"strconv"
 
 	"github.com/google/uuid"
 )
+
+func decode[T any](r *http.Request) (T, error) {
+	var v T
+	if err := json.NewDecoder(r.Body).Decode(&v); err != nil {
+		return v, fmt.Errorf("json decode failed: %w", err)
+	}
+
+	return v, nil
+}
 
 func pageParam(w http.ResponseWriter, r *http.Request) (int32, error) {
 	page := r.URL.Query().Get("page")

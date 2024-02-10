@@ -21,11 +21,13 @@ func handleGetTrack(trackStore *trackstore.Store) http.HandlerFunc {
 			return
 		}
 		if track == nil {
-			writeNotFound(w, r)
+			w.WriteHeader(http.StatusNotFound)
 			return
 		}
 
-		writeJSON(w, track, http.StatusOK)
+		if err := encode(w, r, http.StatusOK, track); err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+		}
 	}
 }
 
@@ -52,7 +54,7 @@ func handleGetTracklistsByTrack(
 			return
 		}
 		if track == nil {
-			writeNotFound(w, r)
+			w.WriteHeader(http.StatusNotFound)
 			return
 		}
 
@@ -63,7 +65,10 @@ func handleGetTracklistsByTrack(
 		}
 
 		addPaginationHeaders(w, perPageTracklists, page, total)
-		writeJSON(w, tracklists, http.StatusOK)
+
+		if err := encode(w, r, http.StatusOK, tracklists); err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+		}
 	}
 }
 
@@ -75,7 +80,9 @@ func handleGetMostPlayedTracks(trackStore *trackstore.Store) http.HandlerFunc {
 			return
 		}
 
-		writeJSON(w, tracks, http.StatusOK)
+		if err := encode(w, r, http.StatusOK, tracks); err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+		}
 	}
 }
 
@@ -89,6 +96,8 @@ func handleSearchTracks(trackStore *trackstore.Store) http.HandlerFunc {
 			return
 		}
 
-		writeJSON(w, tracks, http.StatusOK)
+		if err := encode(w, r, http.StatusOK, tracks); err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+		}
 	}
 }

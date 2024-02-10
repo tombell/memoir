@@ -26,6 +26,8 @@ func handlePostArtwork(store *artworkstore.Store) http.HandlerFunc {
 			status = http.StatusOK
 		}
 
-		writeJSON(w, uploaded, status)
+		if err := encode(w, r, status, uploaded); err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+		}
 	}
 }

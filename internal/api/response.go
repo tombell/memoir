@@ -2,6 +2,7 @@ package api
 
 import (
 	"encoding/json"
+	"fmt"
 	"math"
 	"net/http"
 	"strconv"
@@ -19,33 +20,13 @@ func addPaginationHeaders(w http.ResponseWriter, limit, page int32, total int64)
 	w.Header().Add("Total-Pages", strconv.Itoa(pages))
 }
 
-func (s *Server) writeInternalServerError(w http.ResponseWriter) {
-	w.WriteHeader(http.StatusInternalServerError)
-}
+func encode[T any](w http.ResponseWriter, r *http.Request, status int, v T) error {
+	w.Header().Add("Content-Type", "application/json")
+	w.WriteHeader(status)
 
-func (s *Server) writeBadRequest(w http.ResponseWriter, err error) {
-	model := Error{Err: err.Error(), Msg: "Bad Request"}
-	writeJSON(w, model, http.StatusBadRequest)
-}
-
-func (s *Server) writeUnprocessableContent(w http.ResponseWriter, err error) {
-	model := Error{Err: err.Error(), Msg: "Unprocessable Content"}
-	writeJSON(w, model, http.StatusUnprocessableEntity)
-}
-
-func writeNotFound(w http.ResponseWriter, r *http.Request) {
-	w.WriteHeader(http.StatusNotFound)
-}
-
-func writeJSON(w http.ResponseWriter, model any, status int) {
-	resp, err := json.Marshal(model)
-	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		return
+	if err := json.NewEncoder(w).Encode(v); err != nil {
+		return fmt.Errorf("json encode failed: %w", err)
 	}
 
-	w.Header().Add("Content-Type", "application/json")
-
-	w.WriteHeader(status)
-	w.Write(resp)
+	return nil
 }

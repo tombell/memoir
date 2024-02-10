@@ -6,6 +6,6 @@ import (
 
 func handleNotFound() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		writeNotFound(w, r)
+		w.WriteHeader(http.StatusNotFound)
 	}
 }
