@@ -1,0 +1,23 @@
+version: "2"
+sql:
+  - engine: "postgresql"
+    queries: "internal/datastore/queries"
+    schema: "internal/datastore/migrations"
+    gen:
+      go:
+        emit_empty_slices: true
+        emit_result_struct_pointers: true
+        omit_unused_structs: true
+        sql_package: "pgx/v5"
+        package: "datastore"
+        out: "internal/datastore"
+        rename:
+          bpm: "BPM"
+          url: "URL"
+        overrides:
+          - db_type: "pg_catalog.numeric"
+            go_type: "float64"
+          - db_type: "pg_catalog.timestamp"
+            go_type: "time.Time"
+          - db_type: "uuid"
+            go_type: "string"
