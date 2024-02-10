@@ -17,14 +17,10 @@ import (
 )
 
 func (s *Services) GetTracklists(page, limit int32) ([]*Tracklist, int64, error) {
-	s.Logger.Info("get-tracklists:started", "page", page)
-	defer s.Logger.Info("get-tracklists:finished", "page", page)
-
 	var total int64
 
 	total, err := s.DataStore.CountTracklists(context.Background())
 	if err != nil {
-		s.Logger.Error("get-tracklists:error", "msg", "datastore count tracklists failed", "err", err)
 		return nil, -1, fmt.Errorf("count tracklists failed: %w", ErrQueryFailed)
 	}
 
@@ -33,7 +29,6 @@ func (s *Services) GetTracklists(page, limit int32) ([]*Tracklist, int64, error)
 		Limit:  limit,
 	})
 	if err != nil {
-		s.Logger.Error("get-tracklists:error", "msg", "datastore get tracklists failed", "err", err)
 		return nil, -1, fmt.Errorf("get tracklists failed: %w", ErrQueryFailed)
 	}
 
@@ -56,17 +51,12 @@ func (s *Services) GetTracklists(page, limit int32) ([]*Tracklist, int64, error)
 }
 
 func (s *Services) GetTracklist(id string) (*Tracklist, error) {
-	s.Logger.Info("get-tracklist:started", "id", id)
-	defer s.Logger.Info("get-tracklist:finished", "id", id)
-
 	rows, err := s.DataStore.GetTracklistWithTracks(context.Background(), id)
 	if err != nil {
-		s.Logger.Error("get-tracklists:error", "msg", "datastore get tracklist with tracks failed", "err", err)
 		return nil, fmt.Errorf("get tracklists with tracks failed: %w", ErrQueryFailed)
 	}
 
 	if len(rows) == 0 {
-		s.Logger.Info("get-tracklists", "msg", "tracklist not found")
 		return nil, nil
 	}
 
@@ -99,9 +89,6 @@ func (s *Services) GetTracklist(id string) (*Tracklist, error) {
 }
 
 func (s *Services) AddTracklist(model *TracklistAdd) (*Tracklist, error) {
-	s.Logger.Info("add-tracklist:started", "name", model.Name)
-	defer s.Logger.Info("add-tracklist:finished", "name", model.Name)
-
 	tx, err := s.DataStore.Begin(context.Background())
 	if err != nil {
 		return nil, fmt.Errorf("db begin failed: %w", err)
@@ -123,7 +110,6 @@ func (s *Services) AddTracklist(model *TracklistAdd) (*Tracklist, error) {
 
 		if pgErr, ok := err.(*pgconn.PgError); ok {
 			if pgErr.Code == pgerrcode.UniqueViolation {
-				s.Logger.Error("add-tracklist:error", "tracklist with name already exists", "name", model.Name)
 				return nil, ErrTracklistExists
 			}
 		}
@@ -196,12 +182,8 @@ func (s *Services) AddTracklist(model *TracklistAdd) (*Tracklist, error) {
 }
 
 func (s *Services) UpdateTracklist(id string, model *TracklistUpdate) (*Tracklist, error) {
-	s.Logger.Info("update-tracklist:started", "id", id)
-	defer s.Logger.Info("update-tracklist:finished", "id", id)
-
 	tx, err := s.DataStore.Begin(context.Background())
 	if err != nil {
-		// TODO: log error
 		// return nil, fmt.Errorf("db begin failed: %w", err)
 		return nil, ErrQueryFailed
 	}
@@ -215,21 +197,18 @@ func (s *Services) UpdateTracklist(id string, model *TracklistUpdate) (*Tracklis
 		URL:  model.URL,
 	}); err != nil {
 		tx.Rollback(context.Background())
-		// TODO: log error
 		// return nil, fmt.Errorf("update tracklist failed: %w", err)
 		return nil, ErrQueryFailed
 	}
 
 	if err := tx.Commit(context.Background()); err != nil {
 		tx.Rollback(context.Background())
-		// TODO: log error
 		// return nil, fmt.Errorf("tx commit failed: %w", err)
 		return nil, ErrQueryFailed
 	}
 
 	rows, err := s.DataStore.GetTracklistWithTracks(context.Background(), id)
 	if err != nil {
-		// TODO: log error
 		// return nil, fmt.Errorf("find tracklist failed: %w", err)
 		return nil, ErrQueryFailed
 	}
@@ -263,9 +242,6 @@ func (s *Services) UpdateTracklist(id string, model *TracklistUpdate) (*Tracklis
 }
 
 func (s *Services) GetTracklistsByTrack(id string, page, limit int32) ([]*Tracklist, int64, error) {
-	s.Logger.Info("get-tracklists-by-track:started", "id", id, "page", page)
-	defer s.Logger.Info("get-tracklists-by-track:finished", "id", id, "page", page)
-
 	var total int64
 	total, err := s.DataStore.CountTracklistsByTrack(context.Background(), id)
 	if err != nil {

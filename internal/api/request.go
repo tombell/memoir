@@ -9,7 +9,7 @@ import (
 	"github.com/matryer/way"
 )
 
-func (s *Server) pageParam(w http.ResponseWriter, r *http.Request) (int32, error) {
+func pageParam(w http.ResponseWriter, r *http.Request) (int32, error) {
 	page := r.URL.Query().Get("page")
 	if page == "" {
 		page = "1"
@@ -17,7 +17,6 @@ func (s *Server) pageParam(w http.ResponseWriter, r *http.Request) (int32, error
 
 	n, err := strconv.Atoi(page)
 	if err != nil {
-		s.services.Logger.Error("page-param:error", "msg", "strconv atoi failed", "err", err)
 		return -1, errors.New("invalid page parameter")
 	}
 
@@ -28,11 +27,10 @@ func (s *Server) pageParam(w http.ResponseWriter, r *http.Request) (int32, error
 	return int32(n), nil
 }
 
-func (s *Server) idParam(w http.ResponseWriter, r *http.Request) (string, error) {
+func idParam(w http.ResponseWriter, r *http.Request) (string, error) {
 	id := way.Param(r.Context(), "id")
 
 	if _, err := uuid.Parse(id); err != nil {
-		s.services.Logger.Error("id-param:error", "msg", "uuid parse failed", "err", err)
 		return "", errors.New("invalid id parameter")
 	}
 

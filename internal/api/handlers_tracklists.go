@@ -9,106 +9,104 @@ import (
 	"github.com/tombell/memoir/internal/services"
 )
 
-func (s *Server) handleGetTracklists() http.HandlerFunc {
+func handleGetTracklists(services *services.Services) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		page, err := s.pageParam(w, r)
+		page, err := pageParam(w, r)
 		if err != nil {
-			s.writeBadRequest(w, err)
+			w.WriteHeader(http.StatusBadRequest)
 			return
 		}
 
-		tracklists, total, err := s.services.GetTracklists(page, perPageTracklists)
+		tracklists, total, err := services.GetTracklists(page, perPageTracklists)
 		if err != nil {
-			s.writeInternalServerError(w)
+			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}
 
-		s.addPaginationHeaders(w, perPageTracklists, page, total)
-		s.writeJSON(w, tracklists, http.StatusOK)
+		addPaginationHeaders(w, perPageTracklists, page, total)
+		writeJSON(w, tracklists, http.StatusOK)
 	}
 }
 
-func (s *Server) handleGetTracklist() http.HandlerFunc {
+func handleGetTracklist(services *services.Services) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		id, err := s.idParam(w, r)
+		id, err := idParam(w, r)
 		if err != nil {
-			s.writeBadRequest(w, err)
+			w.WriteHeader(http.StatusBadRequest)
 			return
 		}
 
-		tracklist, err := s.services.GetTracklist(id)
+		tracklist, err := services.GetTracklist(id)
 		if err != nil {
-			s.writeInternalServerError(w)
+			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}
 		if tracklist == nil {
-			s.writeNotFound(w, r)
+			writeNotFound(w, r)
 			return
 		}
 
-		s.writeJSON(w, tracklist, http.StatusOK)
+		writeJSON(w, tracklist, http.StatusOK)
 	}
 }
 
-func (s *Server) handleAddTracklist() http.HandlerFunc {
+func handleAddTracklist(svc *services.Services) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		body, err := io.ReadAll(r.Body)
 		defer r.Body.Close()
 		if err != nil {
-			s.services.Logger.Error("handle-add-tracklist:error", "io read all failed", "err", err)
-			s.writeInternalServerError(w)
+			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}
 
 		var tl services.TracklistAdd
 		if err = json.Unmarshal(body, &tl); err != nil {
-			s.services.Logger.Error("handle-add-tracklist:error", "json unmarshal failed", "err", err)
-			s.writeInternalServerError(w)
+			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}
 
-		tracklist, err := s.services.AddTracklist(&tl)
+		tracklist, err := svc.AddTracklist(&tl)
 		if err != nil {
 			if errors.Is(err, services.ErrTracklistExists) {
-				s.writeUnprocessableContent(w, err)
+				w.WriteHeader(http.StatusUnprocessableEntity)
 				return
 			}
 
-			s.writeInternalServerError(w)
+			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}
 
-		s.writeJSON(w, tracklist, http.StatusCreated)
+		writeJSON(w, tracklist, http.StatusCreated)
 	}
 }
 
-func (s *Server) handleUpdateTracklist() http.HandlerFunc {
+func handleUpdateTracklist(svc *services.Services) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		id, err := s.idParam(w, r)
+		id, err := idParam(w, r)
 		if err != nil {
-			s.writeBadRequest(w, err)
+			w.WriteHeader(http.StatusBadRequest)
 			return
 		}
 
 		body, err := io.ReadAll(r.Body)
 		defer r.Body.Close()
 		if err != nil {
-			s.writeInternalServerError(w)
+			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}
 
 		var tracklistUpdate services.TracklistUpdate
 		if err = json.Unmarshal(body, &tracklistUpdate); err != nil {
-			s.writeBadRequest(w, err)
+			w.WriteHeader(http.StatusBadRequest)
 			return
 		}
 
-		tracklist, err := s.services.UpdateTracklist(id, &tracklistUpdate)
+		tracklist, err := svc.UpdateTracklist(id, &tracklistUpdate)
 		if err != nil {
-			s.writeInternalServerError(w)
+			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}
 
-		s.writeJSON(w, tracklist, http.StatusOK)
+		writeJSON(w, tracklist, http.StatusOK)
 	}
 }

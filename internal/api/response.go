@@ -12,7 +12,7 @@ type Error struct {
 	Msg string `json:"msg"`
 }
 
-func (s *Server) addPaginationHeaders(w http.ResponseWriter, limit, page int32, total int64) {
+func addPaginationHeaders(w http.ResponseWriter, limit, page int32, total int64) {
 	pages := int(math.Ceil(float64(total) / float64(limit)))
 
 	w.Header().Add("Current-Page", strconv.FormatInt(int64(page), 10))
@@ -25,22 +25,22 @@ func (s *Server) writeInternalServerError(w http.ResponseWriter) {
 
 func (s *Server) writeBadRequest(w http.ResponseWriter, err error) {
 	model := Error{Err: err.Error(), Msg: "Bad Request"}
-	s.writeJSON(w, model, http.StatusBadRequest)
+	writeJSON(w, model, http.StatusBadRequest)
 }
 
 func (s *Server) writeUnprocessableContent(w http.ResponseWriter, err error) {
 	model := Error{Err: err.Error(), Msg: "Unprocessable Content"}
-	s.writeJSON(w, model, http.StatusUnprocessableEntity)
+	writeJSON(w, model, http.StatusUnprocessableEntity)
 }
 
-func (s *Server) writeNotFound(w http.ResponseWriter, r *http.Request) {
+func writeNotFound(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusNotFound)
 }
 
-func (s *Server) writeJSON(w http.ResponseWriter, model any, status int) {
+func writeJSON(w http.ResponseWriter, model any, status int) {
 	resp, err := json.Marshal(model)
 	if err != nil {
-		s.writeInternalServerError(w)
+		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 

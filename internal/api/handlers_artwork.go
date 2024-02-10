@@ -2,20 +2,22 @@ package api
 
 import (
 	"net/http"
+
+	"github.com/tombell/memoir/internal/services"
 )
 
-func (s *Server) handlePostArtwork() http.HandlerFunc {
+func handlePostArtwork(services *services.Services) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		file, header, err := r.FormFile("artwork")
 		if err != nil {
-			s.writeInternalServerError(w)
+			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}
 		defer file.Close()
 
-		uploaded, exists, err := s.services.UploadArtwork(file, header.Filename)
+		uploaded, exists, err := services.UploadArtwork(file, header.Filename)
 		if err != nil {
-			s.writeInternalServerError(w)
+			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}
 
@@ -24,6 +26,6 @@ func (s *Server) handlePostArtwork() http.HandlerFunc {
 			status = http.StatusOK
 		}
 
-		s.writeJSON(w, uploaded, status)
+		writeJSON(w, uploaded, status)
 	}
 }

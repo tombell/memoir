@@ -11,8 +11,6 @@ import (
 )
 
 func (s *Services) GetTrack(id string) (*Track, error) {
-	s.Logger.Info("get-track:started", "id", id)
-
 	row, err := s.DataStore.GetTrack(context.Background(), id)
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
@@ -21,8 +19,6 @@ func (s *Services) GetTrack(id string) (*Track, error) {
 
 		return nil, fmt.Errorf("get track failed: %w", err)
 	}
-
-	s.Logger.Info("get-track:finished", "id", id)
 
 	return &Track{
 		ID:      row.ID,
@@ -37,8 +33,6 @@ func (s *Services) GetTrack(id string) (*Track, error) {
 }
 
 func (s *Services) GetMostPlayedTracks(limit int32) ([]*Track, error) {
-	s.Logger.Info("get-most-played-tracks:started", "limit", limit)
-
 	rows, err := s.DataStore.GetMostPlayedTracks(context.Background(), limit)
 	if err != nil {
 		return nil, fmt.Errorf("find most played tracks failed: %w", err)
@@ -62,14 +56,10 @@ func (s *Services) GetMostPlayedTracks(limit int32) ([]*Track, error) {
 		tracks = append(tracks, track)
 	}
 
-	s.Logger.Info("get-most-played-tracks:finished", "limit", limit, "tracks", len(tracks))
-
 	return tracks, nil
 }
 
 func (s *Services) SearchTracks(query string, limit int32) ([]*Track, error) {
-	s.Logger.Info("search-tracks:started", "query", query)
-
 	rows, err := s.DataStore.GetTracksByQuery(context.Background(), datastore.GetTracksByQueryParams{
 		Query:    query,
 		RowLimit: limit,
@@ -96,8 +86,6 @@ func (s *Services) SearchTracks(query string, limit int32) ([]*Track, error) {
 
 		tracks = append(tracks, track)
 	}
-
-	s.Logger.Info("search-tracks:finished", "query", query, "tracks", len(tracks))
 
 	return tracks, nil
 }

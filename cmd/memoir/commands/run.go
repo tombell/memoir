@@ -44,15 +44,14 @@ func RunCommand(logger *slog.Logger) {
 	}
 	defer dbpool.Close()
 
-	srv := api.New(&services.Services{
+	srv := api.New(logger, cfg, &services.Services{
 		Config:    cfg,
 		DataStore: datastore.NewStore(dbpool),
 		FileStore: filestore.New(cfg.AWS.Key, cfg.AWS.Secret, cfg.AWS.Region),
-		Logger:    logger,
 	})
 
 	go func() {
-		if err := srv.Start(); err != nil {
+		if err := srv.Start(logger); err != nil {
 			if err == http.ErrServerClosed {
 				logger.Info("api server shutdown finished")
 				return
@@ -69,7 +68,7 @@ func RunCommand(logger *slog.Logger) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	if err := srv.Shutdown(ctx); err != nil {
+	if err := srv.Shutdown(ctx, logger); err != nil {
 		logger.Error("server shutdown failed", "err", err)
 	}
 }

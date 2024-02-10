@@ -2,87 +2,89 @@ package api
 
 import (
 	"net/http"
+
+	"github.com/tombell/memoir/internal/services"
 )
 
-func (s *Server) handleGetTrack() http.HandlerFunc {
+func handleGetTrack(services *services.Services) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		id, err := s.idParam(w, r)
+		id, err := idParam(w, r)
 		if err != nil {
-			s.writeBadRequest(w, err)
+			w.WriteHeader(http.StatusBadRequest)
 			return
 		}
 
-		track, err := s.services.GetTrack(id)
+		track, err := services.GetTrack(id)
 		if err != nil {
-			s.writeInternalServerError(w)
+			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}
 		if track == nil {
-			s.writeNotFound(w, r)
+			writeNotFound(w, r)
 			return
 		}
 
-		s.writeJSON(w, track, http.StatusOK)
+		writeJSON(w, track, http.StatusOK)
 	}
 }
 
-func (s *Server) handleGetTracklistsByTrack() http.HandlerFunc {
+func handleGetTracklistsByTrack(services *services.Services) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		id, err := s.idParam(w, r)
+		id, err := idParam(w, r)
 		if err != nil {
-			s.writeBadRequest(w, err)
+			w.WriteHeader(http.StatusBadRequest)
 			return
 		}
 
-		page, err := s.pageParam(w, r)
+		page, err := pageParam(w, r)
 		if err != nil {
-			s.writeBadRequest(w, err)
+			w.WriteHeader(http.StatusBadRequest)
 			return
 		}
 
-		track, err := s.services.GetTrack(id)
+		track, err := services.GetTrack(id)
 		if err != nil {
-			s.writeInternalServerError(w)
+			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}
 		if track == nil {
-			s.writeNotFound(w, r)
+			writeNotFound(w, r)
 			return
 		}
 
-		tracklists, total, err := s.services.GetTracklistsByTrack(track.ID, page, perPageTracklists)
+		tracklists, total, err := services.GetTracklistsByTrack(track.ID, page, perPageTracklists)
 		if err != nil {
-			s.writeInternalServerError(w)
+			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}
 
-		s.addPaginationHeaders(w, perPageTracklists, page, total)
-		s.writeJSON(w, tracklists, http.StatusOK)
+		addPaginationHeaders(w, perPageTracklists, page, total)
+		writeJSON(w, tracklists, http.StatusOK)
 	}
 }
 
-func (s *Server) handleGetMostPlayedTracks() http.HandlerFunc {
+func handleGetMostPlayedTracks(services *services.Services) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		tracks, err := s.services.GetMostPlayedTracks(mostPlayedTracksLimit)
+		tracks, err := services.GetMostPlayedTracks(mostPlayedTracksLimit)
 		if err != nil {
-			s.writeInternalServerError(w)
+			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}
 
-		s.writeJSON(w, tracks, http.StatusOK)
+		writeJSON(w, tracks, http.StatusOK)
 	}
 }
 
-func (s *Server) handleSearchTracks() http.HandlerFunc {
+func handleSearchTracks(services *services.Services) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		q := r.URL.Query().Get("q")
 
-		tracks, err := s.services.SearchTracks(q, searchResultsLimit)
+		tracks, err := services.SearchTracks(q, searchResultsLimit)
 		if err != nil {
-			s.writeInternalServerError(w)
+			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}
 
-		s.writeJSON(w, tracks, http.StatusOK)
+		writeJSON(w, tracks, http.StatusOK)
 	}
 }

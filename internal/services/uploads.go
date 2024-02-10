@@ -8,9 +8,6 @@ import (
 )
 
 func (s *Services) UploadArtwork(r io.ReadSeeker, filename string) (*UploadedItem, bool, error) {
-	s.Logger.Info("upload-artwork:started", "filename", filename)
-	s.Logger.Info("upload-artwork:finished", "filename", filename)
-
 	ext := filepath.Ext(filename)
 
 	h := md5.New()

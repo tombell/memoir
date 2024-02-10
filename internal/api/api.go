@@ -2,11 +2,13 @@ package api
 
 import (
 	"context"
+	"log/slog"
 	"net/http"
 	"time"
 
 	"github.com/matryer/way"
 
+	"github.com/tombell/memoir/internal/config"
 	"github.com/tombell/memoir/internal/services"
 )
 
@@ -18,40 +20,36 @@ const (
 )
 
 type Server struct {
-	services *services.Services
-
 	router *way.Router
 	server *http.Server
 }
 
-func New(services *services.Services) *Server {
-	return &Server{
-		services: services,
-		router:   way.NewRouter(),
-	}
-}
+func New(
+	logger *slog.Logger,
+	config *config.Config,
+	services *services.Services,
+) *Server {
+	router := way.NewRouter()
+	server := &Server{router: router}
 
-func (s *Server) Start() error {
-	s.routes()
-
-	s.server = &http.Server{
-		Addr:         s.services.Config.Address,
-		Handler:      s.router,
+	server.server = &http.Server{
+		Addr:         config.Address,
+		Handler:      router,
 		ReadTimeout:  5 * time.Second,
 		WriteTimeout: 10 * time.Second,
 	}
 
-	s.services.Logger.Info("starting api server", "addr", s.services.Config.Address)
+	routes(logger, router, services.Config, services)
 
+	return server
+}
+
+func (s *Server) Start(logger *slog.Logger) error {
+	logger.Info("starting api server", "addr", s.server.Addr)
 	return s.server.ListenAndServe()
 }
 
-func (s *Server) Shutdown(ctx context.Context) error {
-	if s.server == nil {
-		return nil
-	}
-
-	s.services.Logger.Info("shutting down api server")
-
+func (s *Server) Shutdown(ctx context.Context, logger *slog.Logger) error {
+	logger.Info("shutting down api server")
 	return s.server.Shutdown(ctx)
 }

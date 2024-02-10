@@ -1,34 +1,46 @@
 package api
 
 import (
+	"log/slog"
+	"net/http"
+
 	"github.com/google/uuid"
+	"github.com/matryer/way"
 
 	"github.com/tombell/memoir/internal/api/middleware"
+	"github.com/tombell/memoir/internal/config"
+	"github.com/tombell/memoir/internal/services"
 )
 
-func (s *Server) routes() {
-	api := []middleware.Middleware{
+func routes(
+	logger *slog.Logger,
+	router *way.Router,
+	config *config.Config,
+	services *services.Services,
+) {
+	api := []func(http.HandlerFunc) http.HandlerFunc{
 		middleware.CORS(),
-		middleware.Logging(s.services.Logger),
-		middleware.RequestID(uuid.NewString, s.services.Logger),
+		middleware.RequestLogger(),
+		middleware.RequestID(uuid.NewString),
+		middleware.Logger(logger),
 	}
 
-	apiAuth := append(api, middleware.APIToken(s.services.Config.API.Token, s.services.Logger))
+	apiAuth := append(api, middleware.APIToken(config.API.Token, logger))
 
-	s.router.Handle("OPTIONS", "/...", middleware.Use(s.handlePreflight(), middleware.CORS()))
+	router.Handle("OPTIONS", "/...", middleware.Use(handlePreflight(), middleware.CORS()))
 
-	s.router.Handle("GET", "/tracklists", middleware.Use(s.handleGetTracklists(), api...))
-	s.router.Handle("GET", "/tracklists/:id", middleware.Use(s.handleGetTracklist(), api...))
-	s.router.Handle("POST", "/tracklists", middleware.Use(s.handleAddTracklist(), apiAuth...))
-	s.router.Handle("PATCH", "/tracklists/:id", middleware.Use(s.handleUpdateTracklist(), apiAuth...))
+	router.Handle("GET", "/tracklists", middleware.Use(handleGetTracklists(services), api...))
+	router.Handle("GET", "/tracklists/:id", middleware.Use(handleGetTracklist(services), api...))
+	router.Handle("POST", "/tracklists", middleware.Use(handleAddTracklist(services), apiAuth...))
+	router.Handle("PATCH", "/tracklists/:id", middleware.Use(handleUpdateTracklist(services), apiAuth...))
 
-	s.router.Handle("GET", "/tracks/mostplayed", middleware.Use(s.handleGetMostPlayedTracks(), api...))
-	s.router.Handle("GET", "/tracks/search", middleware.Use(s.handleSearchTracks(), api...))
+	router.Handle("GET", "/tracks/mostplayed", middleware.Use(handleGetMostPlayedTracks(services), api...))
+	router.Handle("GET", "/tracks/search", middleware.Use(handleSearchTracks(services), api...))
 
-	s.router.Handle("GET", "/tracks/:id", middleware.Use(s.handleGetTrack(), api...))
-	s.router.Handle("GET", "/tracks/:id/tracklists", middleware.Use(s.handleGetTracklistsByTrack(), api...))
+	router.Handle("GET", "/tracks/:id", middleware.Use(handleGetTrack(services), api...))
+	router.Handle("GET", "/tracks/:id/tracklists", middleware.Use(handleGetTracklistsByTrack(services), api...))
 
-	s.router.Handle("POST", "/artwork", middleware.Use(s.handlePostArtwork(), apiAuth...))
+	router.Handle("POST", "/artwork", middleware.Use(handlePostArtwork(services), apiAuth...))
 
-	s.router.NotFound = middleware.Use(s.handleNotFOund(), api...)
+	router.NotFound = middleware.Use(handleNotFound(), api...)
 }
