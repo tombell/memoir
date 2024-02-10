@@ -2,14 +2,13 @@ package api
 
 import (
 	"encoding/json"
-	"errors"
 	"io"
 	"net/http"
 
-	"github.com/tombell/memoir/internal/services"
+	"github.com/tombell/memoir/internal/trackliststore"
 )
 
-func handleGetTracklists(services *services.Services) http.HandlerFunc {
+func handleGetTracklists(tracklistStore *trackliststore.Store) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		page, err := pageParam(w, r)
 		if err != nil {
@@ -17,7 +16,7 @@ func handleGetTracklists(services *services.Services) http.HandlerFunc {
 			return
 		}
 
-		tracklists, total, err := services.GetTracklists(page, perPageTracklists)
+		tracklists, total, err := tracklistStore.GetTracklists(page, perPageTracklists)
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
 			return
@@ -28,7 +27,7 @@ func handleGetTracklists(services *services.Services) http.HandlerFunc {
 	}
 }
 
-func handleGetTracklist(services *services.Services) http.HandlerFunc {
+func handleGetTracklist(tracklistStore *trackliststore.Store) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		id, err := idParam(w, r)
 		if err != nil {
@@ -36,7 +35,7 @@ func handleGetTracklist(services *services.Services) http.HandlerFunc {
 			return
 		}
 
-		tracklist, err := services.GetTracklist(id)
+		tracklist, err := tracklistStore.GetTracklist(id)
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
 			return
@@ -50,7 +49,7 @@ func handleGetTracklist(services *services.Services) http.HandlerFunc {
 	}
 }
 
-func handleAddTracklist(svc *services.Services) http.HandlerFunc {
+func handleAddTracklist(tracklistStore *trackliststore.Store) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		body, err := io.ReadAll(r.Body)
 		defer r.Body.Close()
@@ -59,20 +58,20 @@ func handleAddTracklist(svc *services.Services) http.HandlerFunc {
 			return
 		}
 
-		var tl services.TracklistAdd
+		var tl trackliststore.TracklistAdd
 		if err = json.Unmarshal(body, &tl); err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}
 
-		tracklist, err := svc.AddTracklist(&tl)
+		tracklist, err := tracklistStore.AddTracklist(&tl)
 		if err != nil {
-			if errors.Is(err, services.ErrTracklistExists) {
-				w.WriteHeader(http.StatusUnprocessableEntity)
-				return
-			}
 
 			w.WriteHeader(http.StatusInternalServerError)
+			return
+		}
+		if tracklist == nil {
+			w.WriteHeader(http.StatusUnprocessableEntity)
 			return
 		}
 
@@ -80,7 +79,7 @@ func handleAddTracklist(svc *services.Services) http.HandlerFunc {
 	}
 }
 
-func handleUpdateTracklist(svc *services.Services) http.HandlerFunc {
+func handleUpdateTracklist(tracklistStore *trackliststore.Store) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		id, err := idParam(w, r)
 		if err != nil {
@@ -95,13 +94,13 @@ func handleUpdateTracklist(svc *services.Services) http.HandlerFunc {
 			return
 		}
 
-		var tracklistUpdate services.TracklistUpdate
+		var tracklistUpdate trackliststore.TracklistUpdate
 		if err = json.Unmarshal(body, &tracklistUpdate); err != nil {
 			w.WriteHeader(http.StatusBadRequest)
 			return
 		}
 
-		tracklist, err := svc.UpdateTracklist(id, &tracklistUpdate)
+		tracklist, err := tracklistStore.UpdateTracklist(id, &tracklistUpdate)
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
 			return

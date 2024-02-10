@@ -16,7 +16,8 @@ import (
 	"github.com/tombell/memoir/internal/config"
 	"github.com/tombell/memoir/internal/datastore"
 	"github.com/tombell/memoir/internal/filestore"
-	"github.com/tombell/memoir/internal/services"
+	"github.com/tombell/memoir/internal/trackliststore"
+	"github.com/tombell/memoir/internal/trackstore"
 )
 
 const runHelpText = `usage: memoir run [<args>]
@@ -45,13 +46,15 @@ func RunCommand(logger *slog.Logger) {
 	}
 	defer dbpool.Close()
 
+	dataStore := datastore.NewStore(dbpool)
+	fileStore := filestore.New(cfg)
+
 	srv := api.New(
 		logger,
 		cfg,
-		artworkstore.New(filestore.New(cfg)),
-		&services.Services{
-			DataStore: datastore.NewStore(dbpool),
-		},
+		trackliststore.New(dataStore),
+		trackstore.New(dataStore),
+		artworkstore.New(fileStore),
 	)
 
 	go func() {

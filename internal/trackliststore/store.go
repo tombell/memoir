@@ -1,4 +1,4 @@
-package services
+package trackliststore
 
 import (
 	"context"
@@ -11,25 +11,61 @@ import (
 	"github.com/jackc/pgerrcode"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgconn"
-	"github.com/tombell/tonality"
-
 	"github.com/tombell/memoir/internal/datastore"
+	"github.com/tombell/memoir/internal/trackstore"
+	"github.com/tombell/tonality"
 )
 
-func (s *Services) GetTracklists(page, limit int32) ([]*Tracklist, int64, error) {
+type Tracklist struct {
+	ID      string    `json:"id"`
+	Name    string    `json:"name"`
+	Date    time.Time `json:"date"`
+	URL     string    `json:"url"`
+	Artwork string    `json:"artwork"`
+
+	Created time.Time `json:"-"`
+	Updated time.Time `json:"-"`
+
+	Tracks     []*trackstore.Track `json:"tracks,omitempty"`
+	TrackCount int                 `json:"trackCount"`
+}
+
+type TracklistAdd struct {
+	Name    string     `json:"name"`
+	Date    time.Time  `json:"date"`
+	URL     string     `json:"url"`
+	Artwork string     `json:"artwork"`
+	Tracks  [][]string `json:"tracks"`
+}
+
+type TracklistUpdate struct {
+	Name string    `json:"name"`
+	Date time.Time `json:"date"`
+	URL  string    `json:"url"`
+}
+
+type Store struct {
+	dataStore *datastore.Store
+}
+
+func New(store *datastore.Store) *Store {
+	return &Store{dataStore: store}
+}
+
+func (s *Store) GetTracklists(page, limit int32) ([]*Tracklist, int64, error) {
 	var total int64
 
-	total, err := s.DataStore.CountTracklists(context.Background())
+	total, err := s.dataStore.CountTracklists(context.Background())
 	if err != nil {
-		return nil, -1, fmt.Errorf("count tracklists failed: %w", ErrQueryFailed)
+		return nil, -1, fmt.Errorf("count tracklists failed: %w", err)
 	}
 
-	rows, err := s.DataStore.GetTracklists(context.Background(), datastore.GetTracklistsParams{
+	rows, err := s.dataStore.GetTracklists(context.Background(), datastore.GetTracklistsParams{
 		Offset: limit * (page - 1),
 		Limit:  limit,
 	})
 	if err != nil {
-		return nil, -1, fmt.Errorf("get tracklists failed: %w", ErrQueryFailed)
+		return nil, -1, fmt.Errorf("get tracklists failed: %w", err)
 	}
 
 	tracklists := make([]*Tracklist, 0, len(rows))
@@ -50,10 +86,10 @@ func (s *Services) GetTracklists(page, limit int32) ([]*Tracklist, int64, error)
 	return tracklists, total, nil
 }
 
-func (s *Services) GetTracklist(id string) (*Tracklist, error) {
-	rows, err := s.DataStore.GetTracklistWithTracks(context.Background(), id)
+func (s *Store) GetTracklist(id string) (*Tracklist, error) {
+	rows, err := s.dataStore.GetTracklistWithTracks(context.Background(), id)
 	if err != nil {
-		return nil, fmt.Errorf("get tracklists with tracks failed: %w", ErrQueryFailed)
+		return nil, fmt.Errorf("get tracklists with tracks failed: %w", err)
 	}
 
 	if len(rows) == 0 {
@@ -71,7 +107,7 @@ func (s *Services) GetTracklist(id string) (*Tracklist, error) {
 	}
 
 	for _, row := range rows {
-		tracklist.Tracks = append(tracklist.Tracks, &Track{
+		tracklist.Tracks = append(tracklist.Tracks, &trackstore.Track{
 			ID:      row.TrackID,
 			Artist:  row.Artist,
 			Name:    row.TrackName,
@@ -88,13 +124,13 @@ func (s *Services) GetTracklist(id string) (*Tracklist, error) {
 	return tracklist, nil
 }
 
-func (s *Services) AddTracklist(model *TracklistAdd) (*Tracklist, error) {
-	tx, err := s.DataStore.Begin(context.Background())
+func (s *Store) AddTracklist(model *TracklistAdd) (*Tracklist, error) {
+	tx, err := s.dataStore.Begin(context.Background())
 	if err != nil {
 		return nil, fmt.Errorf("db begin failed: %w", err)
 	}
 
-	queries := s.DataStore.WithTx(tx)
+	queries := s.dataStore.WithTx(tx)
 
 	tracklist, err := queries.AddTracklist(context.Background(), datastore.AddTracklistParams{
 		ID:      uuid.NewString(),
@@ -110,11 +146,11 @@ func (s *Services) AddTracklist(model *TracklistAdd) (*Tracklist, error) {
 
 		if pgErr, ok := err.(*pgconn.PgError); ok {
 			if pgErr.Code == pgerrcode.UniqueViolation {
-				return nil, ErrTracklistExists
+				return nil, nil
 			}
 		}
 
-		return nil, ErrQueryFailed
+		return nil, err
 
 	}
 
@@ -181,14 +217,13 @@ func (s *Services) AddTracklist(model *TracklistAdd) (*Tracklist, error) {
 	}, nil
 }
 
-func (s *Services) UpdateTracklist(id string, model *TracklistUpdate) (*Tracklist, error) {
-	tx, err := s.DataStore.Begin(context.Background())
+func (s *Store) UpdateTracklist(id string, model *TracklistUpdate) (*Tracklist, error) {
+	tx, err := s.dataStore.Begin(context.Background())
 	if err != nil {
-		// return nil, fmt.Errorf("db begin failed: %w", err)
-		return nil, ErrQueryFailed
+		return nil, fmt.Errorf("db begin failed: %w", err)
 	}
 
-	queries := s.DataStore.WithTx(tx)
+	queries := s.dataStore.WithTx(tx)
 
 	if _, err = queries.UpdateTracklist(context.Background(), datastore.UpdateTracklistParams{
 		ID:   id,
@@ -197,20 +232,17 @@ func (s *Services) UpdateTracklist(id string, model *TracklistUpdate) (*Tracklis
 		URL:  model.URL,
 	}); err != nil {
 		tx.Rollback(context.Background())
-		// return nil, fmt.Errorf("update tracklist failed: %w", err)
-		return nil, ErrQueryFailed
+		return nil, fmt.Errorf("update tracklist failed: %w", err)
 	}
 
 	if err := tx.Commit(context.Background()); err != nil {
 		tx.Rollback(context.Background())
-		// return nil, fmt.Errorf("tx commit failed: %w", err)
-		return nil, ErrQueryFailed
+		return nil, fmt.Errorf("tx commit failed: %w", err)
 	}
 
-	rows, err := s.DataStore.GetTracklistWithTracks(context.Background(), id)
+	rows, err := s.dataStore.GetTracklistWithTracks(context.Background(), id)
 	if err != nil {
-		// return nil, fmt.Errorf("find tracklist failed: %w", err)
-		return nil, ErrQueryFailed
+		return nil, fmt.Errorf("find tracklist failed: %w", err)
 	}
 
 	tracklist := &Tracklist{
@@ -224,7 +256,7 @@ func (s *Services) UpdateTracklist(id string, model *TracklistUpdate) (*Tracklis
 	}
 
 	for _, row := range rows {
-		tracklist.Tracks = append(tracklist.Tracks, &Track{
+		tracklist.Tracks = append(tracklist.Tracks, &trackstore.Track{
 			ID:      row.TrackID,
 			Artist:  row.Artist,
 			Name:    row.TrackName,
@@ -241,14 +273,14 @@ func (s *Services) UpdateTracklist(id string, model *TracklistUpdate) (*Tracklis
 	return tracklist, nil
 }
 
-func (s *Services) GetTracklistsByTrack(id string, page, limit int32) ([]*Tracklist, int64, error) {
+func (s *Store) GetTracklistsByTrack(id string, page, limit int32) ([]*Tracklist, int64, error) {
 	var total int64
-	total, err := s.DataStore.CountTracklistsByTrack(context.Background(), id)
+	total, err := s.dataStore.CountTracklistsByTrack(context.Background(), id)
 	if err != nil {
 		return nil, -1, fmt.Errorf("datastore count tracklists by track failed: %w", err)
 	}
 
-	rows, err := s.DataStore.GetTracklistsByTrack(context.Background(), datastore.GetTracklistsByTrackParams{
+	rows, err := s.dataStore.GetTracklistsByTrack(context.Background(), datastore.GetTracklistsByTrackParams{
 		TrackID: id,
 		Offset:  limit * (page - 1),
 		Limit:   limit,

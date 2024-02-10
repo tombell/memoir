@@ -8,7 +8,8 @@ import (
 
 	"github.com/tombell/memoir/internal/artworkstore"
 	"github.com/tombell/memoir/internal/config"
-	"github.com/tombell/memoir/internal/services"
+	"github.com/tombell/memoir/internal/trackliststore"
+	"github.com/tombell/memoir/internal/trackstore"
 )
 
 const (
@@ -26,8 +27,9 @@ type Server struct {
 func New(
 	logger *slog.Logger,
 	config *config.Config,
+	tracklistStore *trackliststore.Store,
+	trackStore *trackstore.Store,
 	artworkStore *artworkstore.Store,
-	services *services.Services,
 ) *Server {
 	router := http.NewServeMux()
 	server := &Server{router: router}
@@ -43,8 +45,9 @@ func New(
 		logger,
 		router,
 		config,
+		tracklistStore,
+		trackStore,
 		artworkStore,
-		services,
 	)
 
 	return server

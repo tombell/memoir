@@ -3,10 +3,11 @@ package api
 import (
 	"net/http"
 
-	"github.com/tombell/memoir/internal/services"
+	"github.com/tombell/memoir/internal/trackliststore"
+	"github.com/tombell/memoir/internal/trackstore"
 )
 
-func handleGetTrack(services *services.Services) http.HandlerFunc {
+func handleGetTrack(trackStore *trackstore.Store) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		id, err := idParam(w, r)
 		if err != nil {
@@ -14,7 +15,7 @@ func handleGetTrack(services *services.Services) http.HandlerFunc {
 			return
 		}
 
-		track, err := services.GetTrack(id)
+		track, err := trackStore.GetTrack(id)
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
 			return
@@ -28,7 +29,10 @@ func handleGetTrack(services *services.Services) http.HandlerFunc {
 	}
 }
 
-func handleGetTracklistsByTrack(services *services.Services) http.HandlerFunc {
+func handleGetTracklistsByTrack(
+	trackStore *trackstore.Store,
+	tracklistStore *trackliststore.Store,
+) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		id, err := idParam(w, r)
 		if err != nil {
@@ -42,7 +46,7 @@ func handleGetTracklistsByTrack(services *services.Services) http.HandlerFunc {
 			return
 		}
 
-		track, err := services.GetTrack(id)
+		track, err := trackStore.GetTrack(id)
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
 			return
@@ -52,7 +56,7 @@ func handleGetTracklistsByTrack(services *services.Services) http.HandlerFunc {
 			return
 		}
 
-		tracklists, total, err := services.GetTracklistsByTrack(track.ID, page, perPageTracklists)
+		tracklists, total, err := tracklistStore.GetTracklistsByTrack(track.ID, page, perPageTracklists)
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
 			return
@@ -63,9 +67,9 @@ func handleGetTracklistsByTrack(services *services.Services) http.HandlerFunc {
 	}
 }
 
-func handleGetMostPlayedTracks(services *services.Services) http.HandlerFunc {
+func handleGetMostPlayedTracks(trackStore *trackstore.Store) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		tracks, err := services.GetMostPlayedTracks(mostPlayedTracksLimit)
+		tracks, err := trackStore.GetMostPlayedTracks(mostPlayedTracksLimit)
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
 			return
@@ -75,11 +79,11 @@ func handleGetMostPlayedTracks(services *services.Services) http.HandlerFunc {
 	}
 }
 
-func handleSearchTracks(services *services.Services) http.HandlerFunc {
+func handleSearchTracks(trackStore *trackstore.Store) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		q := r.URL.Query().Get("q")
 
-		tracks, err := services.SearchTracks(q, searchResultsLimit)
+		tracks, err := trackStore.SearchTracks(q, searchResultsLimit)
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
 			return

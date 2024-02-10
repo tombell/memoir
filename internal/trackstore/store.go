@@ -1,17 +1,42 @@
-package services
+package trackstore
 
 import (
 	"context"
 	"errors"
 	"fmt"
+	"time"
 
 	"github.com/jackc/pgx/v5"
-
 	"github.com/tombell/memoir/internal/datastore"
 )
 
-func (s *Services) GetTrack(id string) (*Track, error) {
-	row, err := s.DataStore.GetTrack(context.Background(), id)
+type Track struct {
+	ID     string  `json:"id"`
+	Artist string  `json:"artist"`
+	Name   string  `json:"name"`
+	Genre  string  `json:"genre"`
+	BPM    float64 `json:"bpm"`
+	Key    string  `json:"key"`
+
+	Created time.Time `json:"-"`
+	Updated time.Time `json:"-"`
+
+	Played int64 `json:"played,omitempty"`
+
+	ArtistHighlighted string `json:"artistHighlighted,omitempty"`
+	NameHighlighted   string `json:"nameHighlighted,omitempty"`
+}
+
+type Store struct {
+	dataStore *datastore.Store
+}
+
+func New(store *datastore.Store) *Store {
+	return &Store{dataStore: store}
+}
+
+func (s *Store) GetTrack(id string) (*Track, error) {
+	row, err := s.dataStore.GetTrack(context.Background(), id)
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
 			return nil, nil
@@ -32,8 +57,8 @@ func (s *Services) GetTrack(id string) (*Track, error) {
 	}, nil
 }
 
-func (s *Services) GetMostPlayedTracks(limit int32) ([]*Track, error) {
-	rows, err := s.DataStore.GetMostPlayedTracks(context.Background(), limit)
+func (s *Store) GetMostPlayedTracks(limit int32) ([]*Track, error) {
+	rows, err := s.dataStore.GetMostPlayedTracks(context.Background(), limit)
 	if err != nil {
 		return nil, fmt.Errorf("find most played tracks failed: %w", err)
 	}
@@ -59,8 +84,8 @@ func (s *Services) GetMostPlayedTracks(limit int32) ([]*Track, error) {
 	return tracks, nil
 }
 
-func (s *Services) SearchTracks(query string, limit int32) ([]*Track, error) {
-	rows, err := s.DataStore.GetTracksByQuery(context.Background(), datastore.GetTracksByQueryParams{
+func (s *Store) SearchTracks(query string, limit int32) ([]*Track, error) {
+	rows, err := s.dataStore.GetTracksByQuery(context.Background(), datastore.GetTracksByQueryParams{
 		Query:    query,
 		RowLimit: limit,
 	})
