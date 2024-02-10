@@ -58,7 +58,7 @@ func handleAddTracklist(tracklistStore *trackliststore.Store) http.HandlerFunc {
 			return
 		}
 
-		var tl trackliststore.TracklistAdd
+		var tl trackliststore.AddTracklistParams
 		if err = json.Unmarshal(body, &tl); err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
 			return
@@ -94,7 +94,7 @@ func handleUpdateTracklist(tracklistStore *trackliststore.Store) http.HandlerFun
 			return
 		}
 
-		var tracklistUpdate trackliststore.TracklistUpdate
+		var tracklistUpdate trackliststore.UpdateTracklistParams
 		if err = json.Unmarshal(body, &tracklistUpdate); err != nil {
 			w.WriteHeader(http.StatusBadRequest)
 			return

@@ -30,7 +30,7 @@ type Tracklist struct {
 	TrackCount int                 `json:"trackCount"`
 }
 
-type TracklistAdd struct {
+type AddTracklistParams struct {
 	Name    string     `json:"name"`
 	Date    time.Time  `json:"date"`
 	URL     string     `json:"url"`
@@ -38,7 +38,7 @@ type TracklistAdd struct {
 	Tracks  [][]string `json:"tracks"`
 }
 
-type TracklistUpdate struct {
+type UpdateTracklistParams struct {
 	Name string    `json:"name"`
 	Date time.Time `json:"date"`
 	URL  string    `json:"url"`
@@ -124,7 +124,7 @@ func (s *Store) GetTracklist(id string) (*Tracklist, error) {
 	return tracklist, nil
 }
 
-func (s *Store) AddTracklist(model *TracklistAdd) (*Tracklist, error) {
+func (s *Store) AddTracklist(model *AddTracklistParams) (*Tracklist, error) {
 	tx, err := s.dataStore.Begin(context.Background())
 	if err != nil {
 		return nil, fmt.Errorf("db begin failed: %w", err)
@@ -217,7 +217,7 @@ func (s *Store) AddTracklist(model *TracklistAdd) (*Tracklist, error) {
 	}, nil
 }
 
-func (s *Store) UpdateTracklist(id string, model *TracklistUpdate) (*Tracklist, error) {
+func (s *Store) UpdateTracklist(id string, model *UpdateTracklistParams) (*Tracklist, error) {
 	tx, err := s.dataStore.Begin(context.Background())
 	if err != nil {
 		return nil, fmt.Errorf("db begin failed: %w", err)
