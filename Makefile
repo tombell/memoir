@@ -32,6 +32,9 @@ watch:
 test:
 	@go test ${MODFLAGS} ${TESTFLAGS} ./...
 
+sqlc:
+	@sqlc generate
+
 clean:
 	@rm -fr dist
 
