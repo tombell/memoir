@@ -7,6 +7,7 @@ import (
 	"github.com/google/uuid"
 
 	"github.com/tombell/memoir/internal/api/middleware"
+	"github.com/tombell/memoir/internal/artworkstore"
 	"github.com/tombell/memoir/internal/config"
 	"github.com/tombell/memoir/internal/services"
 )
@@ -15,6 +16,7 @@ func routes(
 	logger *slog.Logger,
 	router *http.ServeMux,
 	config *config.Config,
+	artworkStore *artworkstore.Store,
 	services *services.Services,
 ) {
 	api := []func(http.HandlerFunc) http.HandlerFunc{
@@ -39,7 +41,7 @@ func routes(
 	router.HandleFunc("GET /tracks/{id}", middleware.Use(handleGetTrack(services), api...))
 	router.HandleFunc("GET /tracks/{id}/tracklists", middleware.Use(handleGetTracklistsByTrack(services), api...))
 
-	router.HandleFunc("POST /artwork", middleware.Use(handlePostArtwork(services), apiAuth...))
+	router.HandleFunc("POST /artwork", middleware.Use(handlePostArtwork(artworkStore), apiAuth...))
 
 	router.HandleFunc("/{path...}", middleware.Use(handleNotFound(), api...))
 }

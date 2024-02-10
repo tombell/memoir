@@ -10,23 +10,25 @@ import (
 	"github.com/aws/aws-sdk-go/aws/credentials"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/s3"
+	"github.com/tombell/memoir/internal/config"
 )
 
 type Store struct {
-	svc *s3.S3
+	config *config.Config
+	svc    *s3.S3
 }
 
-func New(key, secret, region string) *Store {
-	creds := credentials.NewStaticCredentials(key, secret, "")
-	cfg := aws.NewConfig().WithCredentials(creds).WithRegion(region)
+func New(config *config.Config) *Store {
+	creds := credentials.NewStaticCredentials(config.AWS.Key, config.AWS.Secret, "")
+	cfg := aws.NewConfig().WithCredentials(creds).WithRegion(config.AWS.Region)
 	sess, _ := session.NewSession(cfg)
 
-	return &Store{s3.New(sess)}
+	return &Store{config: config, svc: s3.New(sess)}
 }
 
-func (s *Store) Exists(bucket, key string) (bool, error) {
+func (s *Store) Exists(key string) (bool, error) {
 	input := &s3.GetObjectInput{
-		Bucket: aws.String(bucket),
+		Bucket: aws.String(s.config.AWS.Bucket),
 		Key:    aws.String(key),
 		Range:  aws.String("bytes=0-1"),
 	}
@@ -44,7 +46,7 @@ func (s *Store) Exists(bucket, key string) (bool, error) {
 	return true, nil
 }
 
-func (s *Store) Put(bucket, key string, r io.ReadSeeker) error {
+func (s *Store) Put(key string, r io.ReadSeeker) error {
 	var buf [512]byte
 
 	if _, err := r.Read(buf[:]); err != nil {
@@ -54,7 +56,7 @@ func (s *Store) Put(bucket, key string, r io.ReadSeeker) error {
 	r.Seek(0, io.SeekStart)
 
 	input := &s3.PutObjectInput{
-		Bucket:      aws.String(bucket),
+		Bucket:      aws.String(s.config.AWS.Bucket),
 		Key:         aws.String(key),
 		ContentType: aws.String(http.DetectContentType(buf[:])),
 		Body:        r,

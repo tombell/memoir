@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/tombell/memoir/internal/artworkstore"
 	"github.com/tombell/memoir/internal/config"
 	"github.com/tombell/memoir/internal/services"
 )
@@ -25,6 +26,7 @@ type Server struct {
 func New(
 	logger *slog.Logger,
 	config *config.Config,
+	artworkStore *artworkstore.Store,
 	services *services.Services,
 ) *Server {
 	router := http.NewServeMux()
@@ -37,7 +39,13 @@ func New(
 		WriteTimeout: 10 * time.Second,
 	}
 
-	routes(logger, router, services.Config, services)
+	routes(
+		logger,
+		router,
+		config,
+		artworkStore,
+		services,
+	)
 
 	return server
 }

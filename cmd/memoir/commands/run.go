@@ -12,6 +12,7 @@ import (
 	"github.com/jackc/pgx/v5/pgxpool"
 
 	"github.com/tombell/memoir/internal/api"
+	"github.com/tombell/memoir/internal/artworkstore"
 	"github.com/tombell/memoir/internal/config"
 	"github.com/tombell/memoir/internal/datastore"
 	"github.com/tombell/memoir/internal/filestore"
@@ -44,11 +45,14 @@ func RunCommand(logger *slog.Logger) {
 	}
 	defer dbpool.Close()
 
-	srv := api.New(logger, cfg, &services.Services{
-		Config:    cfg,
-		DataStore: datastore.NewStore(dbpool),
-		FileStore: filestore.New(cfg.AWS.Key, cfg.AWS.Secret, cfg.AWS.Region),
-	})
+	srv := api.New(
+		logger,
+		cfg,
+		artworkstore.New(filestore.New(cfg)),
+		&services.Services{
+			DataStore: datastore.NewStore(dbpool),
+		},
+	)
 
 	go func() {
 		if err := srv.Start(logger); err != nil {

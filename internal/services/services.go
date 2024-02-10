@@ -3,15 +3,11 @@ package services
 import (
 	"time"
 
-	"github.com/tombell/memoir/internal/config"
 	"github.com/tombell/memoir/internal/datastore"
-	"github.com/tombell/memoir/internal/filestore"
 )
 
 type Services struct {
-	Config    *config.Config
 	DataStore *datastore.Store
-	FileStore *filestore.Store
 }
 
 type Tracklist struct {
@@ -57,8 +53,4 @@ type Track struct {
 
 	ArtistHighlighted string `json:"artistHighlighted,omitempty"`
 	NameHighlighted   string `json:"nameHighlighted,omitempty"`
-}
-
-type UploadedItem struct {
-	Key string `json:"key"`
 }

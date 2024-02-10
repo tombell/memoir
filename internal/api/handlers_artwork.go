@@ -3,10 +3,10 @@ package api
 import (
 	"net/http"
 
-	"github.com/tombell/memoir/internal/services"
+	"github.com/tombell/memoir/internal/artworkstore"
 )
 
-func handlePostArtwork(services *services.Services) http.HandlerFunc {
+func handlePostArtwork(store *artworkstore.Store) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		file, header, err := r.FormFile("artwork")
 		if err != nil {
@@ -15,7 +15,7 @@ func handlePostArtwork(services *services.Services) http.HandlerFunc {
 		}
 		defer file.Close()
 
-		uploaded, exists, err := services.UploadArtwork(file, header.Filename)
+		uploaded, exists, err := store.Upload(file, header.Filename)
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
 			return
