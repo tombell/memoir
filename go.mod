@@ -2,7 +2,6 @@ module github.com/tombell/memoir
 
 require (
 	github.com/aws/aws-sdk-go v1.49.16
-	github.com/charmbracelet/lipgloss v0.9.1
 	github.com/charmbracelet/log v0.3.1
 	github.com/google/uuid v1.5.0
 	github.com/jackc/pgerrcode v0.0.0-20220416144525-469b46aa5efa
@@ -15,6 +14,7 @@ require (
 
 require (
 	github.com/aymanbagabas/go-osc52/v2 v2.0.1 // indirect
+	github.com/charmbracelet/lipgloss v0.9.1 // indirect
 	github.com/go-logfmt/logfmt v0.6.0 // indirect
 	github.com/jackc/pgpassfile v1.0.0 // indirect
 	github.com/jackc/pgservicefile v0.0.0-20231201235250-de7065d80cb9 // indirect
