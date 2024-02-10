@@ -14,13 +14,13 @@ func handleGetTracklists(tracklistStore *trackliststore.Store) http.HandlerFunc 
 			return
 		}
 
-		tracklists, total, err := tracklistStore.GetTracklists(page, perPageTracklists)
+		tracklists, total, err := tracklistStore.GetTracklists(page, tracklistsPerPage)
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}
 
-		addPaginationHeaders(w, perPageTracklists, page, total)
+		addPaginationHeaders(w, tracklistsPerPage, page, total)
 
 		if err := encode(w, r, http.StatusOK, tracklists); err != nil {
 			w.WriteHeader(http.StatusInternalServerError)

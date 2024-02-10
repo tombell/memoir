@@ -58,13 +58,13 @@ func handleGetTracklistsByTrack(
 			return
 		}
 
-		tracklists, total, err := tracklistStore.GetTracklistsByTrack(track.ID, page, perPageTracklists)
+		tracklists, total, err := tracklistStore.GetTracklistsByTrack(track.ID, page, tracklistsPerPage)
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}
 
-		addPaginationHeaders(w, perPageTracklists, page, total)
+		addPaginationHeaders(w, tracklistsPerPage, page, total)
 
 		if err := encode(w, r, http.StatusOK, tracklists); err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
@@ -74,7 +74,7 @@ func handleGetTracklistsByTrack(
 
 func handleGetMostPlayedTracks(trackStore *trackstore.Store) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		tracks, err := trackStore.GetMostPlayedTracks(mostPlayedTracksLimit)
+		tracks, err := trackStore.GetMostPlayedTracks(maxMostPlayedTracks)
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
 			return
@@ -90,7 +90,7 @@ func handleSearchTracks(trackStore *trackstore.Store) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		q := r.URL.Query().Get("q")
 
-		tracks, err := trackStore.SearchTracks(q, searchResultsLimit)
+		tracks, err := trackStore.SearchTracks(q, maxSearchResults)
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
 			return

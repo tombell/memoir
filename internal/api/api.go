@@ -13,10 +13,10 @@ import (
 )
 
 const (
-	perPageTracklists = 20
+	tracklistsPerPage = 20
 
-	mostPlayedTracksLimit = 10
-	searchResultsLimit    = 10
+	maxMostPlayedTracks = 10
+	maxSearchResults    = 10
 )
 
 type Server struct {
