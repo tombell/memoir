@@ -23,12 +23,9 @@ Special options:
   --version  Show the version number, then exit
 `
 
-var (
-	cfgpath = flag.String("config", ".env.dev.toml", "")
-	version = flag.Bool("version", false, "")
-)
-
 func main() {
+	version := flag.Bool("version", false, "")
+
 	flag.Usage = func() {
 		fmt.Fprintf(os.Stderr, helpText)
 		os.Exit(2)

@@ -31,7 +31,7 @@ func RunCommand(logger *slog.Logger) {
 	cmd := flag.NewFlagSet("run", flag.ExitOnError)
 	cmd.Usage = usageText(runHelpText)
 
-	cfgpath := cmd.String("config", ".env.dev.toml", "")
+	cfgpath := cmd.String("config", "config.dev.json", "")
 
 	cfg, err := config.Load(*cfgpath)
 	if err != nil {

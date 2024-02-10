@@ -1,37 +1,37 @@
 package config
 
 import (
+	"encoding/json"
 	"fmt"
-
-	"github.com/pelletier/go-toml"
+	"os"
 )
 
 type Config struct {
-	Address    string `toml:"address" default:":8080"`
-	DB         string `toml:"db"`
-	Migrations string `toml:"migrations"`
+	Address    string `json:"address"`
+	DB         string `json:"db"`
+	Migrations string `json:"migrations"`
 
 	API struct {
-		Token string `toml:"token"`
-	} `toml:"api"`
+		Token string `json:"token"`
+	} `json:"api"`
 
 	AWS struct {
-		Bucket string `toml:"bucket"`
-		Region string `toml:"region"`
-		Key    string `toml:"key"`
-		Secret string `toml:"secret"`
-	} `toml:"aws"`
+		Bucket string `json:"bucket"`
+		Region string `json:"region"`
+		Key    string `json:"key"`
+		Secret string `json:"secret"`
+	} `json:"aws"`
 }
 
 func Load(filepath string) (*Config, error) {
-	tree, err := toml.LoadFile(filepath)
+	data, err := os.ReadFile(filepath)
 	if err != nil {
-		return nil, fmt.Errorf("toml load file failed: %w", err)
+		return nil, fmt.Errorf("io read file failed: %w", err)
 	}
 
 	var cfg Config
-	if err := tree.Unmarshal(&cfg); err != nil {
-		return nil, fmt.Errorf("toml unmarshal failed: %w", err)
+	if err := json.Unmarshal(data, &cfg); err != nil {
+		return nil, fmt.Errorf("json unmarshal failed: %w", err)
 	}
 
 	return &cfg, nil

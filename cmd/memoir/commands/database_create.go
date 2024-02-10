@@ -22,7 +22,7 @@ func DatabaseCreateCommand(logger *slog.Logger) {
 	cmd := flag.NewFlagSet("create", flag.ExitOnError)
 	cmd.Usage = usageText(createHelpText)
 
-	cfgpath := cmd.String("config", ".env.dev.toml", "")
+	cfgpath := cmd.String("config", "config.dev.json", "")
 
 	if err := cmd.Parse(os.Args[2:]); err != nil {
 		logger.Error("cmd parse failed", "err", err)

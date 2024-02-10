@@ -25,7 +25,7 @@ func DatabaseRollback(logger *slog.Logger) {
 	cmd := flag.NewFlagSet("rollback", flag.ExitOnError)
 	cmd.Usage = usageText(rollbackHelpText)
 
-	cfgpath := cmd.String("config", ".env.dev.toml", "")
+	cfgpath := cmd.String("config", "config.dev.json", "")
 	steps := cmd.Int("steps", 1, "")
 
 	if err := cmd.Parse(os.Args[2:]); err != nil {

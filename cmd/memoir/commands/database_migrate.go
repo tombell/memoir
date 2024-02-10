@@ -24,7 +24,7 @@ func DatabaseMigrate(logger *slog.Logger) {
 	cmd := flag.NewFlagSet("migrate", flag.ExitOnError)
 	cmd.Usage = usageText(migrateHelpText)
 
-	cfgpath := cmd.String("config", ".env.dev.toml", "")
+	cfgpath := cmd.String("config", "config.dev.json", "")
 
 	if err := cmd.Parse(os.Args[2:]); err != nil {
 		logger.Error("cmd parse failed", "err", err)

@@ -5,7 +5,6 @@ require (
 	github.com/google/uuid v1.5.0
 	github.com/jackc/pgerrcode v0.0.0-20220416144525-469b46aa5efa
 	github.com/jackc/pgx/v5 v5.5.1
-	github.com/pelletier/go-toml v1.9.5
 	github.com/tombell/tonality v1.0.0
 	github.com/tombell/trek v0.0.9
 )

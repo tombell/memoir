@@ -15,5 +15,5 @@
 dist/
 
 # Environment configuration files
-.env.toml
-.env.*.toml
+config.json
+config.*.json

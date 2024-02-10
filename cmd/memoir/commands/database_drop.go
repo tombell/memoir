@@ -22,7 +22,7 @@ func DatabaseDrop(logger *slog.Logger) {
 	cmd := flag.NewFlagSet("drop", flag.ExitOnError)
 	cmd.Usage = usageText(dropHelpText)
 
-	cfgpath := cmd.String("config", ".env.dev.toml", "")
+	cfgpath := cmd.String("config", "config.dev.json", "")
 
 	if err := cmd.Parse(os.Args[2:]); err != nil {
 		logger.Error("cmd parse failed", "err", err)
