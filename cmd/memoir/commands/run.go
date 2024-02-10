@@ -39,7 +39,7 @@ func Run(logger *slog.Logger) {
 	dataStore := datastore.NewStore(dbpool)
 	fileStore := filestore.New(cfg)
 
-	srv := api.New(
+	server := api.New(
 		logger,
 		cfg,
 		trackliststore.New(dataStore),
@@ -48,7 +48,7 @@ func Run(logger *slog.Logger) {
 	)
 
 	go func() {
-		if err := srv.Start(logger); err != nil {
+		if err := server.Start(logger); err != nil {
 			if err == http.ErrServerClosed {
 				logger.Info("api server shutdown finished")
 				return
@@ -65,7 +65,7 @@ func Run(logger *slog.Logger) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	if err := srv.Shutdown(ctx, logger); err != nil {
+	if err := server.Shutdown(ctx, logger); err != nil {
 		logger.Error("server shutdown failed", "err", err)
 	}
 }
