@@ -23,7 +23,7 @@ func (rw *responseWriter) Write(b []byte) (int, error) {
 	return size, err
 }
 
-func RequestLogger() Middleware {
+func RequestLogger() func(http.HandlerFunc) http.HandlerFunc {
 	return func(h http.HandlerFunc) http.HandlerFunc {
 		return func(w http.ResponseWriter, r *http.Request) {
 			logger, _ := r.Context().Value(LoggerContextKey).(*slog.Logger)

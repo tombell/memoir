@@ -8,7 +8,7 @@ import (
 
 const LoggerContextKey ContextKey = "logger"
 
-func Logger(logger *slog.Logger) Middleware {
+func Logger(logger *slog.Logger) func(http.HandlerFunc) http.HandlerFunc {
 	return func(h http.HandlerFunc) http.HandlerFunc {
 		return func(w http.ResponseWriter, r *http.Request) {
 			ctx := context.WithValue(r.Context(), LoggerContextKey, logger)

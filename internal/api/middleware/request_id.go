@@ -8,7 +8,7 @@ import (
 
 const RequestIDContextKey ContextKey = "request-id"
 
-func RequestID(generate func() string) Middleware {
+func RequestID(generate func() string) func(http.HandlerFunc) http.HandlerFunc {
 	return func(h http.HandlerFunc) http.HandlerFunc {
 		return func(w http.ResponseWriter, r *http.Request) {
 			rid := generate()

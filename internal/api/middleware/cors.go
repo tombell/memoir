@@ -4,7 +4,7 @@ import (
 	"net/http"
 )
 
-func CORS() Middleware {
+func CORS() func(http.HandlerFunc) http.HandlerFunc {
 	return func(h http.HandlerFunc) http.HandlerFunc {
 		return func(w http.ResponseWriter, r *http.Request) {
 			w.Header().Add("Access-Control-Allow-Origin", "*")

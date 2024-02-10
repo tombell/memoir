@@ -5,7 +5,7 @@ import (
 	"net/http"
 )
 
-func APIToken(token string, logger *slog.Logger) Middleware {
+func APIToken(token string, logger *slog.Logger) func(http.HandlerFunc) http.HandlerFunc {
 	return func(h http.HandlerFunc) http.HandlerFunc {
 		return func(w http.ResponseWriter, r *http.Request) {
 			key := r.Header.Get("API-Token")
