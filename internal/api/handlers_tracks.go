@@ -12,9 +12,9 @@ func (s *Server) handleGetTrack() http.HandlerFunc {
 			return
 		}
 
-		track, err := s.GetTrack(id)
+		track, err := s.services.GetTrack(id)
 		if err != nil {
-			s.writeInternalServerError(w, err)
+			s.writeInternalServerError(w)
 			return
 		}
 		if track == nil {
@@ -40,9 +40,9 @@ func (s *Server) handleGetTracklistsByTrack() http.HandlerFunc {
 			return
 		}
 
-		track, err := s.GetTrack(id)
+		track, err := s.services.GetTrack(id)
 		if err != nil {
-			s.writeInternalServerError(w, err)
+			s.writeInternalServerError(w)
 			return
 		}
 		if track == nil {
@@ -50,9 +50,9 @@ func (s *Server) handleGetTracklistsByTrack() http.HandlerFunc {
 			return
 		}
 
-		tracklists, total, err := s.GetTracklistsByTrack(track.ID, page, perPageTracklists)
+		tracklists, total, err := s.services.GetTracklistsByTrack(track.ID, page, perPageTracklists)
 		if err != nil {
-			s.writeInternalServerError(w, err)
+			s.writeInternalServerError(w)
 			return
 		}
 
@@ -63,9 +63,9 @@ func (s *Server) handleGetTracklistsByTrack() http.HandlerFunc {
 
 func (s *Server) handleGetMostPlayedTracks() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		tracks, err := s.GetMostPlayedTracks(mostPlayedTracksLimit)
+		tracks, err := s.services.GetMostPlayedTracks(mostPlayedTracksLimit)
 		if err != nil {
-			s.writeInternalServerError(w, err)
+			s.writeInternalServerError(w)
 			return
 		}
 
@@ -75,11 +75,11 @@ func (s *Server) handleGetMostPlayedTracks() http.HandlerFunc {
 
 func (s *Server) handleSearchTracks() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		q := searchParam(r)
+		q := r.URL.Query().Get("q")
 
-		tracks, err := s.SearchTracks(q, searchResultsLimit)
+		tracks, err := s.services.SearchTracks(q, searchResultsLimit)
 		if err != nil {
-			s.writeInternalServerError(w, err)
+			s.writeInternalServerError(w)
 			return
 		}
 

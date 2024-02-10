@@ -11,14 +11,14 @@ import (
 )
 
 const (
-	perPageTracklists     = 20
-	perPageTracks         = 10
+	perPageTracklists = 20
+
 	mostPlayedTracksLimit = 10
 	searchResultsLimit    = 10
 )
 
 type Server struct {
-	*services.Services
+	services *services.Services
 
 	router *way.Router
 	server *http.Server
@@ -26,7 +26,7 @@ type Server struct {
 
 func New(services *services.Services) *Server {
 	return &Server{
-		Services: services,
+		services: services,
 		router:   way.NewRouter(),
 	}
 }
@@ -35,13 +35,13 @@ func (s *Server) Start() error {
 	s.routes()
 
 	s.server = &http.Server{
-		Addr:         s.Config.Address,
+		Addr:         s.services.Config.Address,
 		Handler:      s.router,
 		ReadTimeout:  5 * time.Second,
 		WriteTimeout: 10 * time.Second,
 	}
 
-	s.Logger.Info("starting api server", "addr", s.Config.Address)
+	s.services.Logger.Info("starting api server", "addr", s.services.Config.Address)
 
 	return s.server.ListenAndServe()
 }
@@ -51,7 +51,7 @@ func (s *Server) Shutdown(ctx context.Context) error {
 		return nil
 	}
 
-	s.Logger.Info("shutting down api server")
+	s.services.Logger.Info("shutting down api server")
 
 	return s.server.Shutdown(ctx)
 }

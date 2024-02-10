@@ -30,7 +30,7 @@ func Logging(logger *log.Logger) Middleware {
 			start := time.Now().UTC()
 
 			logger.Info(
-				"http",
+				"http:started",
 				"method",
 				r.Method,
 				"path",
@@ -42,7 +42,7 @@ func Logging(logger *log.Logger) Middleware {
 			h(rw, r)
 
 			logger.Info(
-				"http",
+				"http:finished",
 				"method",
 				r.Method,
 				"path",

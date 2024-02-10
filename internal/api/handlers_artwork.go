@@ -8,14 +8,14 @@ func (s *Server) handlePostArtwork() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		file, header, err := r.FormFile("artwork")
 		if err != nil {
-			s.writeInternalServerError(w, err)
+			s.writeInternalServerError(w)
 			return
 		}
 		defer file.Close()
 
-		uploaded, exists, err := s.UploadArtwork(file, header.Filename)
+		uploaded, exists, err := s.services.UploadArtwork(file, header.Filename)
 		if err != nil {
-			s.writeInternalServerError(w, err)
+			s.writeInternalServerError(w)
 			return
 		}
 

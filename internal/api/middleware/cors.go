@@ -1,6 +1,8 @@
 package middleware
 
-import "net/http"
+import (
+	"net/http"
+)
 
 func CORS() Middleware {
 	return func(h http.HandlerFunc) http.HandlerFunc {
