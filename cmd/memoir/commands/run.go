@@ -20,18 +20,8 @@ import (
 	"github.com/tombell/memoir/internal/trackstore"
 )
 
-const runHelpText = `usage: memoir run [<args>]
-
-  --config  Path to .env.toml configuration file
-
-Special options:
-
-  --help    Show this message, then exit
-`
-
-func RunCommand(logger *slog.Logger) {
+func Run(logger *slog.Logger) {
 	cmd := flag.NewFlagSet("run", flag.ExitOnError)
-	cmd.Usage = usageText(runHelpText)
 
 	cfgpath := cmd.String("config", "config.dev.json", "")
 

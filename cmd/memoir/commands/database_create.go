@@ -9,18 +9,8 @@ import (
 	"github.com/tombell/memoir/internal/config"
 )
 
-const createHelpText = `usage: memoir db:create [<args>]
-
-  --config  Path to .env.toml configuration file
-
-Special options:
-
-  --help    Show this message, then exit
-`
-
-func DatabaseCreateCommand(logger *slog.Logger) {
+func DatabaseCreate(logger *slog.Logger) {
 	cmd := flag.NewFlagSet("create", flag.ExitOnError)
-	cmd.Usage = usageText(createHelpText)
 
 	cfgpath := cmd.String("config", "config.dev.json", "")
 

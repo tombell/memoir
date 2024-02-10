@@ -2,41 +2,14 @@ package main
 
 import (
 	"flag"
-	"fmt"
 	"log/slog"
 	"os"
 
 	"github.com/tombell/memoir/cmd/memoir/commands"
 )
 
-const helpText = `usage: memoir <command> [<args>]
-
-Commands:
-  run          Run the API server
-  db:create    Create the database
-  db:drop      Drop the database
-  db:migrate   Migrate the database
-  db:rollback  Rolls back applied migrations from the database
-
-Special options:
-  --help     Show this message, then exit
-  --version  Show the version number, then exit
-`
-
 func main() {
-	version := flag.Bool("version", false, "")
-
-	flag.Usage = func() {
-		fmt.Fprintf(os.Stderr, helpText)
-		os.Exit(2)
-	}
-
 	flag.Parse()
-
-	if *version {
-		fmt.Fprintf(os.Stderr, fmt.Sprintf("memoir %s (%s)\n", Version, Commit))
-		os.Exit(0)
-	}
 
 	if len(os.Args) < 2 {
 		flag.Usage()
@@ -46,9 +19,9 @@ func main() {
 
 	switch os.Args[1] {
 	case "run", "r":
-		commands.RunCommand(logger)
+		commands.Run(logger)
 	case "db:create":
-		commands.DatabaseCreateCommand(logger)
+		commands.DatabaseCreate(logger)
 	case "db:drop":
 		commands.DatabaseDrop(logger)
 	case "db:migrate":

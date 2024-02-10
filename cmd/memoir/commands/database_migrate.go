@@ -11,18 +11,8 @@ import (
 	"github.com/tombell/memoir/internal/config"
 )
 
-const migrateHelpText = `usage: memoir-db migrate [<args>]
-
-  --config  Path to .env.toml configuration file
-
-Special options:
-
-  --help    Show this message, then exit
-`
-
 func DatabaseMigrate(logger *slog.Logger) {
 	cmd := flag.NewFlagSet("migrate", flag.ExitOnError)
-	cmd.Usage = usageText(migrateHelpText)
 
 	cfgpath := cmd.String("config", "config.dev.json", "")
 

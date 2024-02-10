@@ -9,18 +9,8 @@ import (
 	"github.com/tombell/memoir/internal/config"
 )
 
-const dropHelpText = `usage: memoir db:drop [<args>]
-
-  --config  Path to .env.toml configuration file
-
-Special options:
-
-  --help    Show this message, then exit
-`
-
 func DatabaseDrop(logger *slog.Logger) {
 	cmd := flag.NewFlagSet("drop", flag.ExitOnError)
-	cmd.Usage = usageText(dropHelpText)
 
 	cfgpath := cmd.String("config", "config.dev.json", "")
 

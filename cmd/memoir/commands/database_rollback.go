@@ -11,19 +11,8 @@ import (
 	"github.com/tombell/memoir/internal/config"
 )
 
-const rollbackHelpText = `usage: memoir-db rollback [<args>]
-
-  --config  Path to .env.toml configuration file
-  --steps   Number of migrations to roll back (default: 1)
-
-Special options:
-
-  --help    Show this message, then exit
-`
-
 func DatabaseRollback(logger *slog.Logger) {
 	cmd := flag.NewFlagSet("rollback", flag.ExitOnError)
-	cmd.Usage = usageText(rollbackHelpText)
 
 	cfgpath := cmd.String("config", "config.dev.json", "")
 	steps := cmd.Int("steps", 1, "")
