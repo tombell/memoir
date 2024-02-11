@@ -130,6 +130,7 @@ func (s *Store) AddTracklist(model *AddTracklistParams) (*Tracklist, error) {
 	if err != nil {
 		return nil, fmt.Errorf("db begin failed: %w", err)
 	}
+	defer tx.Rollback(context.Background())
 
 	queries := s.dataStore.WithTx(tx)
 
@@ -143,8 +144,6 @@ func (s *Store) AddTracklist(model *AddTracklistParams) (*Tracklist, error) {
 		Updated: time.Now().UTC(),
 	})
 	if err != nil {
-		tx.Rollback(context.Background())
-
 		if pgErr, ok := err.(*pgconn.PgError); ok {
 			if pgErr.Code == pgerrcode.UniqueViolation {
 				return nil, nil
@@ -180,7 +179,6 @@ func (s *Store) AddTracklist(model *AddTracklistParams) (*Tracklist, error) {
 				Created: time.Now().UTC(),
 				Updated: time.Now().UTC(),
 			}); err != nil {
-				tx.Rollback(context.Background())
 				return nil, fmt.Errorf("add track failed: %w", err)
 			}
 		}
@@ -191,13 +189,11 @@ func (s *Store) AddTracklist(model *AddTracklistParams) (*Tracklist, error) {
 			TrackID:     foundTrackID,
 			TrackNumber: int32(idx + 1),
 		}); err != nil {
-			tx.Rollback(context.Background())
 			return nil, fmt.Errorf("insert tracklist_track failed: %w", err)
 		}
 	}
 
 	if err := tx.Commit(context.Background()); err != nil {
-		tx.Rollback(context.Background())
 		return nil, fmt.Errorf("tx commit failed: %w", err)
 	}
 
@@ -217,6 +213,7 @@ func (s *Store) UpdateTracklist(id string, model *UpdateTracklistParams) (*Track
 	if err != nil {
 		return nil, fmt.Errorf("db begin failed: %w", err)
 	}
+	defer tx.Rollback(context.Background())
 
 	queries := s.dataStore.WithTx(tx)
 
@@ -226,12 +223,10 @@ func (s *Store) UpdateTracklist(id string, model *UpdateTracklistParams) (*Track
 		Date: model.Date,
 		URL:  model.URL,
 	}); err != nil {
-		tx.Rollback(context.Background())
 		return nil, fmt.Errorf("update tracklist failed: %w", err)
 	}
 
 	if err := tx.Commit(context.Background()); err != nil {
-		tx.Rollback(context.Background())
 		return nil, fmt.Errorf("tx commit failed: %w", err)
 	}
 
