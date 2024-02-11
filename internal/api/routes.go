@@ -5,6 +5,8 @@ import (
 	"net/http"
 
 	"github.com/google/uuid"
+	"github.com/tombell/middle"
+	"github.com/tombell/middle/ware"
 
 	"github.com/tombell/memoir/internal/api/handlers"
 	"github.com/tombell/memoir/internal/api/middleware"
@@ -22,15 +24,15 @@ func routes(
 	trackStore *trackstore.Store,
 	artworkStore *artworkstore.Store,
 ) {
-	api := middleware.Use(
-		middleware.Recovery(),
+	api := middle.Use(
+		ware.Recovery(),
 		middleware.CORS(),
-		middleware.RequestLogger(),
-		middleware.RequestID(uuid.NewString),
-		middleware.Logger(logger),
+		ware.RequestLogging(),
+		ware.RequestID(uuid.NewString),
+		ware.Logger(logger),
 	)
 
-	authorized := middleware.Use(
+	authorized := middle.Use(
 		middleware.Authorize(config.API.Token),
 		api,
 	)

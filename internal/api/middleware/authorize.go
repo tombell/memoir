@@ -3,6 +3,8 @@ package middleware
 import (
 	"log/slog"
 	"net/http"
+
+	"github.com/tombell/middle/ware"
 )
 
 // Authorize is a middleware function that checks an API-Token from the request
@@ -10,7 +12,7 @@ import (
 func Authorize(token string) func(http.Handler) http.Handler {
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			logger, _ := r.Context().Value(LoggerContextKey).(*slog.Logger)
+			logger, _ := r.Context().Value(ware.LoggerContextKey).(*slog.Logger)
 
 			key := r.Header.Get("API-Token")
 
