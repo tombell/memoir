@@ -7,8 +7,8 @@ import (
 	"github.com/tombell/memoir/internal/trackstore"
 )
 
-func handleGetTrack(trackStore *trackstore.Store) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
+func handleGetTrack(trackStore *trackstore.Store) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		id, err := idParam(w, r)
 		if err != nil {
 			w.WriteHeader(http.StatusBadRequest)
@@ -28,14 +28,14 @@ func handleGetTrack(trackStore *trackstore.Store) http.HandlerFunc {
 		if err := encode(w, r, http.StatusOK, track); err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
 		}
-	}
+	})
 }
 
 func handleGetTracklistsByTrack(
 	trackStore *trackstore.Store,
 	tracklistStore *trackliststore.Store,
-) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
+) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		id, err := idParam(w, r)
 		if err != nil {
 			w.WriteHeader(http.StatusBadRequest)
@@ -69,11 +69,11 @@ func handleGetTracklistsByTrack(
 		if err := encode(w, r, http.StatusOK, tracklists); err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
 		}
-	}
+	})
 }
 
-func handleGetMostPlayedTracks(trackStore *trackstore.Store) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
+func handleGetMostPlayedTracks(trackStore *trackstore.Store) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		tracks, err := trackStore.GetMostPlayedTracks(maxMostPlayedTracks)
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
@@ -83,11 +83,11 @@ func handleGetMostPlayedTracks(trackStore *trackstore.Store) http.HandlerFunc {
 		if err := encode(w, r, http.StatusOK, tracks); err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
 		}
-	}
+	})
 }
 
-func handleSearchTracks(trackStore *trackstore.Store) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
+func handleSearchTracks(trackStore *trackstore.Store) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		q := r.URL.Query().Get("q")
 
 		tracks, err := trackStore.SearchTracks(q, maxSearchResults)
@@ -99,5 +99,5 @@ func handleSearchTracks(trackStore *trackstore.Store) http.HandlerFunc {
 		if err := encode(w, r, http.StatusOK, tracks); err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
 		}
-	}
+	})
 }

@@ -23,9 +23,11 @@ func (rw *responseWriter) Write(b []byte) (int, error) {
 	return size, err
 }
 
-func RequestLogger() func(http.HandlerFunc) http.HandlerFunc {
-	return func(h http.HandlerFunc) http.HandlerFunc {
-		return func(w http.ResponseWriter, r *http.Request) {
+// RequestLogger is a middleware function that uses the slog.Logger from the
+// request context to log before and after a request.
+func RequestLogger() func(http.Handler) http.Handler {
+	return func(next http.Handler) http.Handler {
+		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			logger, _ := r.Context().Value(LoggerContextKey).(*slog.Logger)
 
 			start := time.Now().UTC()
@@ -40,7 +42,7 @@ func RequestLogger() func(http.HandlerFunc) http.HandlerFunc {
 
 			rw := &responseWriter{ResponseWriter: w}
 
-			h(rw, r)
+			next.ServeHTTP(rw, r)
 
 			logger.Info(
 				"http:finished",
@@ -55,6 +57,6 @@ func RequestLogger() func(http.HandlerFunc) http.HandlerFunc {
 				"elapsed",
 				time.Since(start),
 			)
-		}
+		})
 	}
 }

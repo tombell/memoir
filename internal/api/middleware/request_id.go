@@ -6,11 +6,17 @@ import (
 	"net/http"
 )
 
+// RequestIDContextKey is the key to retrieve the request ID from the request
+// context.
 const RequestIDContextKey ContextKey = "request-id"
 
-func RequestID(generate func() string) func(http.HandlerFunc) http.HandlerFunc {
-	return func(h http.HandlerFunc) http.HandlerFunc {
-		return func(w http.ResponseWriter, r *http.Request) {
+// RequestID is a middleware function that uses the given function to generate a
+// unique ID for the request. This ID is then added to the request context, and
+// as a key/value attribute to the slog.Logger from the request context. A
+// Request-ID header is also added to the response headers.
+func RequestID(generate func() string) func(http.Handler) http.Handler {
+	return func(next http.Handler) http.Handler {
+		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			rid := generate()
 			ctx := context.WithValue(r.Context(), RequestIDContextKey, rid)
 
@@ -21,7 +27,7 @@ func RequestID(generate func() string) func(http.HandlerFunc) http.HandlerFunc {
 			w.Header().Add("Request-ID", rid)
 			r = r.WithContext(ctx)
 
-			h(w, r)
-		}
+			next.ServeHTTP(w, r)
+		})
 	}
 }

@@ -6,14 +6,18 @@ import (
 	"net/http"
 )
 
+// LoggerContextKey is the key to retrieve the slog.Logger instance from the
+// request context.
 const LoggerContextKey ContextKey = "logger"
 
-func Logger(logger *slog.Logger) func(http.HandlerFunc) http.HandlerFunc {
-	return func(h http.HandlerFunc) http.HandlerFunc {
-		return func(w http.ResponseWriter, r *http.Request) {
+// Logger is a middleware function that adds a slog.Logger instance to the
+// request context. This logger can then be used to scope logging to just this
+// request. For example the RequestID middleware function.
+func Logger(logger *slog.Logger) func(http.Handler) http.Handler {
+	return func(next http.Handler) http.Handler {
+		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			ctx := context.WithValue(r.Context(), LoggerContextKey, logger)
-			r = r.WithContext(ctx)
-			h(w, r)
-		}
+			next.ServeHTTP(w, r.WithContext(ctx))
+		})
 	}
 }

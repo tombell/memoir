@@ -6,8 +6,8 @@ import (
 	"github.com/tombell/memoir/internal/trackliststore"
 )
 
-func handleGetTracklists(tracklistStore *trackliststore.Store) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
+func handleGetTracklists(tracklistStore *trackliststore.Store) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		page, err := pageParam(w, r)
 		if err != nil {
 			w.WriteHeader(http.StatusBadRequest)
@@ -25,11 +25,11 @@ func handleGetTracklists(tracklistStore *trackliststore.Store) http.HandlerFunc 
 		if err := encode(w, r, http.StatusOK, tracklists); err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
 		}
-	}
+	})
 }
 
-func handleGetTracklist(tracklistStore *trackliststore.Store) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
+func handleGetTracklist(tracklistStore *trackliststore.Store) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		id, err := idParam(w, r)
 		if err != nil {
 			w.WriteHeader(http.StatusBadRequest)
@@ -49,11 +49,11 @@ func handleGetTracklist(tracklistStore *trackliststore.Store) http.HandlerFunc {
 		if err := encode(w, r, http.StatusOK, tracklist); err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
 		}
-	}
+	})
 }
 
-func handleAddTracklist(tracklistStore *trackliststore.Store) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
+func handleAddTracklist(tracklistStore *trackliststore.Store) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		params, err := decode[trackliststore.AddTracklistParams](r)
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
@@ -74,11 +74,11 @@ func handleAddTracklist(tracklistStore *trackliststore.Store) http.HandlerFunc {
 		if err := encode(w, r, http.StatusOK, tracklist); err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
 		}
-	}
+	})
 }
 
-func handleUpdateTracklist(tracklistStore *trackliststore.Store) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
+func handleUpdateTracklist(tracklistStore *trackliststore.Store) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		id, err := idParam(w, r)
 		if err != nil {
 			w.WriteHeader(http.StatusBadRequest)
@@ -100,5 +100,5 @@ func handleUpdateTracklist(tracklistStore *trackliststore.Store) http.HandlerFun
 		if err := encode(w, r, http.StatusOK, tracklist); err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
 		}
-	}
+	})
 }
