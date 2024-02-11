@@ -5,6 +5,8 @@ import (
 	"log/slog"
 	"os"
 
+	_ "github.com/jackc/pgx/v5/stdlib"
+
 	"github.com/tombell/memoir/cmd/memoir/commands"
 )
 

@@ -5,7 +5,6 @@ import (
 	"log/slog"
 	"os"
 
-	_ "github.com/jackc/pgx/v5/stdlib"
 	"github.com/tombell/trek"
 
 	"github.com/tombell/memoir/internal/config"
