@@ -87,6 +87,10 @@ github.com/jackc/puddle/v2/internal/genstack
 github.com/jmespath/go-jmespath
 # github.com/stretchr/testify v1.8.4
 ## explicit; go 1.20
+# github.com/tombell/middle v0.0.0-20240211230957-256fa9be568a
+## explicit; go 1.21
+github.com/tombell/middle
+github.com/tombell/middle/ware
 # github.com/tombell/trek v0.0.9
 ## explicit; go 1.13
 github.com/tombell/trek
