@@ -4,7 +4,6 @@ import (
 	"context"
 	"flag"
 	"log/slog"
-	"net/http"
 	"os"
 	"os/signal"
 	"syscall"
@@ -48,16 +47,7 @@ func Run(logger *slog.Logger) {
 		artworkstore.New(fileStore),
 	)
 
-	go func() {
-		if err := server.Start(logger); err != nil {
-			if err == http.ErrServerClosed {
-				logger.Info("api server shutdown finished")
-				return
-			}
-
-			logger.Error("starting api server failed", "err", err)
-		}
-	}()
+	go server.Run(logger)
 
 	c := make(chan os.Signal, 1)
 	signal.Notify(c, os.Interrupt, syscall.SIGTERM)
