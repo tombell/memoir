@@ -23,6 +23,7 @@ func routes(
 	artworkStore *artworkstore.Store,
 ) {
 	api := middleware.Use(
+		middleware.Recovery(),
 		middleware.CORS(),
 		middleware.RequestLogger(),
 		middleware.RequestID(uuid.NewString),
