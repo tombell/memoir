@@ -6,6 +6,7 @@ import (
 
 	"github.com/google/uuid"
 
+	"github.com/tombell/memoir/internal/api/handlers"
 	"github.com/tombell/memoir/internal/api/middleware"
 	"github.com/tombell/memoir/internal/artworkstore"
 	"github.com/tombell/memoir/internal/config"
@@ -33,19 +34,18 @@ func routes(
 		api,
 	)
 
-	router.Handle("GET /tracklists", api(handleGetTracklists(tracklistStore)))
-	router.Handle("GET /tracklists/{id}", api(handleGetTracklist(tracklistStore)))
-	router.Handle("POST /tracklists", authorized(handleAddTracklist(tracklistStore)))
-	router.Handle("PATCH /tracklists/{id}", authorized(handleUpdateTracklist(tracklistStore)))
+	router.Handle("GET /tracklists", api(handlers.GetTracklists(tracklistStore)))
+	router.Handle("GET /tracklists/{id}", api(handlers.GetTracklist(tracklistStore)))
+	router.Handle("POST /tracklists", authorized(handlers.PostTracklist(tracklistStore)))
+	router.Handle("PATCH /tracklists/{id}", authorized(handlers.PatchTracklist(tracklistStore)))
 
-	router.Handle("GET /tracks/mostplayed", api(handleGetMostPlayedTracks(trackStore)))
-	router.Handle("GET /tracks/search", api(handleSearchTracks(trackStore)))
+	router.Handle("GET /tracks/mostplayed", api(handlers.GetMostPlayedTracks(trackStore)))
+	router.Handle("GET /tracks/search", api(handlers.GetTrackSearch(trackStore)))
+	router.Handle("GET /tracks/{id}", api(handlers.GetTrack(trackStore)))
+	router.Handle("GET /tracks/{id}/tracklists", api(handlers.GetTracklistsByTrack(trackStore, tracklistStore)))
 
-	router.Handle("GET /tracks/{id}", api(handleGetTrack(trackStore)))
-	router.Handle("GET /tracks/{id}/tracklists", api(handleGetTracklistsByTrack(trackStore, tracklistStore)))
+	router.Handle("POST /artwork", api(handlers.PostArtwork(artworkStore)))
 
-	router.Handle("POST /artwork", api(handlePostArtwork(artworkStore)))
-
-	router.Handle("OPTIONS /{path...}", api(handlePreflight()))
-	router.Handle("/{path...}", api(handleNotFound()))
+	router.Handle("OPTIONS /{path...}", api(handlers.Preflight()))
+	router.Handle("/{path...}", api(handlers.NotFound()))
 }

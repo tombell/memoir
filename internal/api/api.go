@@ -12,13 +12,6 @@ import (
 	"github.com/tombell/memoir/internal/trackstore"
 )
 
-const (
-	tracklistsPerPage = 20
-
-	maxMostPlayedTracks = 10
-	maxSearchResults    = 10
-)
-
 type Server struct {
 	router *http.ServeMux
 	server *http.Server

@@ -1,4 +1,4 @@
-package api
+package handlers
 
 import (
 	"net/http"
@@ -6,7 +6,7 @@ import (
 	"github.com/tombell/memoir/internal/artworkstore"
 )
 
-func handlePostArtwork(store *artworkstore.Store) http.HandlerFunc {
+func PostArtwork(store *artworkstore.Store) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		file, header, err := r.FormFile("artwork")
 		if err != nil {

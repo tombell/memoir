@@ -1,4 +1,4 @@
-package api
+package handlers
 
 import (
 	"net/http"
@@ -7,15 +7,9 @@ import (
 	"github.com/tombell/memoir/internal/trackstore"
 )
 
-func handleGetTrack(trackStore *trackstore.Store) http.Handler {
+func GetTrack(trackStore *trackstore.Store) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		id, err := idParam(w, r)
-		if err != nil {
-			w.WriteHeader(http.StatusBadRequest)
-			return
-		}
-
-		track, err := trackStore.GetTrack(id)
+		track, err := trackStore.GetTrack(r.PathValue("id"))
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
 			return
@@ -31,24 +25,14 @@ func handleGetTrack(trackStore *trackstore.Store) http.Handler {
 	})
 }
 
-func handleGetTracklistsByTrack(
+func GetTracklistsByTrack(
 	trackStore *trackstore.Store,
 	tracklistStore *trackliststore.Store,
 ) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		id, err := idParam(w, r)
-		if err != nil {
-			w.WriteHeader(http.StatusBadRequest)
-			return
-		}
+		page := pageParam(r)
 
-		page, err := pageParam(w, r)
-		if err != nil {
-			w.WriteHeader(http.StatusBadRequest)
-			return
-		}
-
-		track, err := trackStore.GetTrack(id)
+		track, err := trackStore.GetTrack(r.PathValue("id"))
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
 			return
@@ -72,7 +56,7 @@ func handleGetTracklistsByTrack(
 	})
 }
 
-func handleGetMostPlayedTracks(trackStore *trackstore.Store) http.Handler {
+func GetMostPlayedTracks(trackStore *trackstore.Store) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		tracks, err := trackStore.GetMostPlayedTracks(maxMostPlayedTracks)
 		if err != nil {
@@ -86,7 +70,7 @@ func handleGetMostPlayedTracks(trackStore *trackstore.Store) http.Handler {
 	})
 }
 
-func handleSearchTracks(trackStore *trackstore.Store) http.Handler {
+func GetTrackSearch(trackStore *trackstore.Store) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		q := r.URL.Query().Get("q")
 

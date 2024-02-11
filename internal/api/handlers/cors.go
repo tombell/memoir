@@ -1,10 +1,10 @@
-package api
+package handlers
 
 import (
 	"net/http"
 )
 
-func handlePreflight() http.Handler {
+func Preflight() http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
 		w.WriteHeader(http.StatusOK)
 	})

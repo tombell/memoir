@@ -1,4 +1,4 @@
-package api
+package handlers
 
 import (
 	"net/http"
@@ -6,13 +6,9 @@ import (
 	"github.com/tombell/memoir/internal/trackliststore"
 )
 
-func handleGetTracklists(tracklistStore *trackliststore.Store) http.Handler {
+func GetTracklists(tracklistStore *trackliststore.Store) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		page, err := pageParam(w, r)
-		if err != nil {
-			w.WriteHeader(http.StatusBadRequest)
-			return
-		}
+		page := pageParam(r)
 
 		tracklists, total, err := tracklistStore.GetTracklists(page, tracklistsPerPage)
 		if err != nil {
@@ -28,15 +24,9 @@ func handleGetTracklists(tracklistStore *trackliststore.Store) http.Handler {
 	})
 }
 
-func handleGetTracklist(tracklistStore *trackliststore.Store) http.Handler {
+func GetTracklist(tracklistStore *trackliststore.Store) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		id, err := idParam(w, r)
-		if err != nil {
-			w.WriteHeader(http.StatusBadRequest)
-			return
-		}
-
-		tracklist, err := tracklistStore.GetTracklist(id)
+		tracklist, err := tracklistStore.GetTracklist(r.PathValue("id"))
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
 			return
@@ -52,7 +42,7 @@ func handleGetTracklist(tracklistStore *trackliststore.Store) http.Handler {
 	})
 }
 
-func handleAddTracklist(tracklistStore *trackliststore.Store) http.Handler {
+func PostTracklist(tracklistStore *trackliststore.Store) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		params, err := decode[trackliststore.AddTracklistParams](r)
 		if err != nil {
@@ -77,21 +67,15 @@ func handleAddTracklist(tracklistStore *trackliststore.Store) http.Handler {
 	})
 }
 
-func handleUpdateTracklist(tracklistStore *trackliststore.Store) http.Handler {
+func PatchTracklist(tracklistStore *trackliststore.Store) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		id, err := idParam(w, r)
-		if err != nil {
-			w.WriteHeader(http.StatusBadRequest)
-			return
-		}
-
 		params, err := decode[trackliststore.UpdateTracklistParams](r)
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}
 
-		tracklist, err := tracklistStore.UpdateTracklist(id, &params)
+		tracklist, err := tracklistStore.UpdateTracklist(r.PathValue("id"), &params)
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
 			return
