@@ -1,5 +1,4 @@
 NAME=memoir
-MODFLAGS=-mod=vendor
 
 PLATFORMS:=darwin linux windows
 
@@ -8,13 +7,13 @@ sqlc:
 
 dev:
 	@echo "building dist/${NAME}"
-	@go build ${MODFLAGS} -o dist/${NAME} ./cmd/${NAME}
+	@go build -o dist/${NAME} ./cmd/${NAME}
 
 prod: $(PLATFORMS)
 
 $(PLATFORMS):
 	@echo "building ${NAME}-$@-amd64"
-	@GOOS=$@ GOARCH=amd64 go build ${MODFLAGS} -o dist/${NAME}-$@-amd64 ./cmd/${NAME}
+	@GOOS=$@ GOARCH=amd64 go build -o dist/${NAME}-$@-amd64 ./cmd/${NAME}
 
 run:
 	@dist/${NAME} run
