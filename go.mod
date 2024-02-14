@@ -1,10 +1,10 @@
 module github.com/tombell/memoir
 
 require (
-	github.com/aws/aws-sdk-go v1.49.16
-	github.com/google/uuid v1.5.0
+	github.com/aws/aws-sdk-go v1.50.18
+	github.com/google/uuid v1.6.0
 	github.com/jackc/pgerrcode v0.0.0-20220416144525-469b46aa5efa
-	github.com/jackc/pgx/v5 v5.5.1
+	github.com/jackc/pgx/v5 v5.5.3
 	github.com/tombell/middle v0.0.0-20240211230957-256fa9be568a
 	github.com/tombell/trek v0.0.9
 )
@@ -15,7 +15,7 @@ require (
 	github.com/jackc/puddle/v2 v2.2.1 // indirect
 	github.com/jmespath/go-jmespath v0.4.0 // indirect
 	github.com/stretchr/testify v1.8.4 // indirect
-	golang.org/x/crypto v0.17.0 // indirect
+	golang.org/x/crypto v0.19.0 // indirect
 	golang.org/x/sync v0.6.0 // indirect
 	golang.org/x/text v0.14.0 // indirect
 	gopkg.in/yaml.v2 v2.3.0 // indirect
