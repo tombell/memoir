@@ -28,15 +28,8 @@ FROM (
 
 -- name: GetTracklistWithTracks :many
 SELECT
-  "tracklists".*,
-  "tracks"."id" as "track_id",
-  "tracks"."artist",
-  "tracks"."name" as "track_name",
-  "tracks"."genre",
-  "tracks"."bpm",
-  "tracks"."key",
-  "tracks"."created" as "track_created",
-  "tracks"."updated" as "track_updated"
+  sqlc.embed(tracklists),
+  sqlc.embed(tracks)
 FROM "tracklists"
 JOIN "tracklist_tracks" ON "tracklist_tracks"."tracklist_id" = "tracklists"."id"
 JOIN "tracks" ON "tracks"."id" = "tracklist_tracks"."track_id"
@@ -45,13 +38,7 @@ ORDER BY "tracklist_tracks"."track_number" ASC;
 
 -- name: GetTracklists :many
 SELECT
-  "tracklists"."id",
-  "tracklists"."name",
-  "tracklists"."date",
-  "tracklists"."artwork",
-  "tracklists"."url",
-  "tracklists"."created",
-  "tracklists"."updated",
+  sqlc.embed(tracklists),
   count("tracklists"."id") as "track_count"
 FROM "tracklists"
 JOIN "tracklist_tracks" ON "tracklist_tracks"."tracklist_id" = "tracklists"."id"
@@ -61,11 +48,13 @@ OFFSET $1
 LIMIT $2;
 
 -- name: GetTracklistsByTrack :many
-SELECT "tracklists".*, (
-  SELECT count("id")
-  FROM "tracklist_tracks"
-  WHERE "tracklist_tracks"."tracklist_id" = "tracklists"."id"
-) as "track_count"
+SELECT
+  sqlc.embed(tracklists),
+  (
+    SELECT count("id")
+    FROM "tracklist_tracks"
+    WHERE "tracklist_tracks"."tracklist_id" = "tracklists"."id"
+  ) as "track_count"
 FROM "tracklists"
 JOIN "tracklist_tracks" ON "tracklist_tracks"."tracklist_id" = "tracklists"."id"
 WHERE "tracklist_tracks"."track_id" = $1

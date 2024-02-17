@@ -8,6 +8,18 @@ import (
 	"time"
 )
 
+type Track struct {
+	ID               string
+	Artist           string
+	Name             string
+	Genre            string
+	BPM              float64
+	Key              string
+	Created          time.Time
+	Updated          time.Time
+	FtsNameAndArtist string
+}
+
 type Tracklist struct {
 	ID      string
 	Name    string
