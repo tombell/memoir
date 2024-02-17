@@ -20,7 +20,7 @@ INSERT INTO "tracklists" (
   "created",
   "updated"
 )
-VALUES ($1, $2, $3, $4, $5, $6, $7)
+VALUES ($1, $2, $3, $4, $5, NOW(), NOW())
 RETURNING id, name, date, artwork, url, created, updated
 `
 
@@ -30,8 +30,6 @@ type AddTracklistParams struct {
 	URL     string
 	Artwork string
 	Date    time.Time
-	Created time.Time
-	Updated time.Time
 }
 
 func (q *Queries) AddTracklist(ctx context.Context, arg AddTracklistParams) (*Tracklist, error) {
@@ -41,8 +39,6 @@ func (q *Queries) AddTracklist(ctx context.Context, arg AddTracklistParams) (*Tr
 		arg.URL,
 		arg.Artwork,
 		arg.Date,
-		arg.Created,
-		arg.Updated,
 	)
 	var i Tracklist
 	err := row.Scan(
@@ -250,7 +246,7 @@ func (q *Queries) GetTracklistsByTrack(ctx context.Context, arg GetTracklistsByT
 
 const updateTracklist = `-- name: UpdateTracklist :one
 UPDATE "tracklists"
-SET "name" = $2, "url" = $3, "date" = $4, "updated" = now()
+SET "name" = $2, "url" = $3, "date" = $4, "updated" = NOW()
 WHERE "id" = $1
 RETURNING id, name, date, artwork, url, created, updated
 `

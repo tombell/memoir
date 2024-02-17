@@ -8,7 +8,7 @@ INSERT INTO "tracklists" (
   "created",
   "updated"
 )
-VALUES ($1, $2, $3, $4, $5, $6, $7)
+VALUES ($1, $2, $3, $4, $5, NOW(), NOW())
 RETURNING *;
 
 -- name: CountTracklists :one
@@ -64,6 +64,6 @@ LIMIT $3;
 
 -- name: UpdateTracklist :one
 UPDATE "tracklists"
-SET "name" = $2, "url" = $3, "date" = $4, "updated" = now()
+SET "name" = $2, "url" = $3, "date" = $4, "updated" = NOW()
 WHERE "id" = $1
 RETURNING *;

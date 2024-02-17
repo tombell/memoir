@@ -140,8 +140,6 @@ func (s *Store) AddTracklist(model *AddTracklistParams) (*Tracklist, error) {
 		Date:    model.Date,
 		URL:     model.URL,
 		Artwork: model.Artwork,
-		Created: time.Now().UTC(),
-		Updated: time.Now().UTC(),
 	})
 	if err != nil {
 		if pgErr, ok := err.(*pgconn.PgError); ok {
