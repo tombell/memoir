@@ -73,13 +73,13 @@ func (s *Store) GetTracklists(page, limit int32) ([]*Tracklist, int64, error) {
 
 	for _, row := range rows {
 		tracklists = append(tracklists, &Tracklist{
-			ID:         row.ID,
-			Name:       row.Name,
-			Artwork:    row.Artwork,
-			URL:        row.URL,
-			Date:       row.Date,
-			Created:    row.Created,
-			Updated:    row.Updated,
+			ID:         row.Tracklist.ID,
+			Name:       row.Tracklist.Name,
+			Artwork:    row.Tracklist.Artwork,
+			URL:        row.Tracklist.URL,
+			Date:       row.Tracklist.Date,
+			Created:    row.Tracklist.Created,
+			Updated:    row.Tracklist.Updated,
 			TrackCount: int(row.TrackCount),
 		})
 	}
@@ -98,25 +98,25 @@ func (s *Store) GetTracklist(id string) (*Tracklist, error) {
 	}
 
 	tracklist := &Tracklist{
-		ID:      rows[0].ID,
-		Name:    rows[0].Name,
-		Artwork: rows[0].Artwork,
-		URL:     rows[0].URL,
-		Date:    rows[0].Date,
-		Created: rows[0].Created,
-		Updated: rows[0].Updated,
+		ID:      rows[0].Tracklist.ID,
+		Name:    rows[0].Tracklist.Name,
+		Artwork: rows[0].Tracklist.Artwork,
+		URL:     rows[0].Tracklist.URL,
+		Date:    rows[0].Tracklist.Date,
+		Created: rows[0].Tracklist.Created,
+		Updated: rows[0].Tracklist.Updated,
 	}
 
 	for _, row := range rows {
 		tracklist.Tracks = append(tracklist.Tracks, &trackstore.Track{
-			ID:      row.TrackID,
-			Artist:  row.Artist,
-			Name:    row.TrackName,
-			Genre:   row.Genre,
-			BPM:     row.BPM,
-			Key:     row.Key,
-			Created: row.TrackCreated,
-			Updated: row.TrackUpdated,
+			ID:      row.Track.ID,
+			Artist:  row.Track.Artist,
+			Name:    row.Track.Name,
+			Genre:   row.Track.Genre,
+			BPM:     row.Track.BPM,
+			Key:     row.Track.Key,
+			Created: row.Track.Created,
+			Updated: row.Track.Updated,
 		})
 	}
 
@@ -236,25 +236,25 @@ func (s *Store) UpdateTracklist(id string, model *UpdateTracklistParams) (*Track
 	}
 
 	tracklist := &Tracklist{
-		ID:      rows[0].ID,
-		Name:    rows[0].Name,
-		Artwork: rows[0].Artwork,
-		URL:     rows[0].URL,
-		Date:    rows[0].Date,
-		Created: rows[0].Created,
-		Updated: rows[0].Updated,
+		ID:      rows[0].Tracklist.ID,
+		Name:    rows[0].Tracklist.Name,
+		Artwork: rows[0].Tracklist.Artwork,
+		URL:     rows[0].Tracklist.URL,
+		Date:    rows[0].Tracklist.Date,
+		Created: rows[0].Tracklist.Created,
+		Updated: rows[0].Tracklist.Updated,
 	}
 
 	for _, row := range rows {
 		tracklist.Tracks = append(tracklist.Tracks, &trackstore.Track{
-			ID:      row.TrackID,
-			Artist:  row.Artist,
-			Name:    row.TrackName,
-			Genre:   row.Genre,
-			BPM:     row.BPM,
-			Key:     row.Key,
-			Created: row.TrackCreated,
-			Updated: row.TrackUpdated,
+			ID:      row.Track.ID,
+			Artist:  row.Track.Artist,
+			Name:    row.Track.Name,
+			Genre:   row.Track.Genre,
+			BPM:     row.Track.BPM,
+			Key:     row.Track.Key,
+			Created: row.Track.Created,
+			Updated: row.Track.Updated,
 		})
 	}
 
@@ -283,13 +283,13 @@ func (s *Store) GetTracklistsByTrack(id string, page, limit int32) ([]*Tracklist
 
 	for _, row := range rows {
 		tracklists = append(tracklists, &Tracklist{
-			ID:         row.ID,
-			Name:       row.Name,
-			Date:       row.Date,
-			URL:        row.URL,
-			Artwork:    row.Artwork,
-			Created:    row.Created,
-			Updated:    row.Updated,
+			ID:         row.Tracklist.ID,
+			Name:       row.Tracklist.Name,
+			Date:       row.Tracklist.Date,
+			URL:        row.Tracklist.URL,
+			Artwork:    row.Tracklist.Artwork,
+			Created:    row.Tracklist.Created,
+			Updated:    row.Tracklist.Updated,
 			TrackCount: int(row.TrackCount),
 		})
 	}

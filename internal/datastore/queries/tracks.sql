@@ -13,14 +13,7 @@ VALUES ($1, $2, $3, $4, $5, $6, $7, $8);
 
 -- name: GetMostPlayedTracks :many
 SELECT
-  "tracks"."id",
-  "tracks"."artist",
-  "tracks"."name",
-  "tracks"."genre",
-  "tracks"."bpm",
-  "tracks"."key",
-  "tracks"."created",
-  "tracks"."updated",
+  sqlc.embed(tracks),
   count("tracks"."id") as "played"
 FROM "tracks"
 JOIN "tracklist_tracks" ON "tracklist_tracks"."track_id" = "tracks"."id"

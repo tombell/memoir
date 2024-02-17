@@ -51,14 +51,7 @@ func (q *Queries) AddTrack(ctx context.Context, arg AddTrackParams) error {
 
 const getMostPlayedTracks = `-- name: GetMostPlayedTracks :many
 SELECT
-  "tracks"."id",
-  "tracks"."artist",
-  "tracks"."name",
-  "tracks"."genre",
-  "tracks"."bpm",
-  "tracks"."key",
-  "tracks"."created",
-  "tracks"."updated",
+  tracks.id, tracks.artist, tracks.name, tracks.genre, tracks.bpm, tracks.key, tracks.created, tracks.updated, tracks.fts_name_and_artist,
   count("tracks"."id") as "played"
 FROM "tracks"
 JOIN "tracklist_tracks" ON "tracklist_tracks"."track_id" = "tracks"."id"
@@ -68,15 +61,8 @@ LIMIT $1
 `
 
 type GetMostPlayedTracksRow struct {
-	ID      string
-	Artist  string
-	Name    string
-	Genre   string
-	BPM     float64
-	Key     string
-	Created time.Time
-	Updated time.Time
-	Played  int64
+	Track  Track
+	Played int64
 }
 
 func (q *Queries) GetMostPlayedTracks(ctx context.Context, limit int32) ([]*GetMostPlayedTracksRow, error) {
@@ -89,14 +75,15 @@ func (q *Queries) GetMostPlayedTracks(ctx context.Context, limit int32) ([]*GetM
 	for rows.Next() {
 		var i GetMostPlayedTracksRow
 		if err := rows.Scan(
-			&i.ID,
-			&i.Artist,
-			&i.Name,
-			&i.Genre,
-			&i.BPM,
-			&i.Key,
-			&i.Created,
-			&i.Updated,
+			&i.Track.ID,
+			&i.Track.Artist,
+			&i.Track.Name,
+			&i.Track.Genre,
+			&i.Track.BPM,
+			&i.Track.Key,
+			&i.Track.Created,
+			&i.Track.Updated,
+			&i.Track.FtsNameAndArtist,
 			&i.Played,
 		); err != nil {
 			return nil, err

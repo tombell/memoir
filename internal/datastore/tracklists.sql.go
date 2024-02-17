@@ -91,14 +91,7 @@ func (q *Queries) CountTracklistsByTrack(ctx context.Context, trackID string) (i
 const getTracklistWithTracks = `-- name: GetTracklistWithTracks :many
 SELECT
   tracklists.id, tracklists.name, tracklists.date, tracklists.artwork, tracklists.url, tracklists.created, tracklists.updated,
-  "tracks"."id" as "track_id",
-  "tracks"."artist",
-  "tracks"."name" as "track_name",
-  "tracks"."genre",
-  "tracks"."bpm",
-  "tracks"."key",
-  "tracks"."created" as "track_created",
-  "tracks"."updated" as "track_updated"
+  tracks.id, tracks.artist, tracks.name, tracks.genre, tracks.bpm, tracks.key, tracks.created, tracks.updated, tracks.fts_name_and_artist
 FROM "tracklists"
 JOIN "tracklist_tracks" ON "tracklist_tracks"."tracklist_id" = "tracklists"."id"
 JOIN "tracks" ON "tracks"."id" = "tracklist_tracks"."track_id"
@@ -107,21 +100,8 @@ ORDER BY "tracklist_tracks"."track_number" ASC
 `
 
 type GetTracklistWithTracksRow struct {
-	ID           string
-	Name         string
-	Date         time.Time
-	Artwork      string
-	URL          string
-	Created      time.Time
-	Updated      time.Time
-	TrackID      string
-	Artist       string
-	TrackName    string
-	Genre        string
-	BPM          float64
-	Key          string
-	TrackCreated time.Time
-	TrackUpdated time.Time
+	Tracklist Tracklist
+	Track     Track
 }
 
 func (q *Queries) GetTracklistWithTracks(ctx context.Context, id string) ([]*GetTracklistWithTracksRow, error) {
@@ -134,21 +114,22 @@ func (q *Queries) GetTracklistWithTracks(ctx context.Context, id string) ([]*Get
 	for rows.Next() {
 		var i GetTracklistWithTracksRow
 		if err := rows.Scan(
-			&i.ID,
-			&i.Name,
-			&i.Date,
-			&i.Artwork,
-			&i.URL,
-			&i.Created,
-			&i.Updated,
-			&i.TrackID,
-			&i.Artist,
-			&i.TrackName,
-			&i.Genre,
-			&i.BPM,
-			&i.Key,
-			&i.TrackCreated,
-			&i.TrackUpdated,
+			&i.Tracklist.ID,
+			&i.Tracklist.Name,
+			&i.Tracklist.Date,
+			&i.Tracklist.Artwork,
+			&i.Tracklist.URL,
+			&i.Tracklist.Created,
+			&i.Tracklist.Updated,
+			&i.Track.ID,
+			&i.Track.Artist,
+			&i.Track.Name,
+			&i.Track.Genre,
+			&i.Track.BPM,
+			&i.Track.Key,
+			&i.Track.Created,
+			&i.Track.Updated,
+			&i.Track.FtsNameAndArtist,
 		); err != nil {
 			return nil, err
 		}
@@ -162,13 +143,7 @@ func (q *Queries) GetTracklistWithTracks(ctx context.Context, id string) ([]*Get
 
 const getTracklists = `-- name: GetTracklists :many
 SELECT
-  "tracklists"."id",
-  "tracklists"."name",
-  "tracklists"."date",
-  "tracklists"."artwork",
-  "tracklists"."url",
-  "tracklists"."created",
-  "tracklists"."updated",
+  tracklists.id, tracklists.name, tracklists.date, tracklists.artwork, tracklists.url, tracklists.created, tracklists.updated,
   count("tracklists"."id") as "track_count"
 FROM "tracklists"
 JOIN "tracklist_tracks" ON "tracklist_tracks"."tracklist_id" = "tracklists"."id"
@@ -184,13 +159,7 @@ type GetTracklistsParams struct {
 }
 
 type GetTracklistsRow struct {
-	ID         string
-	Name       string
-	Date       time.Time
-	Artwork    string
-	URL        string
-	Created    time.Time
-	Updated    time.Time
+	Tracklist  Tracklist
 	TrackCount int64
 }
 
@@ -204,13 +173,13 @@ func (q *Queries) GetTracklists(ctx context.Context, arg GetTracklistsParams) ([
 	for rows.Next() {
 		var i GetTracklistsRow
 		if err := rows.Scan(
-			&i.ID,
-			&i.Name,
-			&i.Date,
-			&i.Artwork,
-			&i.URL,
-			&i.Created,
-			&i.Updated,
+			&i.Tracklist.ID,
+			&i.Tracklist.Name,
+			&i.Tracklist.Date,
+			&i.Tracklist.Artwork,
+			&i.Tracklist.URL,
+			&i.Tracklist.Created,
+			&i.Tracklist.Updated,
 			&i.TrackCount,
 		); err != nil {
 			return nil, err
@@ -224,11 +193,13 @@ func (q *Queries) GetTracklists(ctx context.Context, arg GetTracklistsParams) ([
 }
 
 const getTracklistsByTrack = `-- name: GetTracklistsByTrack :many
-SELECT tracklists.id, tracklists.name, tracklists.date, tracklists.artwork, tracklists.url, tracklists.created, tracklists.updated, (
-  SELECT count("id")
-  FROM "tracklist_tracks"
-  WHERE "tracklist_tracks"."tracklist_id" = "tracklists"."id"
-) as "track_count"
+SELECT
+  tracklists.id, tracklists.name, tracklists.date, tracklists.artwork, tracklists.url, tracklists.created, tracklists.updated,
+  (
+    SELECT count("id")
+    FROM "tracklist_tracks"
+    WHERE "tracklist_tracks"."tracklist_id" = "tracklists"."id"
+  ) as "track_count"
 FROM "tracklists"
 JOIN "tracklist_tracks" ON "tracklist_tracks"."tracklist_id" = "tracklists"."id"
 WHERE "tracklist_tracks"."track_id" = $1
@@ -244,13 +215,7 @@ type GetTracklistsByTrackParams struct {
 }
 
 type GetTracklistsByTrackRow struct {
-	ID         string
-	Name       string
-	Date       time.Time
-	Artwork    string
-	URL        string
-	Created    time.Time
-	Updated    time.Time
+	Tracklist  Tracklist
 	TrackCount int64
 }
 
@@ -264,13 +229,13 @@ func (q *Queries) GetTracklistsByTrack(ctx context.Context, arg GetTracklistsByT
 	for rows.Next() {
 		var i GetTracklistsByTrackRow
 		if err := rows.Scan(
-			&i.ID,
-			&i.Name,
-			&i.Date,
-			&i.Artwork,
-			&i.URL,
-			&i.Created,
-			&i.Updated,
+			&i.Tracklist.ID,
+			&i.Tracklist.Name,
+			&i.Tracklist.Date,
+			&i.Tracklist.Artwork,
+			&i.Tracklist.URL,
+			&i.Tracklist.Created,
+			&i.Tracklist.Updated,
 			&i.TrackCount,
 		); err != nil {
 			return nil, err
