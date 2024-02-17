@@ -21,3 +21,5 @@ sql:
             go_type: "time.Time"
           - db_type: "uuid"
             go_type: "string"
+          - column: "tracks.fts_name_and_artist"
+            go_type: "string"
