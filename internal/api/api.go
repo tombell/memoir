@@ -46,15 +46,16 @@ func New(
 	return server
 }
 
-func (s *Server) Run(logger *slog.Logger) {
-	logger.Info("starting api server", "addr", s.server.Addr)
-
-	if err := s.server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
-		logger.Error("starting api server failed", "err", err)
+func (s *Server) Run() error {
+	if err := s.server.ListenAndServe(); err != nil {
+		if err != http.ErrServerClosed {
+			return err
+		}
 	}
+
+	return nil
 }
 
-func (s *Server) Shutdown(ctx context.Context, logger *slog.Logger) error {
-	logger.Info("shutting down api server")
+func (s *Server) Shutdown(ctx context.Context) error {
 	return s.server.Shutdown(ctx)
 }
