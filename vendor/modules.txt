@@ -91,9 +91,6 @@ github.com/jmespath/go-jmespath
 ## explicit; go 1.21
 github.com/tombell/middle
 github.com/tombell/middle/ware
-# github.com/tombell/trek v0.0.9
-## explicit; go 1.13
-github.com/tombell/trek
 # golang.org/x/crypto v0.19.0
 ## explicit; go 1.18
 golang.org/x/crypto/pbkdf2

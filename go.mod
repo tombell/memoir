@@ -6,7 +6,6 @@ require (
 	github.com/jackc/pgerrcode v0.0.0-20220416144525-469b46aa5efa
 	github.com/jackc/pgx/v5 v5.5.3
 	github.com/tombell/middle v0.0.0-20240211230957-256fa9be568a
-	github.com/tombell/trek v0.0.9
 )
 
 require (
