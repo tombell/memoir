@@ -1,6 +1,6 @@
 {
-  "address": ":8080",
-  "db": "dbname=memoir_development sslmode=disable",
+  "address": "localhost:8080",
+  "db": "dbname=memoir_development",
   "migrations": "internal/datastore/migrations",
 
   "api": {
