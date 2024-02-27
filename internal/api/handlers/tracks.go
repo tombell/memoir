@@ -1,7 +1,9 @@
 package handlers
 
 import (
+	"context"
 	"net/http"
+	"time"
 
 	"github.com/tombell/memoir/internal/trackliststore"
 	"github.com/tombell/memoir/internal/trackstore"
@@ -9,7 +11,10 @@ import (
 
 func GetTrack(trackStore *trackstore.Store) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		track, err := trackStore.GetTrack(r.PathValue("id"))
+		ctx, cancel := context.WithTimeout(r.Context(), 30*time.Second)
+		defer cancel()
+
+		track, err := trackStore.GetTrack(ctx, r.PathValue("id"))
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
 			return
@@ -30,9 +35,12 @@ func GetTracklistsByTrack(
 	tracklistStore *trackliststore.Store,
 ) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		ctx, cancel := context.WithTimeout(r.Context(), 30*time.Second)
+		defer cancel()
+
 		page := pageParam(r)
 
-		track, err := trackStore.GetTrack(r.PathValue("id"))
+		track, err := trackStore.GetTrack(ctx, r.PathValue("id"))
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
 			return
@@ -42,7 +50,7 @@ func GetTracklistsByTrack(
 			return
 		}
 
-		tracklists, total, err := tracklistStore.GetTracklistsByTrack(track.ID, page, tracklistsPerPage)
+		tracklists, total, err := tracklistStore.GetTracklistsByTrack(ctx, track.ID, page, tracklistsPerPage)
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
 			return
@@ -58,7 +66,10 @@ func GetTracklistsByTrack(
 
 func GetMostPlayedTracks(trackStore *trackstore.Store) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		tracks, err := trackStore.GetMostPlayedTracks(maxMostPlayedTracks)
+		ctx, cancel := context.WithTimeout(r.Context(), 30*time.Second)
+		defer cancel()
+
+		tracks, err := trackStore.GetMostPlayedTracks(ctx, maxMostPlayedTracks)
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
 			return
@@ -72,9 +83,12 @@ func GetMostPlayedTracks(trackStore *trackstore.Store) http.Handler {
 
 func GetTrackSearch(trackStore *trackstore.Store) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		ctx, cancel := context.WithTimeout(r.Context(), 30*time.Second)
+		defer cancel()
+
 		q := r.URL.Query().Get("q")
 
-		tracks, err := trackStore.SearchTracks(q, maxSearchResults)
+		tracks, err := trackStore.SearchTracks(ctx, q, maxSearchResults)
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
 			return

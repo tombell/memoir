@@ -37,8 +37,8 @@ func New(store *datastore.Store) *Store {
 	return &Store{dataStore: store}
 }
 
-func (s *Store) GetTrack(id string) (*Track, error) {
-	row, err := s.dataStore.GetTrack(context.Background(), id)
+func (s *Store) GetTrack(ctx context.Context, id string) (*Track, error) {
+	row, err := s.dataStore.GetTrack(ctx, id)
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
 			return nil, nil
@@ -59,8 +59,8 @@ func (s *Store) GetTrack(id string) (*Track, error) {
 	}, nil
 }
 
-func (s *Store) GetMostPlayedTracks(limit int32) ([]*Track, error) {
-	rows, err := s.dataStore.GetMostPlayedTracks(context.Background(), limit)
+func (s *Store) GetMostPlayedTracks(ctx context.Context, limit int32) ([]*Track, error) {
+	rows, err := s.dataStore.GetMostPlayedTracks(ctx, limit)
 	if err != nil {
 		return nil, fmt.Errorf("find most played tracks failed: %w", err)
 	}
@@ -86,8 +86,8 @@ func (s *Store) GetMostPlayedTracks(limit int32) ([]*Track, error) {
 	return tracks, nil
 }
 
-func (s *Store) SearchTracks(query string, limit int32) ([]*Track, error) {
-	rows, err := s.dataStore.GetTracksByQuery(context.Background(), db.GetTracksByQueryParams{
+func (s *Store) SearchTracks(ctx context.Context, query string, limit int32) ([]*Track, error) {
+	rows, err := s.dataStore.GetTracksByQuery(ctx, db.GetTracksByQueryParams{
 		Query:    query,
 		RowLimit: limit,
 	})

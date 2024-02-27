@@ -1,16 +1,21 @@
 package handlers
 
 import (
+	"context"
 	"net/http"
+	"time"
 
 	"github.com/tombell/memoir/internal/trackliststore"
 )
 
 func GetTracklists(tracklistStore *trackliststore.Store) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		ctx, cancel := context.WithTimeout(r.Context(), 30*time.Second)
+		defer cancel()
+
 		page := pageParam(r)
 
-		tracklists, total, err := tracklistStore.GetTracklists(page, tracklistsPerPage)
+		tracklists, total, err := tracklistStore.GetTracklists(ctx, page, tracklistsPerPage)
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
 			return
@@ -26,7 +31,10 @@ func GetTracklists(tracklistStore *trackliststore.Store) http.Handler {
 
 func GetTracklist(tracklistStore *trackliststore.Store) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		tracklist, err := tracklistStore.GetTracklist(r.PathValue("id"))
+		ctx, cancel := context.WithTimeout(r.Context(), 30*time.Second)
+		defer cancel()
+
+		tracklist, err := tracklistStore.GetTracklist(ctx, r.PathValue("id"))
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
 			return
@@ -44,15 +52,17 @@ func GetTracklist(tracklistStore *trackliststore.Store) http.Handler {
 
 func PostTracklist(tracklistStore *trackliststore.Store) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		ctx, cancel := context.WithTimeout(r.Context(), 30*time.Second)
+		defer cancel()
+
 		params, err := decode[trackliststore.AddTracklistParams](r)
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}
 
-		tracklist, err := tracklistStore.AddTracklist(&params)
+		tracklist, err := tracklistStore.AddTracklist(ctx, &params)
 		if err != nil {
-
 			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}
@@ -69,13 +79,16 @@ func PostTracklist(tracklistStore *trackliststore.Store) http.Handler {
 
 func PatchTracklist(tracklistStore *trackliststore.Store) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		ctx, cancel := context.WithTimeout(r.Context(), 30*time.Second)
+		defer cancel()
+
 		params, err := decode[trackliststore.UpdateTracklistParams](r)
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}
 
-		tracklist, err := tracklistStore.UpdateTracklist(r.PathValue("id"), &params)
+		tracklist, err := tracklistStore.UpdateTracklist(ctx, r.PathValue("id"), &params)
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
 			return
