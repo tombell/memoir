@@ -3,7 +3,7 @@
 //   sqlc v1.25.0
 // source: tracklist_tracks.sql
 
-package datastore
+package database
 
 import (
 	"context"

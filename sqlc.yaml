@@ -9,8 +9,8 @@ sql:
         emit_result_struct_pointers: true
         omit_unused_structs: true
         sql_package: "pgx/v5"
-        package: "datastore"
-        out: "internal/datastore"
+        package: "database"
+        out: "internal/datastore/database"
         rename:
           bpm: "BPM"
           url: "URL"
