@@ -2,16 +2,18 @@ package datastore
 
 import (
 	"github.com/jackc/pgx/v5/pgxpool"
+
+	"github.com/tombell/memoir/internal/datastore/database"
 )
 
 type Store struct {
 	*pgxpool.Pool
-	*Queries
+	*database.Queries
 }
 
-func NewStore(dbpool *pgxpool.Pool) *Store {
+func New(dbpool *pgxpool.Pool) *Store {
 	return &Store{
 		Pool:    dbpool,
-		Queries: New(dbpool),
+		Queries: database.New(dbpool),
 	}
 }

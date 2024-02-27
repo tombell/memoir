@@ -9,6 +9,7 @@ import (
 	"github.com/jackc/pgx/v5"
 
 	"github.com/tombell/memoir/internal/datastore"
+	db "github.com/tombell/memoir/internal/datastore/database"
 )
 
 type Track struct {
@@ -86,7 +87,7 @@ func (s *Store) GetMostPlayedTracks(limit int32) ([]*Track, error) {
 }
 
 func (s *Store) SearchTracks(query string, limit int32) ([]*Track, error) {
-	rows, err := s.dataStore.GetTracksByQuery(context.Background(), datastore.GetTracksByQueryParams{
+	rows, err := s.dataStore.GetTracksByQuery(context.Background(), db.GetTracksByQueryParams{
 		Query:    query,
 		RowLimit: limit,
 	})

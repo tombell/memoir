@@ -40,7 +40,7 @@ func main() {
 	}
 	defer dbpool.Close()
 
-	dataStore := datastore.NewStore(dbpool)
+	dataStore := datastore.New(dbpool)
 	fileStore := filestore.New(cfg)
 
 	server := api.New(
