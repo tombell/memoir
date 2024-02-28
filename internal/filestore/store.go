@@ -1,44 +1,51 @@
 package filestore
 
 import (
+	"context"
+	"errors"
 	"fmt"
 	"io"
 	"net/http"
 
-	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/aws/awserr"
-	"github.com/aws/aws-sdk-go/aws/credentials"
-	"github.com/aws/aws-sdk-go/aws/session"
-	"github.com/aws/aws-sdk-go/service/s3"
+	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/config"
+	"github.com/aws/aws-sdk-go-v2/credentials"
+	"github.com/aws/aws-sdk-go-v2/service/s3"
+	"github.com/aws/aws-sdk-go-v2/service/s3/types"
 
-	"github.com/tombell/memoir/internal/config"
+	cfg "github.com/tombell/memoir/internal/config"
 )
 
 type Store struct {
-	config *config.Config
-	svc    *s3.S3
+	config *cfg.Config
+	svc    *s3.Client
 }
 
-func New(config *config.Config) *Store {
-	creds := credentials.NewStaticCredentials(config.AWS.Key, config.AWS.Secret, "")
-	cfg := aws.NewConfig().WithCredentials(creds).WithRegion(config.AWS.Region)
-	sess, _ := session.NewSession(cfg)
+func New(cfg *cfg.Config) *Store {
+	creds := credentials.NewStaticCredentialsProvider(cfg.AWS.Key, cfg.AWS.Secret, "")
+	awscfg, _ := config.LoadDefaultConfig(
+		context.TODO(),
+		config.WithCredentialsProvider(creds),
+		config.WithRegion(cfg.AWS.Region),
+	)
 
-	return &Store{config: config, svc: s3.New(sess)}
+	return &Store{
+		config: cfg,
+		svc:    s3.NewFromConfig(awscfg),
+	}
 }
 
-func (s *Store) Exists(key string) (bool, error) {
+func (s *Store) Exists(ctx context.Context, key string) (bool, error) {
 	input := &s3.GetObjectInput{
 		Bucket: aws.String(s.config.AWS.Bucket),
 		Key:    aws.String(key),
 		Range:  aws.String("bytes=0-1"),
 	}
 
-	if _, err := s.svc.GetObject(input); err != nil {
-		if aerr, ok := err.(awserr.Error); ok {
-			if aerr.Code() == s3.ErrCodeNoSuchKey {
-				return false, nil
-			}
+	if _, err := s.svc.GetObject(ctx, input); err != nil {
+		var nsk *types.NoSuchKey
+		if errors.As(err, &nsk) {
+			return false, nil
 		}
 
 		return false, fmt.Errorf("get object failed: %w", err)
@@ -47,7 +54,7 @@ func (s *Store) Exists(key string) (bool, error) {
 	return true, nil
 }
 
-func (s *Store) Put(key string, r io.ReadSeeker) error {
+func (s *Store) Put(ctx context.Context, key string, r io.ReadSeeker) error {
 	var buf [512]byte
 
 	if _, err := r.Read(buf[:]); err != nil {
@@ -63,7 +70,7 @@ func (s *Store) Put(key string, r io.ReadSeeker) error {
 		Body:        r,
 	}
 
-	if _, err := s.svc.PutObject(input); err != nil {
+	if _, err := s.svc.PutObject(ctx, input); err != nil {
 		return fmt.Errorf("s3 put object failed: %w", err)
 	}
 

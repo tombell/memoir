@@ -1,13 +1,19 @@
 package handlers
 
 import (
+	"context"
+	"fmt"
 	"net/http"
+	"time"
 
 	"github.com/tombell/memoir/internal/artworkstore"
 )
 
 func PostArtwork(store *artworkstore.Store) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		ctx, cancel := context.WithTimeout(r.Context(), 30*time.Second)
+		defer cancel()
+
 		file, header, err := r.FormFile("artwork")
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
@@ -15,8 +21,9 @@ func PostArtwork(store *artworkstore.Store) http.HandlerFunc {
 		}
 		defer file.Close()
 
-		uploaded, exists, err := store.Upload(file, header.Filename)
+		uploaded, exists, err := store.Upload(ctx, file, header.Filename)
 		if err != nil {
+			fmt.Println(err)
 			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}
