@@ -1,34 +1,33 @@
-NAME=memoir
-
-PLATFORMS:=darwin linux windows
-
-sqlc:
-	@sqlc generate
+NAME = memoir
+PLATFORMS := windows-amd64 windows-arm64 darwin-amd64 darwin-arm64 linux-amd64 linux-arm64
 
 dev:
-	@echo "building dist/${NAME}"
-	@go build -o dist/${NAME} ./cmd/${NAME}
+	@echo "building bin/${NAME}"
+	@go build -o bin/${NAME} ./cmd/${NAME}
 
 prod: $(PLATFORMS)
 
 $(PLATFORMS):
-	@echo "building ${NAME}-$@-amd64"
-	@GOOS=$@ GOARCH=amd64 go build -o dist/${NAME}-$@-amd64 ./cmd/${NAME}
+	@echo "building ${NAME}-$@"
+	@GOOS=$(word 1,$(subst -, ,$@)) GOARCH=$(word 2,$(subst -, ,$@)) \
+		go build -o bin/${NAME}-$@ ./cmd/${NAME}
 
 run:
-	@dist/${NAME} run
+	@pkill -f bin/${NAME} || true
+	@bin/${NAME}
 
 watch:
 	@while sleep 1; do \
-		trap "exit" SIGINT; \
-		find . \
-			-type d \( -name vendor \) -prune -false -o \
-			-type f \( -name "*.go" \) \
-		| entr -c -d -r make dev run; \
+		trap "exit" INT TERM; \
+		rg --files --glob '{*.json,*.go,*.tmpl.*}' | \
+		entr -c -d -r make dev run; \
 	done
 
 clean:
-	@rm -fr dist
+	@rm -fr bin
+
+sqlc:
+	@sqlc generate
 
 .DEFAULT_GOAL := dev
-.PHONY: sqlc dev prod $(PLATFORMS) run watch clean
+.PHONY: dev prod $(PLATFORMS) run watch clean sqlc
