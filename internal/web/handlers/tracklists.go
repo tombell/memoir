@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/tombell/memoir/internal/trackliststore"
+	"github.com/tombell/memoir/internal/stores/trackliststore"
 )
 
 func GetTracklists(tracklistStore *trackliststore.Store) http.Handler {

@@ -7,7 +7,7 @@ import (
 	"io"
 	"path/filepath"
 
-	"github.com/tombell/memoir/internal/filestore"
+	"github.com/tombell/memoir/internal/stores/filestore"
 )
 
 type UploadedItem struct {

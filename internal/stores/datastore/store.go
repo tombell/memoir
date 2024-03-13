@@ -3,7 +3,7 @@ package datastore
 import (
 	"github.com/jackc/pgx/v5/pgxpool"
 
-	"github.com/tombell/memoir/internal/datastore/database"
+	"github.com/tombell/memoir/internal/database"
 )
 
 type Store struct {

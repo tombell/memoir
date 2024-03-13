@@ -8,8 +8,8 @@ import (
 
 	"github.com/jackc/pgx/v5"
 
-	"github.com/tombell/memoir/internal/datastore"
-	db "github.com/tombell/memoir/internal/datastore/database"
+	db "github.com/tombell/memoir/internal/database"
+	"github.com/tombell/memoir/internal/stores/datastore"
 )
 
 type Track struct {

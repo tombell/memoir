@@ -5,8 +5,8 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/tombell/memoir/internal/trackliststore"
-	"github.com/tombell/memoir/internal/trackstore"
+	"github.com/tombell/memoir/internal/stores/trackliststore"
+	"github.com/tombell/memoir/internal/stores/trackstore"
 )
 
 func GetTrack(trackStore *trackstore.Store) http.Handler {
