@@ -26,7 +26,10 @@ func routes(
 ) {
 	api := middle.Use(
 		ware.Recovery(),
-		middleware.CORS(),
+		ware.CORS(ware.CORSOptions{
+			AllowedMethods: []string{"GET", "POST", "PATCH"},
+			AllowedHeaders: []string{"API-Token"},
+		}),
 		ware.RequestLogging(),
 		ware.RequestID(uuid.NewString),
 		ware.Logger(logger),
@@ -49,6 +52,5 @@ func routes(
 
 	router.Handle("POST /artwork", api(handlers.PostArtwork(artworkStore)))
 
-	router.Handle("OPTIONS /{path...}", api(handlers.Preflight()))
 	router.Handle("/{path...}", api(handlers.NotFound()))
 }
