@@ -50,7 +50,7 @@ func routes(
 	router.Handle("GET /tracks/{id}", api(handlers.GetTrack(trackStore)))
 	router.Handle("GET /tracks/{id}/tracklists", api(handlers.GetTracklistsByTrack(trackStore, tracklistStore)))
 
-	router.Handle("POST /artwork", api(handlers.PostArtwork(artworkStore)))
+	router.Handle("POST /artwork", authorized(handlers.PostArtwork(artworkStore)))
 
 	router.Handle("/{path...}", api(handlers.NotFound()))
 }
