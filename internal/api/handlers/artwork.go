@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/tombell/memoir/internal/artworkstore"
+	"github.com/tombell/memoir/internal/stores/artworkstore"
 )
 
 func PostArtwork(store *artworkstore.Store) http.HandlerFunc {

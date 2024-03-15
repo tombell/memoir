@@ -1,7 +1,7 @@
 {
   "address": "localhost:8080",
   "db": "dbname=memoir_development",
-  "migrations": "internal/datastore/migrations",
+  "migrations": "internal/database/migrations",
 
   "api": {
     "token": "asdfasdf"

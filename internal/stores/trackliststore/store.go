@@ -13,9 +13,9 @@ import (
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgconn"
 
-	"github.com/tombell/memoir/internal/datastore"
-	db "github.com/tombell/memoir/internal/datastore/database"
-	"github.com/tombell/memoir/internal/trackstore"
+	db "github.com/tombell/memoir/internal/database"
+	"github.com/tombell/memoir/internal/stores/datastore"
+	"github.com/tombell/memoir/internal/stores/trackstore"
 )
 
 type Tracklist struct {

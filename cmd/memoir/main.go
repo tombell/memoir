@@ -13,12 +13,12 @@ import (
 	"github.com/jackc/pgx/v5/pgxpool"
 
 	"github.com/tombell/memoir/internal/api"
-	"github.com/tombell/memoir/internal/artworkstore"
 	"github.com/tombell/memoir/internal/config"
-	"github.com/tombell/memoir/internal/datastore"
-	"github.com/tombell/memoir/internal/filestore"
-	"github.com/tombell/memoir/internal/trackliststore"
-	"github.com/tombell/memoir/internal/trackstore"
+	"github.com/tombell/memoir/internal/stores/artworkstore"
+	"github.com/tombell/memoir/internal/stores/datastore"
+	"github.com/tombell/memoir/internal/stores/filestore"
+	"github.com/tombell/memoir/internal/stores/trackliststore"
+	"github.com/tombell/memoir/internal/stores/trackstore"
 )
 
 func main() {

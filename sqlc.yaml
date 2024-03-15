@@ -1,8 +1,8 @@
 version: "2"
 sql:
   - engine: "postgresql"
-    queries: "internal/datastore/queries"
-    schema: "internal/datastore/migrations"
+    queries: "internal/database/queries"
+    schema: "internal/database/migrations"
     gen:
       go:
         emit_empty_slices: true
@@ -10,7 +10,7 @@ sql:
         omit_unused_structs: true
         sql_package: "pgx/v5"
         package: "database"
-        out: "internal/datastore/database"
+        out: "internal/database"
         rename:
           bpm: "BPM"
           url: "URL"

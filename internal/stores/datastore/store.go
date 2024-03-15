@@ -3,17 +3,17 @@ package datastore
 import (
 	"github.com/jackc/pgx/v5/pgxpool"
 
-	"github.com/tombell/memoir/internal/datastore/database"
+	db "github.com/tombell/memoir/internal/database"
 )
 
 type Store struct {
 	*pgxpool.Pool
-	*database.Queries
+	*db.Queries
 }
 
 func New(dbpool *pgxpool.Pool) *Store {
 	return &Store{
 		Pool:    dbpool,
-		Queries: database.New(dbpool),
+		Queries: db.New(dbpool),
 	}
 }
