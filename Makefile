@@ -19,8 +19,8 @@ run:
 watch:
 	@while sleep 1; do \
 		trap "exit" INT TERM; \
-		rg --files --glob '{*.json,*.go,*.tmpl.*}' | \
-		entr -c -d -r make dev run; \
+		rg --files -g '{*.json,*.go,*.sql,*.tmpl.*}' -g '!internal/database/*.go' | \
+		entr -c -d -r make sqlc dev run; \
 	done
 
 clean:
