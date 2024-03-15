@@ -1,0 +1,68 @@
+package payload
+
+import (
+	"encoding/json"
+	"log/slog"
+	"net/http"
+	"reflect"
+
+	"github.com/tombell/memoir/internal/errors"
+)
+
+func Write[T any](w http.ResponseWriter, out T) error {
+	op := errors.Op("payload[write]")
+
+	status := http.StatusOK
+	if sc, ok := any(out).(statusCoder); ok {
+		status = sc.StatusCode()
+	}
+
+	encode(w, out)
+
+	w.Header().Add("Content-Type", "application/json")
+	w.WriteHeader(status)
+
+	if err := json.NewEncoder(w).Encode(out); err != nil {
+		return errors.E(op, errors.Strf("could not write json: %w", err))
+	}
+
+	return nil
+}
+
+func WriteError(logger *slog.Logger, w http.ResponseWriter, err error) {
+	resp := errorResponse{
+		Error:  errors.M{"message": "something went wrong"},
+		status: http.StatusInternalServerError,
+	}
+
+	if cr, ok := err.(clientReporter); ok {
+		resp.status = cr.StatusCode()
+		resp.Error = cr.Message()
+	}
+
+	if resp.status >= http.StatusInternalServerError {
+		logger.Error("something went wrong", "err", err)
+	}
+
+	if err := Write(w, &resp); err != nil {
+		logger.Error("could not write error response", "err", err)
+		http.Error(w, "something went wrong", http.StatusInternalServerError)
+	}
+}
+
+func encode[T any](w http.ResponseWriter, out T) {
+	st := reflect.TypeOf(out).Elem()
+	if st.Kind() != reflect.Struct {
+		return
+	}
+
+	for i := range st.NumField() {
+		field := st.Field(i)
+
+		if key, ok := field.Tag.Lookup("header"); ok {
+			val := reflect.ValueOf(out).Elem().Field(i).String()
+			w.Header().Add(key, val)
+			continue
+		}
+	}
+}
