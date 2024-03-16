@@ -26,7 +26,6 @@ func w[Out any](fn services.WriteOnlyServiceFunc[Out]) http.Handler {
 
 		if err := payload.Write(w, output); err != nil {
 			payload.WriteError(logger, w, err)
-			return
 		}
 	})
 }
@@ -52,7 +51,6 @@ func rw[In, Out any](fn services.ServiceFunc[In, Out]) http.Handler {
 
 		if err := payload.Write(w, output); err != nil {
 			payload.WriteError(logger, w, err)
-			return
 		}
 	})
 }
