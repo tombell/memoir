@@ -20,11 +20,12 @@ func Write[T any](w http.ResponseWriter, out T) error {
 	encode(w, out)
 
 	w.Header().Add("Content-Type", "application/json")
-	w.WriteHeader(status)
 
 	if err := json.NewEncoder(w).Encode(out); err != nil {
 		return errors.E(op, errors.Strf("could not write json: %w", err))
 	}
+
+	w.WriteHeader(status)
 
 	return nil
 }
