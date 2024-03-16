@@ -11,6 +11,7 @@ import (
 	"github.com/tombell/memoir/internal/api/handlers"
 	"github.com/tombell/memoir/internal/api/middleware"
 	"github.com/tombell/memoir/internal/config"
+	"github.com/tombell/memoir/internal/services/artworkservice"
 	"github.com/tombell/memoir/internal/stores/artworkstore"
 	"github.com/tombell/memoir/internal/stores/trackliststore"
 	"github.com/tombell/memoir/internal/stores/trackstore"
@@ -50,7 +51,7 @@ func routes(
 	router.Handle("GET /tracks/{id}", api(handlers.GetTrack(trackStore)))
 	router.Handle("GET /tracks/{id}/tracklists", api(handlers.GetTracklistsByTrack(trackStore, tracklistStore)))
 
-	router.Handle("POST /artwork", authorized(handlers.PostArtwork(artworkStore)))
+	router.Handle("POST /artwork", authorized(rw(artworkservice.Upload(artworkStore))))
 
 	router.Handle("/{path...}", api(handlers.NotFound()))
 }
