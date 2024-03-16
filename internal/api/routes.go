@@ -12,6 +12,7 @@ import (
 	"github.com/tombell/memoir/internal/api/middleware"
 	"github.com/tombell/memoir/internal/config"
 	"github.com/tombell/memoir/internal/services/artworkservice"
+	"github.com/tombell/memoir/internal/services/tracklistservice"
 	"github.com/tombell/memoir/internal/stores/artworkstore"
 	"github.com/tombell/memoir/internal/stores/trackliststore"
 	"github.com/tombell/memoir/internal/stores/trackstore"
@@ -41,7 +42,7 @@ func routes(
 		api,
 	)
 
-	router.Handle("GET /tracklists", api(handlers.GetTracklists(tracklistStore)))
+	router.Handle("GET /tracklists", api(rw(tracklistservice.Index(tracklistStore))))
 	router.Handle("GET /tracklists/{id}", api(handlers.GetTracklist(tracklistStore)))
 	router.Handle("POST /tracklists", authorized(handlers.PostTracklist(tracklistStore)))
 	router.Handle("PATCH /tracklists/{id}", authorized(handlers.PatchTracklist(tracklistStore)))

@@ -8,27 +8,6 @@ import (
 	"github.com/tombell/memoir/internal/stores/trackliststore"
 )
 
-func GetTracklists(tracklistStore *trackliststore.Store) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		ctx, cancel := context.WithTimeout(r.Context(), 30*time.Second)
-		defer cancel()
-
-		page := pageParam(r)
-
-		tracklists, total, err := tracklistStore.GetTracklists(ctx, page, tracklistsPerPage)
-		if err != nil {
-			w.WriteHeader(http.StatusInternalServerError)
-			return
-		}
-
-		addPaginationHeaders(w, tracklistsPerPage, page, total)
-
-		if err := encode(w, r, http.StatusOK, tracklists); err != nil {
-			w.WriteHeader(http.StatusInternalServerError)
-		}
-	})
-}
-
 func GetTracklist(tracklistStore *trackliststore.Store) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		ctx, cancel := context.WithTimeout(r.Context(), 30*time.Second)
