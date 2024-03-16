@@ -7,32 +7,43 @@ import (
 
 	"github.com/tombell/memoir/internal/services"
 	"github.com/tombell/memoir/internal/stores/trackliststore"
+	"github.com/tombell/memoir/internal/stores/trackstore"
 )
 
-type TracklistsRequest struct {
+type ByTrackRequest struct {
 	Page string `query:"page"`
+
+	ID string `path:"id"`
 }
 
-type TracklistsResponse struct {
+type ByTrackResponse struct {
 	CurrentPage string `header:"Current-Page" json:"-"`
 	TotalPages  string `header:"Total-Pages" json:"-"`
 
 	Tracklists []*trackliststore.Tracklist `json:"tracklists"`
 }
 
-func Index(tracklistStore *trackliststore.Store) services.ServiceFunc[TracklistsRequest, *TracklistsResponse] {
-	return func(ctx context.Context, input TracklistsRequest) (*TracklistsResponse, error) {
+func ByTrack(
+	trackStore *trackstore.Store,
+	tracklistStore *trackliststore.Store,
+) services.ServiceFunc[ByTrackRequest, *ByTrackResponse] {
+	return func(ctx context.Context, input ByTrackRequest) (*ByTrackResponse, error) {
 		page, _ := strconv.Atoi(input.Page)
 		if page <= 0 {
 			page = 1
 		}
 
-		tracklists, total, err := tracklistStore.GetTracklists(ctx, int32(page), tracklistsPerPage)
+		track, err := trackStore.GetTrack(ctx, input.ID)
 		if err != nil {
 			return nil, err
 		}
 
-		resp := &TracklistsResponse{
+		tracklists, total, err := tracklistStore.GetTracklistsByTrack(ctx, track.ID, int32(page), tracklistsPerPage)
+		if err != nil {
+			return nil, err
+		}
+
+		resp := &ByTrackResponse{
 			CurrentPage: input.Page,
 			TotalPages:  fmt.Sprintf("%d", total),
 			Tracklists:  tracklists,
