@@ -29,23 +29,30 @@ func decode[T any](r *http.Request, in T) {
 
 	for i := range st.NumField() {
 		field := st.Field(i)
+		fieldValue := reflect.ValueOf(in).Elem().Field(i)
 
 		if key, ok := field.Tag.Lookup("header"); ok {
-			reflect.ValueOf(in).Elem().Field(i).SetString(r.Header.Get(key))
+			fieldValue.SetString(r.Header.Get(key))
 			continue
 		}
 
 		if key, ok := field.Tag.Lookup("path"); ok {
-			reflect.ValueOf(in).Elem().Field(i).SetString(r.PathValue(key))
+			fieldValue.SetString(r.PathValue(key))
 			continue
 		}
 
 		if key, ok := field.Tag.Lookup("query"); ok {
-			reflect.ValueOf(in).Elem().Field(i).SetString(r.URL.Query().Get(key))
+			fieldValue.SetString(r.URL.Query().Get(key))
 			continue
 		}
 
-		// TODO: add form file
-		// payload.File
+		if key, ok := field.Tag.Lookup("file"); ok {
+			if file, header, err := r.FormFile(key); err == nil {
+				val := &File{File: file, Header: header}
+				fieldValue.Set(reflect.ValueOf(val))
+			}
+
+			continue
+		}
 	}
 }

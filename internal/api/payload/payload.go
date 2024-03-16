@@ -1,5 +1,14 @@
 package payload
 
+import (
+	"mime/multipart"
+)
+
+type File struct {
+	File   multipart.File
+	Header *multipart.FileHeader
+}
+
 type clientReporter interface {
 	Message() map[string]string
 	StatusCode() int
