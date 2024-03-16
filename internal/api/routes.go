@@ -43,7 +43,7 @@ func routes(
 	)
 
 	router.Handle("GET /tracklists", api(rw(tracklistservice.Index(tracklistStore))))
-	router.Handle("GET /tracklists/{id}", api(handlers.GetTracklist(tracklistStore)))
+	router.Handle("GET /tracklists/{id}", api(rw(tracklistservice.Show(tracklistStore))))
 	router.Handle("POST /tracklists", authorized(handlers.PostTracklist(tracklistStore)))
 	router.Handle("PATCH /tracklists/{id}", authorized(handlers.PatchTracklist(tracklistStore)))
 
