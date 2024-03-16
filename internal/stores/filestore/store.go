@@ -2,8 +2,6 @@ package filestore
 
 import (
 	"context"
-	"errors"
-	"fmt"
 	"io"
 	"net/http"
 
@@ -14,6 +12,7 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/s3/types"
 
 	cfg "github.com/tombell/memoir/internal/config"
+	"github.com/tombell/memoir/internal/errors"
 )
 
 type Store struct {
@@ -36,6 +35,8 @@ func New(cfg *cfg.Config) *Store {
 }
 
 func (s *Store) Exists(ctx context.Context, key string) (bool, error) {
+	op := errors.Op("filestore[exists]")
+
 	input := &s3.GetObjectInput{
 		Bucket: aws.String(s.config.AWS.Bucket),
 		Key:    aws.String(key),
@@ -48,17 +49,19 @@ func (s *Store) Exists(ctx context.Context, key string) (bool, error) {
 			return false, nil
 		}
 
-		return false, fmt.Errorf("get object failed: %w", err)
+		return false, errors.E(op, errors.Strf("get object failed: %w", err))
 	}
 
 	return true, nil
 }
 
 func (s *Store) Put(ctx context.Context, key string, r io.ReadSeeker) error {
+	op := errors.Op("filestore[put]")
+
 	var buf [512]byte
 
 	if _, err := r.Read(buf[:]); err != nil {
-		return fmt.Errorf("read failed: %w", err)
+		return errors.E(op, errors.Strf("read file failed: %w", err))
 	}
 
 	r.Seek(0, io.SeekStart)
@@ -71,7 +74,7 @@ func (s *Store) Put(ctx context.Context, key string, r io.ReadSeeker) error {
 	}
 
 	if _, err := s.svc.PutObject(ctx, input); err != nil {
-		return fmt.Errorf("s3 put object failed: %w", err)
+		return errors.E(op, errors.Strf("put object failed: %w", err))
 	}
 
 	return nil
