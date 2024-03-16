@@ -92,3 +92,7 @@ func (e *Error) Status() int {
 func Is(err error, target error) bool {
 	return goerr.Is(err, target)
 }
+
+func As(err error, target any) bool {
+	return goerr.As(err, target)
+}
