@@ -8,7 +8,6 @@ import (
 	"github.com/tombell/middle"
 	"github.com/tombell/middle/ware"
 
-	"github.com/tombell/memoir/internal/api/handlers"
 	"github.com/tombell/memoir/internal/api/middleware"
 	"github.com/tombell/memoir/internal/config"
 	"github.com/tombell/memoir/internal/services/artworkservice"
@@ -49,9 +48,9 @@ func routes(
 	router.Handle("PATCH /tracklists/{id}", authorized(rw(tracklistservice.Update(tracklistStore))))
 
 	router.Handle("GET /tracks/{id}", api(rw(trackservice.Show(trackStore))))
+	router.Handle("GET /tracks/{id}/tracklists", api(rw(tracklistservice.ByTrack(trackStore, tracklistStore))))
 	router.Handle("GET /tracks/mostplayed", api(w(trackservice.MostPlayed(trackStore))))
 	router.Handle("GET /tracks/search", api(rw(trackservice.Search(trackStore))))
-	router.Handle("GET /tracks/{id}/tracklists", api(handlers.GetTracklistsByTrack(trackStore, tracklistStore)))
 
 	router.Handle("POST /artwork", authorized(rw(artworkservice.Upload(artworkStore))))
 }
