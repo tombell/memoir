@@ -2,32 +2,14 @@ package trackstore
 
 import (
 	"context"
-	"errors"
-	"fmt"
-	"time"
+	"net/http"
 
 	"github.com/jackc/pgx/v5"
 
 	db "github.com/tombell/memoir/internal/database"
+	"github.com/tombell/memoir/internal/errors"
 	"github.com/tombell/memoir/internal/stores/datastore"
 )
-
-type Track struct {
-	ID     string  `json:"id"`
-	Artist string  `json:"artist"`
-	Name   string  `json:"name"`
-	Genre  string  `json:"genre"`
-	BPM    float64 `json:"bpm"`
-	Key    string  `json:"key"`
-
-	Created time.Time `json:"-"`
-	Updated time.Time `json:"-"`
-
-	Played int64 `json:"played,omitempty"`
-
-	ArtistHighlighted string `json:"artistHighlighted,omitempty"`
-	NameHighlighted   string `json:"nameHighlighted,omitempty"`
-}
 
 type Store struct {
 	dataStore *datastore.Store
@@ -38,13 +20,15 @@ func New(store *datastore.Store) *Store {
 }
 
 func (s *Store) GetTrack(ctx context.Context, id string) (*Track, error) {
+	op := errors.Op("trackstore[get-track]")
+
 	row, err := s.dataStore.GetTrack(ctx, id)
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
-			return nil, nil
+			return nil, errors.E(op, http.StatusNotFound)
 		}
 
-		return nil, fmt.Errorf("get track failed: %w", err)
+		return nil, errors.E(op, errors.Strf("get track failed: %w", err))
 	}
 
 	return &Track{
@@ -60,9 +44,11 @@ func (s *Store) GetTrack(ctx context.Context, id string) (*Track, error) {
 }
 
 func (s *Store) GetMostPlayedTracks(ctx context.Context, limit int32) ([]*Track, error) {
+	op := errors.Op("trackstore[get-most-played-tracks]")
+
 	rows, err := s.dataStore.GetMostPlayedTracks(ctx, limit)
 	if err != nil {
-		return nil, fmt.Errorf("find most played tracks failed: %w", err)
+		return nil, errors.E(op, errors.Strf("find most played tracks failed: %w", err))
 	}
 
 	tracks := make([]*Track, 0, len(rows))
@@ -87,12 +73,14 @@ func (s *Store) GetMostPlayedTracks(ctx context.Context, limit int32) ([]*Track,
 }
 
 func (s *Store) SearchTracks(ctx context.Context, query string, limit int32) ([]*Track, error) {
+	op := errors.Op("trackstore[search-tracks]")
+
 	rows, err := s.dataStore.GetTracksByQuery(ctx, db.GetTracksByQueryParams{
 		Query:    query,
 		RowLimit: limit,
 	})
 	if err != nil {
-		return nil, fmt.Errorf("find tracks by query failed: %w", err)
+		return nil, errors.E(op, errors.Strf("find tracks by query failed: %w", err))
 	}
 
 	tracks := make([]*Track, 0, len(rows))
