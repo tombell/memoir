@@ -49,8 +49,8 @@ func routes(
 	router.Handle("PATCH /tracklists/{id}", authorized(rw(tracklistservice.Update(tracklistStore))))
 
 	router.Handle("GET /tracks/{id}", api(rw(trackservice.Show(trackStore))))
-	router.Handle("GET /tracks/mostplayed", api(handlers.GetMostPlayedTracks(trackStore)))
-	router.Handle("GET /tracks/search", api(handlers.GetTrackSearch(trackStore)))
+	router.Handle("GET /tracks/mostplayed", api(w(trackservice.MostPlayed(trackStore))))
+	router.Handle("GET /tracks/search", api(rw(trackservice.Search(trackStore))))
 	router.Handle("GET /tracks/{id}/tracklists", api(handlers.GetTracklistsByTrack(trackStore, tracklistStore)))
 
 	router.Handle("POST /artwork", authorized(rw(artworkservice.Upload(artworkStore))))

@@ -42,39 +42,3 @@ func GetTracklistsByTrack(
 		}
 	})
 }
-
-func GetMostPlayedTracks(trackStore *trackstore.Store) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		ctx, cancel := context.WithTimeout(r.Context(), 30*time.Second)
-		defer cancel()
-
-		tracks, err := trackStore.GetMostPlayedTracks(ctx, maxMostPlayedTracks)
-		if err != nil {
-			w.WriteHeader(http.StatusInternalServerError)
-			return
-		}
-
-		if err := encode(w, r, http.StatusOK, tracks); err != nil {
-			w.WriteHeader(http.StatusInternalServerError)
-		}
-	})
-}
-
-func GetTrackSearch(trackStore *trackstore.Store) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		ctx, cancel := context.WithTimeout(r.Context(), 30*time.Second)
-		defer cancel()
-
-		q := r.URL.Query().Get("q")
-
-		tracks, err := trackStore.SearchTracks(ctx, q, maxSearchResults)
-		if err != nil {
-			w.WriteHeader(http.StatusInternalServerError)
-			return
-		}
-
-		if err := encode(w, r, http.StatusOK, tracks); err != nil {
-			w.WriteHeader(http.StatusInternalServerError)
-		}
-	})
-}
