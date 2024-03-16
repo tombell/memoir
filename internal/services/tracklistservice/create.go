@@ -1,0 +1,40 @@
+package tracklistservice
+
+import (
+	"context"
+	"time"
+
+	"github.com/tombell/memoir/internal/services"
+	"github.com/tombell/memoir/internal/stores/trackliststore"
+)
+
+type CreateTracklistRequest struct {
+	Name    string     `json:"name"`
+	Date    time.Time  `json:"date"`
+	URL     string     `json:"url"`
+	Artwork string     `json:"artwork"`
+	Tracks  [][]string `json:"tracks"`
+}
+
+type CreateTracklistsResponse struct {
+	Tracklist *trackliststore.Tracklist `json:"tracklist"`
+}
+
+func Create(tracklistStore *trackliststore.Store) services.ServiceFunc[CreateTracklistRequest, *CreateTracklistsResponse] {
+	return func(ctx context.Context, input CreateTracklistRequest) (*CreateTracklistsResponse, error) {
+		params := &trackliststore.AddTracklistParams{
+			Name:    input.Name,
+			Date:    input.Date,
+			URL:     input.URL,
+			Artwork: input.Artwork,
+			Tracks:  input.Tracks,
+		}
+
+		tracklist, err := tracklistStore.AddTracklist(ctx, params)
+		if err != nil {
+			return nil, err
+		}
+
+		return &CreateTracklistsResponse{Tracklist: tracklist}, nil
+	}
+}
