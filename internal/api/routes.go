@@ -53,6 +53,4 @@ func routes(
 	router.Handle("GET /tracks/{id}/tracklists", api(handlers.GetTracklistsByTrack(trackStore, tracklistStore)))
 
 	router.Handle("POST /artwork", authorized(rw(artworkservice.Upload(artworkStore))))
-
-	router.Handle("/{path...}", api(handlers.NotFound()))
 }
