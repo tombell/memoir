@@ -9,27 +9,6 @@ import (
 	"github.com/tombell/memoir/internal/stores/trackstore"
 )
 
-func GetTrack(trackStore *trackstore.Store) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		ctx, cancel := context.WithTimeout(r.Context(), 30*time.Second)
-		defer cancel()
-
-		track, err := trackStore.GetTrack(ctx, r.PathValue("id"))
-		if err != nil {
-			w.WriteHeader(http.StatusInternalServerError)
-			return
-		}
-		if track == nil {
-			w.WriteHeader(http.StatusNotFound)
-			return
-		}
-
-		if err := encode(w, r, http.StatusOK, track); err != nil {
-			w.WriteHeader(http.StatusInternalServerError)
-		}
-	})
-}
-
 func GetTracklistsByTrack(
 	trackStore *trackstore.Store,
 	tracklistStore *trackliststore.Store,
