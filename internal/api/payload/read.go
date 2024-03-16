@@ -12,8 +12,13 @@ func Read[T any](r *http.Request) (T, error) {
 	op := errors.Op("payload[read]")
 
 	var in T
-	if err := json.NewDecoder(r.Body).Decode(&in); err != nil {
-		return in, errors.E(op, errors.Strf("could not read json: %w", err))
+
+	contentType := r.Header.Get("Content-Type")
+
+	if contentType == "application/json" {
+		if err := json.NewDecoder(r.Body).Decode(&in); err != nil {
+			return in, errors.E(op, errors.Strf("could not read json: %w", err))
+		}
 	}
 
 	decode(r, &in)
