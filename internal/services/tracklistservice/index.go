@@ -2,7 +2,6 @@ package tracklistservice
 
 import (
 	"context"
-	"fmt"
 	"strconv"
 
 	"github.com/tombell/memoir/internal/services"
@@ -14,9 +13,7 @@ type TracklistsRequest struct {
 }
 
 type TracklistsResponse struct {
-	CurrentPage string `header:"Current-Page" json:"-"`
-	TotalPages  string `header:"Total-Pages" json:"-"`
-
+	Meta       services.Meta               `json:"meta"`
 	Tracklists []*trackliststore.Tracklist `json:"tracklists"`
 }
 
@@ -33,9 +30,11 @@ func Index(tracklistStore *trackliststore.Store) services.ServiceFunc[Tracklists
 		}
 
 		resp := &TracklistsResponse{
-			CurrentPage: input.Page,
-			TotalPages:  fmt.Sprintf("%d", total),
-			Tracklists:  tracklists,
+			Meta: services.Meta{
+				CurrentPage: page,
+				TotalPages:  total,
+			},
+			Tracklists: tracklists,
 		}
 
 		return resp, nil
