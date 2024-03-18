@@ -12,13 +12,13 @@ import (
 
 	"github.com/jackc/pgx/v5/pgxpool"
 
-	"github.com/tombell/memoir/internal/api"
 	"github.com/tombell/memoir/internal/config"
 	"github.com/tombell/memoir/internal/stores/artworkstore"
 	"github.com/tombell/memoir/internal/stores/datastore"
 	"github.com/tombell/memoir/internal/stores/filestore"
 	"github.com/tombell/memoir/internal/stores/trackliststore"
 	"github.com/tombell/memoir/internal/stores/trackstore"
+	"github.com/tombell/memoir/internal/web"
 )
 
 func main() {
@@ -43,7 +43,7 @@ func main() {
 	dataStore := datastore.New(dbpool)
 	fileStore := filestore.New(cfg)
 
-	server := api.New(
+	server := web.New(
 		logger,
 		cfg,
 		trackliststore.New(dataStore),

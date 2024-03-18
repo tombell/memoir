@@ -1,4 +1,4 @@
-package api
+package web
 
 import (
 	"log/slog"
@@ -8,7 +8,6 @@ import (
 	"github.com/tombell/middle"
 	"github.com/tombell/middle/ware"
 
-	"github.com/tombell/memoir/internal/api/middleware"
 	"github.com/tombell/memoir/internal/config"
 	"github.com/tombell/memoir/internal/services/artworkservice"
 	"github.com/tombell/memoir/internal/services/tracklistservice"
@@ -16,6 +15,7 @@ import (
 	"github.com/tombell/memoir/internal/stores/artworkstore"
 	"github.com/tombell/memoir/internal/stores/trackliststore"
 	"github.com/tombell/memoir/internal/stores/trackstore"
+	"github.com/tombell/memoir/internal/web/middleware"
 )
 
 func routes(

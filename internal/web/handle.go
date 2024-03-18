@@ -1,4 +1,4 @@
-package api
+package web
 
 import (
 	"context"
@@ -7,8 +7,8 @@ import (
 
 	"github.com/tombell/middle/ware"
 
-	"github.com/tombell/memoir/internal/api/payload"
 	"github.com/tombell/memoir/internal/services"
+	"github.com/tombell/memoir/internal/web/payload"
 )
 
 func w[Out any](fn services.WriteOnlyServiceFunc[Out]) http.Handler {

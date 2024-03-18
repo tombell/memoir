@@ -4,9 +4,9 @@ import (
 	"context"
 	"net/http"
 
-	"github.com/tombell/memoir/internal/api/payload"
 	"github.com/tombell/memoir/internal/services"
 	"github.com/tombell/memoir/internal/stores/artworkstore"
+	"github.com/tombell/memoir/internal/web/payload"
 )
 
 type UploadRequest struct {
