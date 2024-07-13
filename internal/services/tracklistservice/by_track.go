@@ -17,7 +17,7 @@ type ByTrackRequest struct {
 
 type ByTrackResponse struct {
 	Meta       services.Meta               `json:"meta"`
-	Tracklists []*trackliststore.Tracklist `json:"tracklists"`
+	Tracklists []*trackliststore.Tracklist `json:"data"`
 }
 
 func ByTrack(

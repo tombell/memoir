@@ -14,7 +14,7 @@ type SearchRequest struct {
 }
 
 type SearchResponse struct {
-	Tracks []*trackstore.Track `json:"tracks"`
+	Tracks []*trackstore.Track `json:"data"`
 }
 
 func Search(trackStore *trackstore.Store) services.ServiceFunc[SearchRequest, *SearchResponse] {

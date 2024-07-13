@@ -14,7 +14,7 @@ type TracklistsRequest struct {
 
 type TracklistsResponse struct {
 	Meta       services.Meta               `json:"meta"`
-	Tracklists []*trackliststore.Tracklist `json:"tracklists"`
+	Tracklists []*trackliststore.Tracklist `json:"data"`
 }
 
 func Index(tracklistStore *trackliststore.Store) services.ServiceFunc[TracklistsRequest, *TracklistsResponse] {

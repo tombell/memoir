@@ -12,7 +12,7 @@ type TrackRequest struct {
 }
 
 type TrackResponse struct {
-	Track *trackstore.Track `json:"track"`
+	Track *trackstore.Track `json:"data"`
 }
 
 func Show(trackStore *trackstore.Store) services.ServiceFunc[TrackRequest, *TrackResponse] {

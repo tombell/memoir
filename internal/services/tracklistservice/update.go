@@ -17,7 +17,7 @@ type UpdateTracklistRequest struct {
 }
 
 type UpdateTracklistsResponse struct {
-	Tracklist *trackliststore.Tracklist `json:"tracklist"`
+	Tracklist *trackliststore.Tracklist `json:"data"`
 }
 
 func Update(tracklistStore *trackliststore.Store) services.ServiceFunc[UpdateTracklistRequest, *UpdateTracklistsResponse] {

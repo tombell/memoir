@@ -14,7 +14,7 @@ type UploadRequest struct {
 }
 
 type UploadResponse struct {
-	Upload *artworkstore.Upload `json:"upload"`
+	Upload *artworkstore.Upload `json:"data"`
 
 	status int
 }

@@ -12,7 +12,7 @@ type TracklistRequest struct {
 }
 
 type TracklistResponse struct {
-	Tracklist *trackliststore.Tracklist `json:"tracklist"`
+	Tracklist *trackliststore.Tracklist `json:"data"`
 }
 
 func Show(tracklistStore *trackliststore.Store) services.ServiceFunc[TracklistRequest, *TracklistResponse] {

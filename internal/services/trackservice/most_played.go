@@ -10,7 +10,7 @@ import (
 const maxMostPlayedTracks = 10
 
 type MostPlayedResponse struct {
-	Tracks []*trackstore.Track `json:"tracks"`
+	Tracks []*trackstore.Track `json:"data"`
 }
 
 func MostPlayed(trackStore *trackstore.Store) services.WriteOnlyServiceFunc[*MostPlayedResponse] {
