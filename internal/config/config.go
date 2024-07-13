@@ -7,9 +7,8 @@ import (
 )
 
 type Config struct {
-	Address    string `json:"address"`
-	DB         string `json:"db"`
-	Migrations string `json:"migrations"`
+	Address string `json:"address"`
+	DB      string `json:"db"`
 
 	API struct {
 		Token string `json:"token"`
