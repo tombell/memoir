@@ -30,7 +30,7 @@ func routes(
 		ware.Recovery(),
 		ware.CORS(ware.CORSOptions{
 			AllowedMethods: []string{"GET", "POST", "PATCH"},
-			AllowedHeaders: []string{"API-Token"},
+			AllowedHeaders: []string{"API-Token", "Content-Type"},
 		}),
 		ware.RequestLogging(),
 		ware.RequestID(uuid.NewString),
