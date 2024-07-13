@@ -53,4 +53,8 @@ func routes(
 	router.Handle("GET /tracks/search", api(rw(trackservice.Search(trackStore))))
 
 	router.Handle("POST /artwork", authorized(rw(artworkservice.Upload(artworkStore))))
+
+	router.Handle("OPTIONS /{path...}", api(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
+		w.WriteHeader(http.StatusOK)
+	})))
 }
