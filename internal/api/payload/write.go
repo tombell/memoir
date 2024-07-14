@@ -13,31 +13,30 @@ func Write[T any](w http.ResponseWriter, out T) error {
 	op := errors.Op("payload[write]")
 
 	status := http.StatusOK
-	if sc, ok := any(out).(statusCoder); ok {
+	if sc, ok := any(out).(StatusCoder); ok {
 		status = sc.StatusCode()
 	}
 
 	encode(w, out)
 
 	w.Header().Add("Content-Type", "application/json")
+	w.WriteHeader(status)
 
 	if err := json.NewEncoder(w).Encode(out); err != nil {
-		return errors.E(op, errors.Strf("could not write json: %w", err))
+		return errors.E(op, errors.Strf("could not encode json: %w", err))
 	}
-
-	w.WriteHeader(status)
 
 	return nil
 }
 
 func WriteError(logger *slog.Logger, w http.ResponseWriter, err error) {
-	resp := errorResponse{
-		Error:  errors.M{"message": "something went wrong"},
+	resp := ErrorResponse{
+		Error:  errors.M{"message": []string{"something went wrong"}},
 		status: http.StatusInternalServerError,
 	}
 
-	if cr, ok := err.(clientReporter); ok {
-		resp.status = cr.StatusCode()
+	if cr, ok := err.(ClientReporter); ok {
+		resp.status = cr.Status()
 		resp.Error = cr.Message()
 	}
 

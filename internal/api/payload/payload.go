@@ -9,21 +9,21 @@ type File struct {
 	Header *multipart.FileHeader
 }
 
-type clientReporter interface {
-	Message() map[string]string
+type ClientReporter interface {
+	Message() map[string][]string
+	Status() int
+}
+
+type StatusCoder interface {
 	StatusCode() int
 }
 
-type statusCoder interface {
-	StatusCode() int
-}
-
-type errorResponse struct {
-	Error map[string]string `json:"error"`
+type ErrorResponse struct {
+	Error map[string][]string `json:"errors"`
 
 	status int
 }
 
-func (e errorResponse) StatusCode() int {
+func (e ErrorResponse) StatusCode() int {
 	return e.status
 }

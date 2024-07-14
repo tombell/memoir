@@ -7,7 +7,7 @@ import (
 	"strings"
 )
 
-type M map[string]string
+type M map[string][]string
 
 type Op string
 
@@ -62,19 +62,19 @@ func (e *Error) Unrap() error {
 	return e.err
 }
 
-func (e *Error) Message() map[string]string {
+func (e *Error) Message() map[string][]string {
 	if len(e.messages) == 0 {
 		switch e.status {
 		case http.StatusBadRequest:
-			return M{"message": "bad request"}
+			return M{"message": []string{"bad request"}}
 		case http.StatusUnauthorized:
-			return M{"message": "unauthorized"}
+			return M{"message": []string{"unauthorized"}}
 		case http.StatusForbidden:
-			return M{"message": "forbidden"}
+			return M{"message": []string{"forbidden"}}
 		case http.StatusNotFound:
-			return M{"message": "not found"}
+			return M{"message": []string{"not found"}}
 		default:
-			return M{"message": "something went wrong"}
+			return M{"message": []string{"something went wrong"}}
 		}
 	}
 
