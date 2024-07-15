@@ -41,10 +41,7 @@ func ByTrack(
 		}
 
 		resp := &ByTrackResponse{
-			Meta: services.Meta{
-				CurrentPage: page,
-				TotalPages:  total,
-			},
+			Meta:       services.NewMeta(page, total),
 			Tracklists: tracklists,
 		}
 

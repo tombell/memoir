@@ -30,10 +30,7 @@ func Index(tracklistStore *trackliststore.Store) services.ServiceFunc[Tracklists
 		}
 
 		resp := &TracklistsResponse{
-			Meta: services.Meta{
-				CurrentPage: page,
-				TotalPages:  total,
-			},
+			Meta:       services.NewMeta(page, total),
 			Tracklists: tracklists,
 		}
 
