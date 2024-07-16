@@ -4,6 +4,7 @@ import (
 	"context"
 	"net/http"
 
+	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5"
 
 	db "github.com/tombell/memoir/internal/database"
@@ -21,6 +22,11 @@ func New(store *datastore.Store) *Store {
 
 func (s *Store) GetTrack(ctx context.Context, id string) (*Track, error) {
 	op := errors.Op("trackstore[get-track]")
+
+	_, err := uuid.Parse(id)
+	if err != nil {
+		return nil, errors.E(op, http.StatusNotFound)
+	}
 
 	row, err := s.dataStore.GetTrack(ctx, id)
 	if err != nil {

@@ -64,6 +64,11 @@ func (s *Store) GetTracklists(ctx context.Context, page, limit int32) ([]*Trackl
 func (s *Store) GetTracklist(ctx context.Context, id string) (*Tracklist, error) {
 	op := errors.Op("trackliststore[get-tracklist]")
 
+	_, err := uuid.Parse(id)
+	if err != nil {
+		return nil, errors.E(op, http.StatusNotFound)
+	}
+
 	rows, err := s.dataStore.GetTracklistWithTracks(ctx, id)
 	if err != nil {
 		return nil, errors.E(op, errors.Strf("get tracklists with tracks failed: %w", err))
@@ -185,6 +190,11 @@ func (s *Store) AddTracklist(ctx context.Context, model *AddTracklistParams) (*T
 
 func (s *Store) UpdateTracklist(ctx context.Context, id string, model *UpdateTracklistParams) (*Tracklist, error) {
 	op := errors.Op("trackliststore[update-tracklist]")
+
+	_, err := uuid.Parse(id)
+	if err != nil {
+		return nil, errors.E(op, http.StatusNotFound)
+	}
 
 	tx, err := s.dataStore.Begin(ctx)
 	if err != nil {
