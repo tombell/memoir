@@ -2,7 +2,6 @@ package tracklistservice
 
 import (
 	"context"
-	"time"
 
 	"github.com/tombell/memoir/internal/services"
 	"github.com/tombell/memoir/internal/stores/trackliststore"
@@ -10,7 +9,7 @@ import (
 
 type CreateTracklistRequest struct {
 	Name    string     `json:"name"`
-	Date    time.Time  `json:"date"`
+	Date    string     `json:"date"`
 	URL     string     `json:"url"`
 	Artwork string     `json:"artwork"`
 	Tracks  [][]string `json:"tracks"`

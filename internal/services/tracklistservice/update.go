@@ -2,7 +2,6 @@ package tracklistservice
 
 import (
 	"context"
-	"time"
 
 	"github.com/tombell/memoir/internal/services"
 	"github.com/tombell/memoir/internal/stores/trackliststore"
@@ -11,9 +10,9 @@ import (
 type UpdateTracklistRequest struct {
 	ID string `path:"id"`
 
-	Name string    `json:"name"`
-	Date time.Time `json:"date"`
-	URL  string    `json:"url"`
+	Name string `json:"name"`
+	Date string `json:"date"`
+	URL  string `json:"url"`
 }
 
 type UpdateTracklistsResponse struct {

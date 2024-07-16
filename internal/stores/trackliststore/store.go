@@ -109,6 +109,10 @@ func (s *Store) GetTracklist(ctx context.Context, id string) (*Tracklist, error)
 func (s *Store) AddTracklist(ctx context.Context, model *AddTracklistParams) (*Tracklist, error) {
 	op := errors.Op("trackliststore[add-tracklist]")
 
+	if err := model.Validate(); err != nil {
+		return nil, errors.E(op, errors.M(err), http.StatusUnprocessableEntity)
+	}
+
 	tx, err := s.dataStore.Begin(ctx)
 	if err != nil {
 		return nil, errors.E(op, errors.Strf("db begin failed: %w", err))
@@ -117,13 +121,7 @@ func (s *Store) AddTracklist(ctx context.Context, model *AddTracklistParams) (*T
 
 	queries := s.dataStore.WithTx(tx)
 
-	tracklist, err := queries.AddTracklist(ctx, db.AddTracklistParams{
-		ID:      uuid.NewString(),
-		Name:    model.Name,
-		Date:    model.Date,
-		URL:     model.URL,
-		Artwork: model.Artwork,
-	})
+	tracklist, err := queries.AddTracklist(ctx, model.ToDatabaseParams())
 	if err != nil {
 		var pgErr *pgconn.PgError
 		if errors.As(err, &pgErr) && pgErr.Code == "23505" {
@@ -196,6 +194,10 @@ func (s *Store) UpdateTracklist(ctx context.Context, id string, model *UpdateTra
 		return nil, errors.E(op, http.StatusNotFound)
 	}
 
+	if err := model.Validate(); err != nil {
+		return nil, errors.E(op, errors.M(err), http.StatusUnprocessableEntity)
+	}
+
 	tx, err := s.dataStore.Begin(ctx)
 	if err != nil {
 		return nil, errors.E(op, errors.Strf("db begin failed: %w", err))
@@ -204,12 +206,7 @@ func (s *Store) UpdateTracklist(ctx context.Context, id string, model *UpdateTra
 
 	queries := s.dataStore.WithTx(tx)
 
-	if _, err = queries.UpdateTracklist(ctx, db.UpdateTracklistParams{
-		ID:   id,
-		Name: model.Name,
-		Date: model.Date,
-		URL:  model.URL,
-	}); err != nil {
+	if _, err = queries.UpdateTracklist(ctx, model.ToDatabaseParams(id)); err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
 			return nil, errors.E(op, http.StatusNotFound)
 		}
