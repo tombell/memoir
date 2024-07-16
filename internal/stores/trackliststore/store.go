@@ -210,6 +210,10 @@ func (s *Store) UpdateTracklist(ctx context.Context, id string, model *UpdateTra
 		Date: model.Date,
 		URL:  model.URL,
 	}); err != nil {
+		if errors.Is(err, pgx.ErrNoRows) {
+			return nil, errors.E(op, http.StatusNotFound)
+		}
+
 		return nil, errors.E(op, errors.Strf("update tracklist failed: %w", err))
 	}
 
