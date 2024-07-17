@@ -8,7 +8,7 @@ require (
 	github.com/google/uuid v1.6.0
 	github.com/jackc/pgx/v5 v5.6.0
 	github.com/tombell/middle v0.0.4
-	github.com/tombell/valid v0.0.1
+	github.com/tombell/valid v0.0.3
 )
 
 require (

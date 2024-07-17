@@ -155,7 +155,7 @@ github.com/jackc/puddle/v2/internal/genstack
 ## explicit; go 1.21
 github.com/tombell/middle
 github.com/tombell/middle/ware
-# github.com/tombell/valid v0.0.1
+# github.com/tombell/valid v0.0.3
 ## explicit; go 1.21.6
 github.com/tombell/valid
 # golang.org/x/crypto v0.25.0
