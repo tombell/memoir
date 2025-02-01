@@ -10,6 +10,7 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/charmbracelet/log"
 	"github.com/jackc/pgx/v5/pgxpool"
 
 	"github.com/tombell/memoir/internal/api"
@@ -22,7 +23,12 @@ import (
 )
 
 func main() {
-	logger := slog.New(slog.NewTextHandler(os.Stderr, nil))
+	handler := log.NewWithOptions(os.Stderr, log.Options{
+		ReportTimestamp: true,
+		TimeFunction:    log.NowUTC,
+		TimeFormat:      time.RFC3339,
+	})
+	logger := slog.New(handler)
 
 	cfgpath := flag.String("config", "config.dev.json", "")
 	flag.Parse()
