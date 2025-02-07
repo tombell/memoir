@@ -35,13 +35,13 @@ func main() {
 
 	cfg, err := config.Load(*cfgpath)
 	if err != nil {
-		logger.Error("config load failed", "err", err)
+		logger.Error("failed loading config file", "err", err)
 		os.Exit(1)
 	}
 
 	dbpool, err := pgxpool.New(context.Background(), cfg.DB)
 	if err != nil {
-		logger.Error("datastore initialise failed", "err", err)
+		logger.Error("failed creating database connection pool", "err", err)
 		os.Exit(1)
 	}
 	defer dbpool.Close()
@@ -70,7 +70,7 @@ func main() {
 		defer cancel()
 
 		if err := server.Shutdown(ctx); err != nil {
-			logger.Error("could not shutdown api server", "err", err)
+			logger.Error("failed to shutdown the api server", "err", err)
 		}
 
 		close(idleConnsClosed)
@@ -79,7 +79,7 @@ func main() {
 	logger.Info("starting api server", "address", fmt.Sprintf("http://%s", cfg.Address))
 
 	if err := server.Run(); err != nil {
-		logger.Error("could not start api server", "err", err)
+		logger.Error("failed to start the api server", "err", err)
 		os.Exit(1)
 	}
 
