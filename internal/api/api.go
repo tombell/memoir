@@ -2,6 +2,7 @@ package api
 
 import (
 	"context"
+	"fmt"
 	"log/slog"
 	"net/http"
 	"time"
@@ -49,7 +50,7 @@ func New(
 func (s *Server) Run() error {
 	if err := s.server.ListenAndServe(); err != nil {
 		if err != http.ErrServerClosed {
-			return err
+			return fmt.Errorf("could not listen and serve: %w", err)
 		}
 	}
 

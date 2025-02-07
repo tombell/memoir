@@ -17,13 +17,13 @@ func Authorize(token string) func(http.Handler) http.Handler {
 			key := r.Header.Get("API-Token")
 
 			if key == "" {
-				logger.Info("authorization failed", "reason", "missing")
+				logger.Info("token authorization failed", "reason", "missing")
 				w.WriteHeader(http.StatusUnauthorized)
 				return
 			}
 
 			if key != token {
-				logger.Info("authorization failed", "reason", "invalid")
+				logger.Info("token authorization failed", "reason", "invalid")
 				w.WriteHeader(http.StatusForbidden)
 				return
 			}
