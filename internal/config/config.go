@@ -25,12 +25,12 @@ type Config struct {
 func Load(filepath string) (*Config, error) {
 	data, err := os.ReadFile(filepath)
 	if err != nil {
-		return nil, fmt.Errorf("io read file failed: %w", err)
+		return nil, fmt.Errorf("could not read config file: %w", err)
 	}
 
 	var cfg Config
 	if err := json.Unmarshal(data, &cfg); err != nil {
-		return nil, fmt.Errorf("json unmarshal failed: %w", err)
+		return nil, fmt.Errorf("could not parse config file: %w", err)
 	}
 
 	return &cfg, nil
