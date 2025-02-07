@@ -1,11 +1,11 @@
-package artworkservice
+package artworkcontroller
 
 import (
 	"context"
 	"net/http"
 
 	"github.com/tombell/memoir/internal/api/payload"
-	"github.com/tombell/memoir/internal/services"
+	"github.com/tombell/memoir/internal/controllers"
 	"github.com/tombell/memoir/internal/stores/artworkstore"
 )
 
@@ -23,7 +23,7 @@ func (r *UploadResponse) StatusCode() int {
 	return r.status
 }
 
-func Upload(artworkStore *artworkstore.Store) services.ServiceFunc[UploadRequest, *UploadResponse] {
+func Create(artworkStore *artworkstore.Store) controllers.ServiceFunc[UploadRequest, *UploadResponse] {
 	return func(ctx context.Context, input UploadRequest) (*UploadResponse, error) {
 		upload, exists, err := artworkStore.Upload(ctx, input.Artwork.File, input.Artwork.Header.Filename)
 		if err != nil {

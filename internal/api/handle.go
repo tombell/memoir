@@ -8,10 +8,10 @@ import (
 	"github.com/tombell/middle/ware"
 
 	"github.com/tombell/memoir/internal/api/payload"
-	"github.com/tombell/memoir/internal/services"
+	"github.com/tombell/memoir/internal/controllers"
 )
 
-func w[Out any](fn services.WriteOnlyServiceFunc[Out]) http.Handler {
+func w[Out any](fn controllers.WriteOnlyServiceFunc[Out]) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		ctx, cancel := context.WithTimeout(r.Context(), 30*time.Second)
 		defer cancel()
@@ -30,7 +30,7 @@ func w[Out any](fn services.WriteOnlyServiceFunc[Out]) http.Handler {
 	})
 }
 
-func rw[In, Out any](fn services.ServiceFunc[In, Out]) http.Handler {
+func rw[In, Out any](fn controllers.ServiceFunc[In, Out]) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		ctx, cancel := context.WithTimeout(r.Context(), 30*time.Second)
 		defer cancel()

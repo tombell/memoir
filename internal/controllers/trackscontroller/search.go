@@ -1,9 +1,9 @@
-package trackservice
+package trackscontroller
 
 import (
 	"context"
 
-	"github.com/tombell/memoir/internal/services"
+	"github.com/tombell/memoir/internal/controllers"
 	"github.com/tombell/memoir/internal/stores/trackstore"
 )
 
@@ -17,7 +17,7 @@ type SearchResponse struct {
 	Tracks []*trackstore.Track `json:"data"`
 }
 
-func Search(trackStore *trackstore.Store) services.ServiceFunc[SearchRequest, *SearchResponse] {
+func Search(trackStore *trackstore.Store) controllers.ServiceFunc[SearchRequest, *SearchResponse] {
 	return func(ctx context.Context, input SearchRequest) (*SearchResponse, error) {
 		tracks, err := trackStore.SearchTracks(ctx, input.Query, maxSearchResults)
 		if err != nil {
