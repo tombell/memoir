@@ -182,7 +182,7 @@ github.com/muesli/termenv
 # github.com/rivo/uniseg v0.4.7
 ## explicit; go 1.18
 github.com/rivo/uniseg
-# github.com/tombell/middle v0.0.4
+# github.com/tombell/middle v0.0.5
 ## explicit; go 1.21
 github.com/tombell/middle
 github.com/tombell/middle/ware

@@ -26,20 +26,25 @@ func routes(
 	trackStore *trackstore.Store,
 	artworkStore *artworkstore.Store,
 ) {
-	api := middle.Use(
-		ware.Recovery(),
+	base := middle.Use(
+		ware.Logger(logger),
+		ware.RequestID(uuid.NewString),
+		ware.RequestLogging(),
 		ware.CORS(ware.CORSOptions{
 			AllowedMethods: []string{"GET", "POST", "PATCH"},
 			AllowedHeaders: []string{"API-Token", "Content-Type"},
 		}),
-		ware.RequestLogging(),
-		ware.RequestID(uuid.NewString),
-		ware.Logger(logger),
+	)
+
+	api := middle.Use(
+		base,
+		ware.Recovery(),
 	)
 
 	authorized := middle.Use(
+		base,
 		middleware.Authorize(config.API.Token),
-		api,
+		ware.Recovery(),
 	)
 
 	router.Handle("GET /tracklists", api(rw(tracklistservice.Index(tracklistStore))))
@@ -58,7 +63,7 @@ func routes(
 		w.WriteHeader(http.StatusOK)
 	})))
 
-	router.Handle("/{path...}", http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
+	router.Handle("/{path...}", api(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
 		w.WriteHeader(http.StatusNotFound)
-	}))
+	})))
 }

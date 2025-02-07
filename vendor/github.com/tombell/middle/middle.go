@@ -7,8 +7,8 @@ import "net/http"
 // the HTTP route.
 func Use(middleware ...func(http.Handler) http.Handler) func(http.Handler) http.Handler {
 	return func(next http.Handler) http.Handler {
-		for _, fn := range middleware {
-			next = fn(next)
+		for i := len(middleware) - 1; i >= 0; i-- {
+			next = middleware[i](next)
 		}
 
 		return next
