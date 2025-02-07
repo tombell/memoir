@@ -1,10 +1,10 @@
-package tracklistservice
+package tracklistscontroller
 
 import (
 	"context"
 	"strconv"
 
-	"github.com/tombell/memoir/internal/services"
+	"github.com/tombell/memoir/internal/controllers"
 	"github.com/tombell/memoir/internal/stores/trackliststore"
 	"github.com/tombell/memoir/internal/stores/trackstore"
 )
@@ -16,14 +16,14 @@ type ByTrackRequest struct {
 }
 
 type ByTrackResponse struct {
-	Meta       services.Meta               `json:"meta"`
+	Meta       controllers.Meta            `json:"meta"`
 	Tracklists []*trackliststore.Tracklist `json:"data"`
 }
 
 func ByTrack(
 	trackStore *trackstore.Store,
 	tracklistStore *trackliststore.Store,
-) services.ServiceFunc[ByTrackRequest, *ByTrackResponse] {
+) controllers.ServiceFunc[ByTrackRequest, *ByTrackResponse] {
 	return func(ctx context.Context, input ByTrackRequest) (*ByTrackResponse, error) {
 		page, _ := strconv.Atoi(input.Page)
 		if page <= 0 {
@@ -35,13 +35,14 @@ func ByTrack(
 			return nil, err
 		}
 
-		tracklists, total, err := tracklistStore.GetTracklistsByTrack(ctx, track.ID, int32(page), tracklistsPerPage)
+		// TODO: move tracklistsPerPage to incoming query string param, with default?
+		tracklists, total, err := tracklistStore.GetTracklistsByTrack(ctx, track.ID, int32(page), 10)
 		if err != nil {
 			return nil, err
 		}
 
 		resp := &ByTrackResponse{
-			Meta:       services.NewMeta(page, total),
+			Meta:       controllers.NewMeta(page, total),
 			Tracklists: tracklists,
 		}
 

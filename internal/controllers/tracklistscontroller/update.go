@@ -1,9 +1,9 @@
-package tracklistservice
+package tracklistscontroller
 
 import (
 	"context"
 
-	"github.com/tombell/memoir/internal/services"
+	"github.com/tombell/memoir/internal/controllers"
 	"github.com/tombell/memoir/internal/stores/trackliststore"
 )
 
@@ -19,7 +19,7 @@ type UpdateTracklistsResponse struct {
 	Tracklist *trackliststore.Tracklist `json:"data"`
 }
 
-func Update(tracklistStore *trackliststore.Store) services.ServiceFunc[UpdateTracklistRequest, *UpdateTracklistsResponse] {
+func Update(tracklistStore *trackliststore.Store) controllers.ServiceFunc[UpdateTracklistRequest, *UpdateTracklistsResponse] {
 	return func(ctx context.Context, input UpdateTracklistRequest) (*UpdateTracklistsResponse, error) {
 		params := &trackliststore.UpdateTracklistParams{
 			Name: input.Name,
