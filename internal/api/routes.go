@@ -70,7 +70,7 @@ func routes(
 	router.Handle("GET /tracks/{id}/tracklists", api(rw(tracklistscontroller.ByTrack(trackStore, tracklistStore))))
 
 	// TODO: maybe filter on tracks index endpoint
-	router.Handle("GET /tracks/mostplayed", api(w(trackscontroller.MostPlayed(trackStore))))
+	router.Handle("GET /tracks/mostplayed", api(rw(trackscontroller.MostPlayed(trackStore))))
 
 	router.Handle("OPTIONS /{path...}", api(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
 		// TODO: validate CORS options?
