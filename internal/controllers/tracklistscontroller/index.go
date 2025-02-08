@@ -9,7 +9,8 @@ import (
 )
 
 type TracklistsRequest struct {
-	Page string `query:"page"`
+	Page    string `query:"page"`
+	PerPage string `query:"per_page"`
 }
 
 type TracklistsResponse struct {
@@ -19,19 +20,37 @@ type TracklistsResponse struct {
 
 func Index(tracklistStore *trackliststore.Store) controllers.ServiceFunc[TracklistsRequest, *TracklistsResponse] {
 	return func(ctx context.Context, input TracklistsRequest) (*TracklistsResponse, error) {
-		page, _ := strconv.Atoi(input.Page)
+		if len(input.Page) == 0 {
+			input.Page = "1"
+		}
+
+		page, err := strconv.ParseInt(input.Page, 10, 64)
+		if err != nil {
+			return nil, err
+		}
 		if page <= 0 {
 			page = 1
 		}
 
-		// TODO: move tracklistsPerPage to incoming query string param, with default?
-		tracklists, total, err := tracklistStore.GetTracklists(ctx, int32(page), 10)
+		if len(input.PerPage) == 0 {
+			input.PerPage = "10"
+		}
+
+		perPage, err := strconv.ParseInt(input.PerPage, 10, 64)
+		if err != nil {
+			return nil, err
+		}
+		if perPage <= 0 {
+			perPage = 10
+		}
+
+		tracklists, total, err := tracklistStore.GetTracklists(ctx, page, perPage)
 		if err != nil {
 			return nil, err
 		}
 
 		resp := &TracklistsResponse{
-			Meta:       controllers.NewMeta(page, total),
+			Meta:       controllers.NewMeta(page, total, perPage),
 			Tracklists: tracklists,
 		}
 
