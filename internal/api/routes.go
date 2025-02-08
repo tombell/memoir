@@ -11,6 +11,7 @@ import (
 	"github.com/tombell/memoir/internal/api/middleware"
 	"github.com/tombell/memoir/internal/config"
 	"github.com/tombell/memoir/internal/controllers/artworkcontroller"
+	"github.com/tombell/memoir/internal/controllers/searchcontroller"
 	"github.com/tombell/memoir/internal/controllers/tracklistscontroller"
 	"github.com/tombell/memoir/internal/controllers/trackscontroller"
 
@@ -52,15 +53,27 @@ func routes(
 	router.Handle("GET /tracklists/{id}", api(rw(tracklistscontroller.Show(tracklistStore))))
 	router.Handle("POST /tracklists", authorized(rw(tracklistscontroller.Create(tracklistStore))))
 	router.Handle("PATCH /tracklists/{id}", authorized(rw(tracklistscontroller.Update(tracklistStore))))
+	// router.Handle("DELETE /tracklists/{id}", authorized(rw(tracklistscontroller.Delete(tracklistStore))))
 
+	// router.Handle("GET /tracks", api(rw(trackscontroller.Index(trackStore))))
 	router.Handle("GET /tracks/{id}", api(rw(trackscontroller.Show(trackStore))))
-	router.Handle("GET /tracks/{id}/tracklists", api(rw(tracklistscontroller.ByTrack(trackStore, tracklistStore))))
-	router.Handle("GET /tracks/mostplayed", api(w(trackscontroller.MostPlayed(trackStore))))
-	router.Handle("GET /tracks/search", api(rw(trackscontroller.Search(trackStore))))
+	// router.Handle("POST /tracks", authorized(rw(trackscontroller.Create(trackStore))))
+	// router.Handle("PATCH /tracks/{id}", authorized(rw(trackscontroller.Update(trackStore))))
+	// router.Handle("DELETE /tracks/{id}", authorized(rw(trackscontroller.Delete(trackStore))))
 
 	router.Handle("POST /artwork", authorized(rw(artworkcontroller.Create(artworkStore))))
 
+	router.Handle("GET /search/tracks", api(rw(searchcontroller.Tracks(trackStore))))
+	// router.Handle("GET /search/tracklists", api(rw(searchcontroller.Tracklists(trackStore))))
+
+	// TODO: maybe filter on tracklists endpoint
+	router.Handle("GET /tracks/{id}/tracklists", api(rw(tracklistscontroller.ByTrack(trackStore, tracklistStore))))
+
+	// TODO: maybe filter on tracks index endpoint
+	router.Handle("GET /tracks/mostplayed", api(w(trackscontroller.MostPlayed(trackStore))))
+
 	router.Handle("OPTIONS /{path...}", api(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
+		// TODO: validate CORS options?
 		w.WriteHeader(http.StatusOK)
 	})))
 
