@@ -1,4 +1,4 @@
-package trackscontroller
+package searchcontroller
 
 import (
 	"context"
@@ -18,7 +18,7 @@ type SearchResponse struct {
 	Tracks []*trackstore.Track `json:"data"`
 }
 
-func Search(trackStore *trackstore.Store) controllers.ServiceFunc[SearchRequest, *SearchResponse] {
+func Tracks(trackStore *trackstore.Store) controllers.ServiceFunc[SearchRequest, *SearchResponse] {
 	return func(ctx context.Context, input SearchRequest) (*SearchResponse, error) {
 		if len(input.Page) == 0 {
 			input.Page = "1"

@@ -78,12 +78,12 @@ func (s *Store) GetMostPlayedTracks(ctx context.Context, limit int32) ([]*Track,
 	return tracks, nil
 }
 
-func (s *Store) SearchTracks(ctx context.Context, query string, limit int32) ([]*Track, error) {
+func (s *Store) SearchTracks(ctx context.Context, query string, limit int64) ([]*Track, error) {
 	op := errors.Op("trackstore[search-tracks]")
 
 	rows, err := s.dataStore.GetTracksByQuery(ctx, db.GetTracksByQueryParams{
 		Query:    query,
-		RowLimit: limit,
+		RowLimit: int32(limit),
 	})
 	if err != nil {
 		return nil, errors.E(op, errors.Strf("find tracks by query failed: %w", err))
