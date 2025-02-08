@@ -25,7 +25,7 @@ func New(store *datastore.Store) *Store {
 	return &Store{dataStore: store}
 }
 
-func (s *Store) GetTracklists(ctx context.Context, page, limit int32) ([]*Tracklist, int64, error) {
+func (s *Store) GetTracklists(ctx context.Context, page, limit int64) ([]*Tracklist, int64, error) {
 	op := errors.Op("trackliststore[get-tracklists]")
 
 	var total int64
@@ -36,8 +36,8 @@ func (s *Store) GetTracklists(ctx context.Context, page, limit int32) ([]*Trackl
 	}
 
 	rows, err := s.dataStore.GetTracklists(ctx, db.GetTracklistsParams{
-		Offset: limit * (page - 1),
-		Limit:  limit,
+		Offset: int32(limit * (page - 1)),
+		Limit:  int32(limit),
 	})
 	if err != nil {
 		return nil, -1, errors.E(op, errors.Strf("get tracklists failed: %w", err))
@@ -251,7 +251,7 @@ func (s *Store) UpdateTracklist(ctx context.Context, id string, model *UpdateTra
 	return tracklist, nil
 }
 
-func (s *Store) GetTracklistsByTrack(ctx context.Context, id string, page, limit int32) ([]*Tracklist, int64, error) {
+func (s *Store) GetTracklistsByTrack(ctx context.Context, id string, page, limit int64) ([]*Tracklist, int64, error) {
 	op := errors.Op("trackliststore[get-tracklists-by-track]")
 
 	var total int64
@@ -262,8 +262,8 @@ func (s *Store) GetTracklistsByTrack(ctx context.Context, id string, page, limit
 
 	rows, err := s.dataStore.GetTracklistsByTrack(ctx, db.GetTracklistsByTrackParams{
 		TrackID: id,
-		Offset:  limit * (page - 1),
-		Limit:   limit,
+		Offset:  int32(limit * (page - 1)),
+		Limit:   int32(limit),
 	})
 	if err != nil {
 		return nil, -1, errors.E(op, errors.Strf("get tracklists by track id failed: %w", err))
