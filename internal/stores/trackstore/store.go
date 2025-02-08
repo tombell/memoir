@@ -49,10 +49,10 @@ func (s *Store) GetTrack(ctx context.Context, id string) (*Track, error) {
 	}, nil
 }
 
-func (s *Store) GetMostPlayedTracks(ctx context.Context, limit int32) ([]*Track, error) {
+func (s *Store) GetMostPlayedTracks(ctx context.Context, limit int64) ([]*Track, error) {
 	op := errors.Op("trackstore[get-most-played-tracks]")
 
-	rows, err := s.dataStore.GetMostPlayedTracks(ctx, limit)
+	rows, err := s.dataStore.GetMostPlayedTracks(ctx, int32(limit))
 	if err != nil {
 		return nil, errors.E(op, errors.Strf("find most played tracks failed: %w", err))
 	}
