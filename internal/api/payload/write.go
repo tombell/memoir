@@ -31,13 +31,13 @@ func Write[T any](w http.ResponseWriter, out T) error {
 
 func WriteError(logger *slog.Logger, w http.ResponseWriter, err error) {
 	resp := ErrorResponse{
-		Error:  errors.M{"message": []string{"something went wrong"}},
+		Errors: errors.M{"message": []string{"something went wrong"}},
 		status: http.StatusInternalServerError,
 	}
 
 	if cr, ok := err.(ClientReporter); ok {
 		resp.status = cr.Status()
-		resp.Error = cr.Message()
+		resp.Errors = cr.Message()
 	}
 
 	if resp.status >= http.StatusInternalServerError {

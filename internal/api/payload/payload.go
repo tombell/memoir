@@ -19,7 +19,7 @@ type StatusCoder interface {
 }
 
 type ErrorResponse struct {
-	Error map[string][]string `json:"errors"`
+	Errors map[string][]string `json:"errors"`
 
 	status int
 }
