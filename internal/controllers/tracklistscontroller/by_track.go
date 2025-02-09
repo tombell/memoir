@@ -61,7 +61,7 @@ func ByTrack(
 		}
 
 		resp := &ByTrackResponse{
-			Meta:       controllers.NewMeta(page, total, perPage),
+			Meta:       controllers.NewMeta(total, page, perPage),
 			Tracklists: tracklists,
 		}
 
