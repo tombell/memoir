@@ -8,6 +8,8 @@ import (
 	"github.com/tombell/memoir/internal/errors"
 )
 
+// Read reads the HTTP request into the output type T. The data read depends on
+// specific structs on the type.
 func Read[T any](r *http.Request) (T, error) {
 	op := errors.Op("payload[read]")
 
@@ -24,6 +26,8 @@ func Read[T any](r *http.Request) (T, error) {
 	return in, nil
 }
 
+// decode reads specific data from the HTTP request based on struct tags found
+// on the type T.
 func decode[T any](r *http.Request, in T) {
 	st := reflect.TypeOf(in).Elem()
 	if st.Kind() != reflect.Struct {
