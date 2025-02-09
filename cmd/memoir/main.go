@@ -23,12 +23,12 @@ import (
 )
 
 func main() {
-	handler := log.NewWithOptions(os.Stderr, log.Options{
+	logger := slog.New(log.NewWithOptions(os.Stderr, log.Options{
 		ReportTimestamp: true,
 		TimeFunction:    log.NowUTC,
 		TimeFormat:      time.RFC3339,
-	})
-	logger := slog.New(handler)
+		ReportCaller:    true,
+	}))
 
 	cfgpath := flag.String("config", "config.dev.json", "")
 	flag.Parse()
