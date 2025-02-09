@@ -11,6 +11,8 @@ import (
 	"github.com/tombell/memoir/internal/controllers"
 )
 
+// rw wraps the given action function with reading HTTP request data, and
+// writing HTTP response data.
 func rw[In, Out any](fn controllers.ActionFunc[In, Out]) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		ctx, cancel := context.WithTimeout(r.Context(), 30*time.Second)
@@ -36,6 +38,7 @@ func rw[In, Out any](fn controllers.ActionFunc[In, Out]) http.Handler {
 	})
 }
 
+// w wraps the given action function with only writing HTTP response data.
 func w[Out any](fn controllers.WriteOnlyActionFunc[Out]) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		ctx, cancel := context.WithTimeout(r.Context(), 30*time.Second)

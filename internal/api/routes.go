@@ -20,6 +20,7 @@ import (
 	"github.com/tombell/memoir/internal/stores/trackstore"
 )
 
+// routes configures the routes of the application.
 func routes(
 	logger *slog.Logger,
 	router *http.ServeMux,

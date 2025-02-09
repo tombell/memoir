@@ -9,6 +9,8 @@ import (
 	"github.com/tombell/memoir/internal/errors"
 )
 
+// Write writes the data to the HTTP response depending on struct tags on the
+// type T.
 func Write[T any](w http.ResponseWriter, out T) error {
 	op := errors.Op("payload[write]")
 
@@ -19,6 +21,7 @@ func Write[T any](w http.ResponseWriter, out T) error {
 
 	encode(w, out)
 
+	// TODO: move this and the JSON encoding into the encode method?
 	w.Header().Add("Content-Type", "application/json")
 	w.WriteHeader(status)
 
@@ -29,6 +32,9 @@ func Write[T any](w http.ResponseWriter, out T) error {
 	return nil
 }
 
+// WriteError writes the given error to the HTTP response. Depending on the
+// interfaces implemented by the error, different status codes and/or error
+// messages may be written.
 func WriteError(logger *slog.Logger, w http.ResponseWriter, err error) {
 	resp := ErrorResponse{
 		Errors: errors.M{"message": []string{"something went wrong"}},
@@ -50,6 +56,8 @@ func WriteError(logger *slog.Logger, w http.ResponseWriter, err error) {
 	}
 }
 
+// encode writes specifc data to the HTTP response based on struct tags found
+// on the type T.
 func encode[T any](w http.ResponseWriter, out T) {
 	st := reflect.TypeOf(out).Elem()
 	if st.Kind() != reflect.Struct {
