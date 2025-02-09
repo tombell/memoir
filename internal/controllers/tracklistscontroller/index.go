@@ -2,7 +2,6 @@ package tracklistscontroller
 
 import (
 	"context"
-	"strconv"
 
 	"github.com/tombell/memoir/internal/controllers"
 	"github.com/tombell/memoir/internal/stores/trackliststore"
@@ -20,28 +19,14 @@ type TracklistsResponse struct {
 
 func Index(tracklistStore *trackliststore.Store) controllers.ActionFunc[TracklistsRequest, *TracklistsResponse] {
 	return func(ctx context.Context, input TracklistsRequest) (*TracklistsResponse, error) {
-		if len(input.Page) == 0 {
-			input.Page = "1"
-		}
-
-		page, err := strconv.ParseInt(input.Page, 10, 64)
+		page, err := controllers.IntQueryParam(input.Page, 1)
 		if err != nil {
 			return nil, err
 		}
-		if page <= 0 {
-			page = 1
-		}
 
-		if len(input.PerPage) == 0 {
-			input.PerPage = "10"
-		}
-
-		perPage, err := strconv.ParseInt(input.PerPage, 10, 64)
+		perPage, err := controllers.IntQueryParam(input.PerPage, 10)
 		if err != nil {
 			return nil, err
-		}
-		if perPage <= 0 {
-			perPage = 10
 		}
 
 		tracklists, total, err := tracklistStore.GetTracklists(ctx, page, perPage)

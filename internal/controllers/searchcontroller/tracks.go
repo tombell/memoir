@@ -2,7 +2,6 @@ package searchcontroller
 
 import (
 	"context"
-	"strconv"
 
 	"github.com/tombell/memoir/internal/controllers"
 	"github.com/tombell/memoir/internal/stores/trackstore"
@@ -20,28 +19,15 @@ type SearchResponse struct {
 
 func Tracks(trackStore *trackstore.Store) controllers.ActionFunc[SearchRequest, *SearchResponse] {
 	return func(ctx context.Context, input SearchRequest) (*SearchResponse, error) {
-		if len(input.Page) == 0 {
-			input.Page = "1"
-		}
+		// TODO: implement pagination
+		// page, err := controllers.IntQueryParam(input.Page, 1)
+		// if err != nil {
+		// 	return nil, err
+		// }
 
-		page, err := strconv.ParseInt(input.Page, 10, 64)
+		perPage, err := controllers.IntQueryParam(input.PerPage, 10)
 		if err != nil {
 			return nil, err
-		}
-		if page <= 0 {
-			page = 1
-		}
-
-		if len(input.PerPage) == 0 {
-			input.PerPage = "10"
-		}
-
-		perPage, err := strconv.ParseInt(input.PerPage, 10, 64)
-		if err != nil {
-			return nil, err
-		}
-		if perPage <= 0 {
-			perPage = 10
 		}
 
 		tracks, err := trackStore.SearchTracks(ctx, input.Query, perPage)
