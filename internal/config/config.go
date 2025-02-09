@@ -6,6 +6,8 @@ import (
 	"os"
 )
 
+// Config contains the configuration values for various parts of the
+// application.
 type Config struct {
 	Address string `json:"address"`
 	DB      string `json:"db"`
@@ -22,6 +24,8 @@ type Config struct {
 	} `json:"aws"`
 }
 
+// Load reads the configuration file at the given path and returns a Config
+// instance.
 func Load(filepath string) (*Config, error) {
 	data, err := os.ReadFile(filepath)
 	if err != nil {
