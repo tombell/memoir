@@ -24,7 +24,7 @@ type ByTrackResponse struct {
 func ByTrack(
 	trackStore *trackstore.Store,
 	tracklistStore *trackliststore.Store,
-) controllers.ServiceFunc[ByTrackRequest, *ByTrackResponse] {
+) controllers.ActionFunc[ByTrackRequest, *ByTrackResponse] {
 	return func(ctx context.Context, input ByTrackRequest) (*ByTrackResponse, error) {
 		if len(input.Page) == 0 {
 			input.Page = "1"

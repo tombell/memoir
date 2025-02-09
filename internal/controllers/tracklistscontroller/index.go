@@ -18,7 +18,7 @@ type TracklistsResponse struct {
 	Tracklists []*trackliststore.Tracklist `json:"data"`
 }
 
-func Index(tracklistStore *trackliststore.Store) controllers.ServiceFunc[TracklistsRequest, *TracklistsResponse] {
+func Index(tracklistStore *trackliststore.Store) controllers.ActionFunc[TracklistsRequest, *TracklistsResponse] {
 	return func(ctx context.Context, input TracklistsRequest) (*TracklistsResponse, error) {
 		if len(input.Page) == 0 {
 			input.Page = "1"

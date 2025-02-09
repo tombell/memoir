@@ -11,7 +11,7 @@ import (
 	"github.com/tombell/memoir/internal/controllers"
 )
 
-func w[Out any](fn controllers.WriteOnlyServiceFunc[Out]) http.Handler {
+func w[Out any](fn controllers.WriteOnlyActionFunc[Out]) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		ctx, cancel := context.WithTimeout(r.Context(), 30*time.Second)
 		defer cancel()
@@ -30,7 +30,7 @@ func w[Out any](fn controllers.WriteOnlyServiceFunc[Out]) http.Handler {
 	})
 }
 
-func rw[In, Out any](fn controllers.ServiceFunc[In, Out]) http.Handler {
+func rw[In, Out any](fn controllers.ActionFunc[In, Out]) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		ctx, cancel := context.WithTimeout(r.Context(), 30*time.Second)
 		defer cancel()

@@ -19,7 +19,7 @@ type UpdateTracklistsResponse struct {
 	Tracklist *trackliststore.Tracklist `json:"data"`
 }
 
-func Update(tracklistStore *trackliststore.Store) controllers.ServiceFunc[UpdateTracklistRequest, *UpdateTracklistsResponse] {
+func Update(tracklistStore *trackliststore.Store) controllers.ActionFunc[UpdateTracklistRequest, *UpdateTracklistsResponse] {
 	return func(ctx context.Context, input UpdateTracklistRequest) (*UpdateTracklistsResponse, error) {
 		params := &trackliststore.UpdateTracklistParams{
 			Name: input.Name,

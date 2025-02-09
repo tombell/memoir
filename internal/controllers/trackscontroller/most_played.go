@@ -17,7 +17,7 @@ type MostPlayedResponse struct {
 	Tracks []*trackstore.Track `json:"data"`
 }
 
-func MostPlayed(trackStore *trackstore.Store) controllers.ServiceFunc[MostPlayedRequest, *MostPlayedResponse] {
+func MostPlayed(trackStore *trackstore.Store) controllers.ActionFunc[MostPlayedRequest, *MostPlayedResponse] {
 	return func(ctx context.Context, input MostPlayedRequest) (*MostPlayedResponse, error) {
 		if len(input.Page) == 0 {
 			input.Page = "1"

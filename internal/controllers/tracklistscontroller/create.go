@@ -19,7 +19,7 @@ type CreateTracklistsResponse struct {
 	Tracklist *trackliststore.Tracklist `json:"data"`
 }
 
-func Create(tracklistStore *trackliststore.Store) controllers.ServiceFunc[CreateTracklistRequest, *CreateTracklistsResponse] {
+func Create(tracklistStore *trackliststore.Store) controllers.ActionFunc[CreateTracklistRequest, *CreateTracklistsResponse] {
 	return func(ctx context.Context, input CreateTracklistRequest) (*CreateTracklistsResponse, error) {
 		params := &trackliststore.AddTracklistParams{
 			Name:    input.Name,

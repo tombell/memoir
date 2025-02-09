@@ -15,7 +15,7 @@ type TracklistResponse struct {
 	Tracklist *trackliststore.Tracklist `json:"data"`
 }
 
-func Show(tracklistStore *trackliststore.Store) controllers.ServiceFunc[TracklistRequest, *TracklistResponse] {
+func Show(tracklistStore *trackliststore.Store) controllers.ActionFunc[TracklistRequest, *TracklistResponse] {
 	return func(ctx context.Context, input TracklistRequest) (*TracklistResponse, error) {
 		tracklist, err := tracklistStore.GetTracklist(ctx, input.ID)
 		if err != nil {

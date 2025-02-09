@@ -15,7 +15,7 @@ type TrackResponse struct {
 	Track *trackstore.Track `json:"data"`
 }
 
-func Show(trackStore *trackstore.Store) controllers.ServiceFunc[TrackRequest, *TrackResponse] {
+func Show(trackStore *trackstore.Store) controllers.ActionFunc[TrackRequest, *TrackResponse] {
 	return func(ctx context.Context, input TrackRequest) (*TrackResponse, error) {
 		track, err := trackStore.GetTrack(ctx, input.ID)
 		if err != nil {

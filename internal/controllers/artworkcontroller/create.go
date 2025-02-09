@@ -23,7 +23,7 @@ func (r *UploadResponse) StatusCode() int {
 	return r.status
 }
 
-func Create(artworkStore *artworkstore.Store) controllers.ServiceFunc[UploadRequest, *UploadResponse] {
+func Create(artworkStore *artworkstore.Store) controllers.ActionFunc[UploadRequest, *UploadResponse] {
 	return func(ctx context.Context, input UploadRequest) (*UploadResponse, error) {
 		upload, exists, err := artworkStore.Upload(ctx, input.Artwork.File, input.Artwork.Header.Filename)
 		if err != nil {
