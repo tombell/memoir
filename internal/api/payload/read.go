@@ -13,9 +13,7 @@ func Read[T any](r *http.Request) (T, error) {
 
 	var in T
 
-	contentType := r.Header.Get("Content-Type")
-
-	if contentType == "application/json" {
+	if r.Header.Get("Content-Type") == "application/json" {
 		if err := json.NewDecoder(r.Body).Decode(&in); err != nil {
 			return in, errors.E(op, errors.Strf("could not decode json: %w", err))
 		}
