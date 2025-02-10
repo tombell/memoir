@@ -12,14 +12,18 @@ import (
 	"github.com/tombell/memoir/internal/stores/datastore"
 )
 
+// Store is a store for interacting with tracks in the data store.
 type Store struct {
 	dataStore *datastore.Store
 }
 
+// New returns a new store.
 func New(store *datastore.Store) *Store {
 	return &Store{dataStore: store}
 }
 
+// GetTrack returns a track with the given ID.
+// If no track exists return a not found error.
 func (s *Store) GetTrack(ctx context.Context, id string) (*Track, error) {
 	op := errors.Op("trackstore[get-track]")
 
@@ -49,6 +53,9 @@ func (s *Store) GetTrack(ctx context.Context, id string) (*Track, error) {
 	}, nil
 }
 
+// GetMostPlayedTracks returns a list of the tracks that are contained in the
+// most tracklists. The list is limited with the limit argument.
+// TODO: properly paginate.
 func (s *Store) GetMostPlayedTracks(ctx context.Context, limit int64) ([]*Track, error) {
 	op := errors.Op("trackstore[get-most-played-tracks]")
 
@@ -78,6 +85,9 @@ func (s *Store) GetMostPlayedTracks(ctx context.Context, limit int64) ([]*Track,
 	return tracks, nil
 }
 
+// SearchTracks returns a list of tracks that match the full text search
+// results. The list is limited with the limit arugment.
+// TODO: properly paginate.
 func (s *Store) SearchTracks(ctx context.Context, query string, limit int64) ([]*Track, error) {
 	op := errors.Op("trackstore[search-tracks]")
 

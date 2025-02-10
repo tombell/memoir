@@ -2,6 +2,7 @@ package trackstore
 
 import "time"
 
+// Track is the model used for serialising a tracklist to JSON.
 type Track struct {
 	ID     string  `json:"id"`
 	Artist string  `json:"artist"`
