@@ -11,7 +11,9 @@ type File struct {
 	Header *multipart.FileHeader
 }
 
-type ClientReporter interface {
+// ErrorReporter is an interface for an error type that can be reported to an
+// HTTP response.
+type ErrorReporter interface {
 	Message() map[string][]string
 	Status() int
 }
