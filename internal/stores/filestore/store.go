@@ -15,11 +15,14 @@ import (
 	"github.com/tombell/memoir/internal/errors"
 )
 
+// Store is a store used for interacting with AWS S3.
 type Store struct {
 	config *cfg.Config
 	svc    *s3.Client
 }
 
+// New returns a new Store configured for the S3 bucket provided in the given
+// configuration.
 func New(cfg *cfg.Config) *Store {
 	creds := credentials.NewStaticCredentialsProvider(cfg.AWS.Key, cfg.AWS.Secret, "")
 	awscfg, _ := config.LoadDefaultConfig(
@@ -34,6 +37,7 @@ func New(cfg *cfg.Config) *Store {
 	}
 }
 
+// Exists checks if an object with the given key exists in the bucket.
 func (s *Store) Exists(ctx context.Context, key string) (bool, error) {
 	op := errors.Op("filestore[exists]")
 
@@ -55,6 +59,7 @@ func (s *Store) Exists(ctx context.Context, key string) (bool, error) {
 	return true, nil
 }
 
+// Put uploads the file as an object with the given key.
 func (s *Store) Put(ctx context.Context, key string, r io.ReadSeeker) error {
 	op := errors.Op("filestore[put]")
 
@@ -64,7 +69,9 @@ func (s *Store) Put(ctx context.Context, key string, r io.ReadSeeker) error {
 		return errors.E(op, errors.Strf("read file failed: %w", err))
 	}
 
-	r.Seek(0, io.SeekStart)
+	if _, err := r.Seek(0, io.SeekStart); err != nil {
+		return errors.E(op, errors.Strf("seek failed: %w", err))
+	}
 
 	input := &s3.PutObjectInput{
 		Bucket:      aws.String(s.config.AWS.Bucket),
