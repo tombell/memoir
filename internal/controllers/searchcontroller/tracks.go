@@ -25,7 +25,7 @@ func Tracks(trackStore *trackstore.Store) controllers.ActionFunc[SearchRequest, 
 		// 	return nil, err
 		// }
 
-		perPage, err := controllers.IntQueryParam(input.PerPage, 10)
+		perPage, err := controllers.ParamAsInt(input.PerPage, 10)
 		if err != nil {
 			return nil, err
 		}

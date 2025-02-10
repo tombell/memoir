@@ -4,19 +4,21 @@ import (
 	"strconv"
 )
 
-func IntQueryParam(param string, def int64) (int64, error) {
+// ParamAsInt is a helper function to convert a string param to an int64, and if
+// it's empty or less than or equal to zero, return the default value.
+func ParamAsInt(param string, def int64) (int64, error) {
 	if len(param) == 0 {
 		return def, nil
 	}
 
-	page, err := strconv.ParseInt(param, 10, 64)
+	num, err := strconv.ParseInt(param, 10, 64)
 	if err != nil {
 		return 0, err
 	}
 
-	if page < def {
+	if num <= 0 {
 		return def, nil
 	}
 
-	return page, nil
+	return num, nil
 }
