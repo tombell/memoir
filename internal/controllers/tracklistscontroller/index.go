@@ -19,12 +19,12 @@ type TracklistsResponse struct {
 
 func Index(tracklistStore *trackliststore.Store) controllers.ActionFunc[TracklistsRequest, *TracklistsResponse] {
 	return func(ctx context.Context, input TracklistsRequest) (*TracklistsResponse, error) {
-		page, err := controllers.IntQueryParam(input.Page, 1)
+		page, err := controllers.ParamAsInt(input.Page, 1)
 		if err != nil {
 			return nil, err
 		}
 
-		perPage, err := controllers.IntQueryParam(input.PerPage, 10)
+		perPage, err := controllers.ParamAsInt(input.PerPage, 10)
 		if err != nil {
 			return nil, err
 		}
