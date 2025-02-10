@@ -11,14 +11,18 @@ import (
 	"github.com/tombell/memoir/internal/stores/filestore"
 )
 
+// Store is a store used for interacting with a file store for artwork files.
 type Store struct {
 	fileStore *filestore.Store
 }
 
+// New returns a new Store.
 func New(store *filestore.Store) *Store {
 	return &Store{fileStore: store}
 }
 
+// Upload will upload the given file data if it does not already exist in the
+// file store. It returns a model containing the "key" of the object.
 func (s *Store) Upload(ctx context.Context, r io.ReadSeeker, filename string) (*Upload, bool, error) {
 	op := errors.Op("artworkstore[upload]")
 
