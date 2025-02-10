@@ -17,14 +17,18 @@ import (
 	"github.com/tombell/memoir/internal/stores/trackstore"
 )
 
+// Store is a store for interacting with tracklists in the data store.
 type Store struct {
 	dataStore *datastore.Store
 }
 
+// New returns a new store.
 func New(store *datastore.Store) *Store {
 	return &Store{dataStore: store}
 }
 
+// GetTracklists returns a list of tracklists. The list is paginated based on
+// the page and limit arguments.
 func (s *Store) GetTracklists(ctx context.Context, page, limit int64) ([]*Tracklist, int64, error) {
 	op := errors.Op("trackliststore[get-tracklists]")
 
@@ -61,6 +65,8 @@ func (s *Store) GetTracklists(ctx context.Context, page, limit int64) ([]*Trackl
 	return tracklists, total, nil
 }
 
+// GetTracklist returns a tracklist with the given ID.
+// If no tracklist exists return a not found error.
 func (s *Store) GetTracklist(ctx context.Context, id string) (*Tracklist, error) {
 	op := errors.Op("trackliststore[get-tracklist]")
 
@@ -106,6 +112,8 @@ func (s *Store) GetTracklist(ctx context.Context, id string) (*Tracklist, error)
 	return tracklist, nil
 }
 
+// AddTracklist adds the tracklist.
+// If the data is not valid returns an unprocessable entity error.
 func (s *Store) AddTracklist(ctx context.Context, model *AddTracklistParams) (*Tracklist, error) {
 	op := errors.Op("trackliststore[add-tracklist]")
 
@@ -186,6 +194,9 @@ func (s *Store) AddTracklist(ctx context.Context, model *AddTracklistParams) (*T
 	}, nil
 }
 
+// UpdateTracklist uupdates the tracklist with the given ID.
+// If the data is not valid returns an unprocessable entity error.
+// If the tracklist does not exist returns a not found error.
 func (s *Store) UpdateTracklist(ctx context.Context, id string, model *UpdateTracklistParams) (*Tracklist, error) {
 	op := errors.Op("trackliststore[update-tracklist]")
 
@@ -251,6 +262,9 @@ func (s *Store) UpdateTracklist(ctx context.Context, id string, model *UpdateTra
 	return tracklist, nil
 }
 
+// GetTracklistsByTrack returns a list of tracklists that contain the track
+// witht he given ID. The list is paginated based on the page and limit
+// arguments.
 func (s *Store) GetTracklistsByTrack(ctx context.Context, id string, page, limit int64) ([]*Tracklist, int64, error) {
 	op := errors.Op("trackliststore[get-tracklists-by-track]")
 

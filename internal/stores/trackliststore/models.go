@@ -10,6 +10,7 @@ import (
 	"github.com/tombell/memoir/internal/stores/trackstore"
 )
 
+// Tracklist is the model used for serialising a tracklist to JSON.
 type Tracklist struct {
 	ID      string    `json:"id"`
 	Name    string    `json:"name"`
@@ -24,6 +25,8 @@ type Tracklist struct {
 	TrackCount int                 `json:"trackCount"`
 }
 
+// AddTracklistParams are the parameters deserialised from JSON for adding a new
+// tracklist.
 type AddTracklistParams struct {
 	Name    string     `json:"name"`
 	Date    string     `json:"date"`
@@ -32,6 +35,8 @@ type AddTracklistParams struct {
 	Tracks  [][]string `json:"tracks"`
 }
 
+// Validate validate that the data provided is correct for adding a new
+// tracklist.
 func (t *AddTracklistParams) Validate() valid.Error {
 	validator := valid.New()
 	validator.Check("name",
@@ -62,6 +67,7 @@ func (t *AddTracklistParams) Validate() valid.Error {
 	return validator.Errors
 }
 
+// ToDatabaseParams returns a database params struct for adding a new tracklist.
 func (t *AddTracklistParams) ToDatabaseParams() db.AddTracklistParams {
 	date, _ := time.Parse(time.RFC3339, t.Date)
 
@@ -74,12 +80,16 @@ func (t *AddTracklistParams) ToDatabaseParams() db.AddTracklistParams {
 	}
 }
 
+// UpdateTracklistParams are the parameters deserialised from JSON for updating
+// an existing tracklist.
 type UpdateTracklistParams struct {
 	Name string `json:"name"`
 	Date string `json:"date"`
 	URL  string `json:"url"`
 }
 
+// Validate validates that the data provided is correct for updating an existing
+// tracklist.
 func (t *UpdateTracklistParams) Validate() valid.Error {
 	validator := valid.New()
 	validator.Check("name",
@@ -103,6 +113,8 @@ func (t *UpdateTracklistParams) Validate() valid.Error {
 	return validator.Errors
 }
 
+// ToDatabaseParams returns a database params struct for updating an existing
+// tracklist.
 func (t *UpdateTracklistParams) ToDatabaseParams(id string) db.UpdateTracklistParams {
 	date, _ := time.Parse(time.RFC3339, t.Date)
 
