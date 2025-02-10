@@ -8,6 +8,7 @@ import (
 	"github.com/tombell/memoir/internal/stores/trackstore"
 )
 
+// ByTrackRequest defines the data to read from the HTTP request.
 type ByTrackRequest struct {
 	Page    string `query:"page"`
 	PerPage string `query:"per_page"`
@@ -15,11 +16,14 @@ type ByTrackRequest struct {
 	ID string `path:"id"`
 }
 
+// ByTrackResponse defines the data to write to the HTTP response.
 type ByTrackResponse struct {
 	Meta       controllers.Meta            `json:"meta"`
 	Tracklists []*trackliststore.Tracklist `json:"data"`
 }
 
+// ByTrack returns an action function for getting a list of tracklists that
+// contain the track with the given ID.
 func ByTrack(
 	trackStore *trackstore.Store,
 	tracklistStore *trackliststore.Store,

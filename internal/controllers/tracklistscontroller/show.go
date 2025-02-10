@@ -7,21 +7,24 @@ import (
 	"github.com/tombell/memoir/internal/stores/trackliststore"
 )
 
-type TracklistRequest struct {
+// ShowRequest defines the data to read from the HTTP request.
+type ShowRequest struct {
 	ID string `path:"id"`
 }
 
-type TracklistResponse struct {
+// ShowResponse defines the data to write to the HTTP response.
+type ShowResponse struct {
 	Tracklist *trackliststore.Tracklist `json:"data"`
 }
 
-func Show(tracklistStore *trackliststore.Store) controllers.ActionFunc[TracklistRequest, *TracklistResponse] {
-	return func(ctx context.Context, input TracklistRequest) (*TracklistResponse, error) {
+// Show returns an action function for getting the track with the given ID.
+func Show(tracklistStore *trackliststore.Store) controllers.ActionFunc[ShowRequest, *ShowResponse] {
+	return func(ctx context.Context, input ShowRequest) (*ShowResponse, error) {
 		tracklist, err := tracklistStore.GetTracklist(ctx, input.ID)
 		if err != nil {
 			return nil, err
 		}
 
-		return &TracklistResponse{Tracklist: tracklist}, nil
+		return &ShowResponse{Tracklist: tracklist}, nil
 	}
 }

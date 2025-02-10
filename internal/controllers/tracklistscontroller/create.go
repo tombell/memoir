@@ -7,7 +7,8 @@ import (
 	"github.com/tombell/memoir/internal/stores/trackliststore"
 )
 
-type CreateTracklistRequest struct {
+// CreateRequest defines the data to read from the HTTP request.
+type CreateRequest struct {
 	Name    string     `json:"name"`
 	Date    string     `json:"date"`
 	URL     string     `json:"url"`
@@ -15,12 +16,14 @@ type CreateTracklistRequest struct {
 	Tracks  [][]string `json:"tracks"`
 }
 
-type CreateTracklistsResponse struct {
+// CreateResponse defines the data to write to the HTTP response.
+type CreateResponse struct {
 	Tracklist *trackliststore.Tracklist `json:"data"`
 }
 
-func Create(tracklistStore *trackliststore.Store) controllers.ActionFunc[CreateTracklistRequest, *CreateTracklistsResponse] {
-	return func(ctx context.Context, input CreateTracklistRequest) (*CreateTracklistsResponse, error) {
+// Create returns an action function that creates a new tracklist.
+func Create(tracklistStore *trackliststore.Store) controllers.ActionFunc[CreateRequest, *CreateResponse] {
+	return func(ctx context.Context, input CreateRequest) (*CreateResponse, error) {
 		params := &trackliststore.AddTracklistParams{
 			Name:    input.Name,
 			Date:    input.Date,
@@ -34,6 +37,6 @@ func Create(tracklistStore *trackliststore.Store) controllers.ActionFunc[CreateT
 			return nil, err
 		}
 
-		return &CreateTracklistsResponse{Tracklist: tracklist}, nil
+		return &CreateResponse{Tracklist: tracklist}, nil
 	}
 }
