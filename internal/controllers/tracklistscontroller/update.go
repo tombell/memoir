@@ -7,7 +7,8 @@ import (
 	"github.com/tombell/memoir/internal/stores/trackliststore"
 )
 
-type UpdateTracklistRequest struct {
+// UpdateRequest defines the data to read from the HTTP request.
+type UpdateRequest struct {
 	ID string `path:"id"`
 
 	Name string `json:"name"`
@@ -15,12 +16,14 @@ type UpdateTracklistRequest struct {
 	URL  string `json:"url"`
 }
 
-type UpdateTracklistsResponse struct {
+// UpdateResponse defines the data to write to the HTTP response.
+type UpdateResponse struct {
 	Tracklist *trackliststore.Tracklist `json:"data"`
 }
 
-func Update(tracklistStore *trackliststore.Store) controllers.ActionFunc[UpdateTracklistRequest, *UpdateTracklistsResponse] {
-	return func(ctx context.Context, input UpdateTracklistRequest) (*UpdateTracklistsResponse, error) {
+// Update returns an action function that updates a tracklist with the given ID.
+func Update(tracklistStore *trackliststore.Store) controllers.ActionFunc[UpdateRequest, *UpdateResponse] {
+	return func(ctx context.Context, input UpdateRequest) (*UpdateResponse, error) {
 		params := &trackliststore.UpdateTracklistParams{
 			Name: input.Name,
 			Date: input.Date,
@@ -32,6 +35,6 @@ func Update(tracklistStore *trackliststore.Store) controllers.ActionFunc[UpdateT
 			return nil, err
 		}
 
-		return &UpdateTracklistsResponse{Tracklist: tracklist}, nil
+		return &UpdateResponse{Tracklist: tracklist}, nil
 	}
 }

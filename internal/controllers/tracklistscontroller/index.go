@@ -7,18 +7,21 @@ import (
 	"github.com/tombell/memoir/internal/stores/trackliststore"
 )
 
-type TracklistsRequest struct {
+// IndexRequest defines the data to read from the HTTP request.
+type IndexRequest struct {
 	Page    string `query:"page"`
 	PerPage string `query:"per_page"`
 }
 
-type TracklistsResponse struct {
+// IndexResponse defines the data to write to the HTTP response.
+type IndexResponse struct {
 	Meta       controllers.Meta            `json:"meta"`
 	Tracklists []*trackliststore.Tracklist `json:"data"`
 }
 
-func Index(tracklistStore *trackliststore.Store) controllers.ActionFunc[TracklistsRequest, *TracklistsResponse] {
-	return func(ctx context.Context, input TracklistsRequest) (*TracklistsResponse, error) {
+// Index returns an action function for getting a list of tracklists.
+func Index(tracklistStore *trackliststore.Store) controllers.ActionFunc[IndexRequest, *IndexResponse] {
+	return func(ctx context.Context, input IndexRequest) (*IndexResponse, error) {
 		page, err := controllers.ParamAsInt(input.Page, 1)
 		if err != nil {
 			return nil, err
@@ -34,7 +37,7 @@ func Index(tracklistStore *trackliststore.Store) controllers.ActionFunc[Tracklis
 			return nil, err
 		}
 
-		resp := &TracklistsResponse{
+		resp := &IndexResponse{
 			Meta:       controllers.NewMeta(total, page, perPage),
 			Tracklists: tracklists,
 		}
