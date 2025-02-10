@@ -7,18 +7,21 @@ import (
 	"github.com/tombell/memoir/internal/stores/trackstore"
 )
 
-type SearchRequest struct {
+// SearchTracksRequest defines the data to read from the HTTP request.
+type SearchTracksRequest struct {
 	Query   string `query:"q"`
 	Page    string `query:"page"`
 	PerPage string `query:"per_page"`
 }
 
-type SearchResponse struct {
+// SearchTracksResponse defines the data to write to the HTTP response.
+type SearchTracksResponse struct {
 	Tracks []*trackstore.Track `json:"data"`
 }
 
-func Tracks(trackStore *trackstore.Store) controllers.ActionFunc[SearchRequest, *SearchResponse] {
-	return func(ctx context.Context, input SearchRequest) (*SearchResponse, error) {
+// Tracks returns an action function for searching tracks using the track store.
+func Tracks(trackStore *trackstore.Store) controllers.ActionFunc[SearchTracksRequest, *SearchTracksResponse] {
+	return func(ctx context.Context, input SearchTracksRequest) (*SearchTracksResponse, error) {
 		// TODO: implement pagination
 		// page, err := controllers.IntQueryParam(input.Page, 1)
 		// if err != nil {
@@ -35,6 +38,6 @@ func Tracks(trackStore *trackstore.Store) controllers.ActionFunc[SearchRequest, 
 			return nil, err
 		}
 
-		return &SearchResponse{Tracks: tracks}, nil
+		return &SearchTracksResponse{Tracks: tracks}, nil
 	}
 }
