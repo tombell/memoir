@@ -50,7 +50,7 @@ func routes(
 		ware.Recovery(),
 	)
 
-	router.Handle("GET /tracklists", api(rw(tracklistscontroller.Index(tracklistStore))))
+	router.Handle("GET /tracklists", api(rw(tracklistscontroller.Index(trackStore, tracklistStore))))
 	router.Handle("GET /tracklists/{id}", api(rw(tracklistscontroller.Show(tracklistStore))))
 	router.Handle("POST /tracklists", authorized(rw(tracklistscontroller.Create(tracklistStore))))
 	router.Handle("PATCH /tracklists/{id}", authorized(rw(tracklistscontroller.Update(tracklistStore))))
@@ -66,9 +66,6 @@ func routes(
 
 	router.Handle("GET /tracks/search", api(rw(searchcontroller.Tracks(trackStore))))
 	// router.Handle("GET /search/tracklists", api(rw(searchcontroller.Tracklists(trackStore))))
-
-	// TODO: maybe filter on tracklists endpoint
-	router.Handle("GET /tracks/{id}/tracklists", api(rw(tracklistscontroller.ByTrack(trackStore, tracklistStore))))
 
 	// TODO: maybe filter on tracks index endpoint
 	router.Handle("GET /tracks/mostplayed", api(rw(trackscontroller.MostPlayed(trackStore))))
