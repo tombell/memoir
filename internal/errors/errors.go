@@ -3,6 +3,7 @@ package errors
 import (
 	goerr "errors"
 	"fmt"
+	"maps"
 	"net/http"
 	"strings"
 )
@@ -42,9 +43,7 @@ func E(op Op, args ...any) error {
 		case error:
 			e.err = arg
 		case M:
-			for k, v := range arg {
-				e.messages[k] = v
-			}
+			maps.Copy(e.messages, arg)
 		case int:
 			e.status = arg
 		}
@@ -57,7 +56,7 @@ func E(op Op, args ...any) error {
 // be passed down to any HTTP responses.
 func (e *Error) Error() string {
 	var b strings.Builder
-	b.WriteString(fmt.Sprintf("%s: ", string(e.op)))
+	fmt.Fprintf(&b, "%s: ", string(e.op))
 
 	if e.err != nil {
 		b.WriteString(e.err.Error())
