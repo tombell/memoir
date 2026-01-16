@@ -64,7 +64,7 @@ func routes(
 
 	router.Handle("POST /artwork", authorized(rw(artworkcontroller.Create(artworkStore))))
 
-	router.Handle("GET /search/tracks", api(rw(searchcontroller.Tracks(trackStore))))
+	router.Handle("GET /tracks/search", api(rw(searchcontroller.Tracks(trackStore))))
 	// router.Handle("GET /search/tracklists", api(rw(searchcontroller.Tracklists(trackStore))))
 
 	// TODO: maybe filter on tracklists endpoint
