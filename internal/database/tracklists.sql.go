@@ -93,6 +93,25 @@ func (q *Queries) DeleteTracklist(ctx context.Context, id string) error {
 	return err
 }
 
+const getTracklist = `-- name: GetTracklist :one
+SELECT id, name, date, artwork, url, created, updated FROM "tracklists" WHERE "id" = $1
+`
+
+func (q *Queries) GetTracklist(ctx context.Context, id string) (*Tracklist, error) {
+	row := q.db.QueryRow(ctx, getTracklist, id)
+	var i Tracklist
+	err := row.Scan(
+		&i.ID,
+		&i.Name,
+		&i.Date,
+		&i.Artwork,
+		&i.URL,
+		&i.Created,
+		&i.Updated,
+	)
+	return &i, err
+}
+
 const getTracklistWithTracks = `-- name: GetTracklistWithTracks :many
 SELECT
   tracklists.id, tracklists.name, tracklists.date, tracklists.artwork, tracklists.url, tracklists.created, tracklists.updated,

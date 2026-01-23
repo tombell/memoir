@@ -311,6 +311,14 @@ func (s *Store) DeleteTracklist(ctx context.Context, id string) error {
 		return errors.E(op, http.StatusNotFound)
 	}
 
+	if _, err = s.dataStore.GetTracklist(ctx, id); err != nil {
+		if errors.Is(err, pgx.ErrNoRows) {
+			return errors.E(op, http.StatusNotFound)
+		}
+
+		return errors.E(op, errors.Strf("get tracklist failed: %w", err))
+	}
+
 	tx, err := s.dataStore.Begin(ctx)
 	if err != nil {
 		return errors.E(op, errors.Strf("db begin failed: %w", err))
