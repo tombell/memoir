@@ -263,7 +263,7 @@ func (s *Store) UpdateTracklist(ctx context.Context, id string, model *UpdateTra
 }
 
 // GetTracklistsByTrack returns a list of tracklists that contain the track
-// witht he given ID. The list is paginated based on the page and limit
+// with the given ID. The list is paginated based on the page and limit
 // arguments.
 func (s *Store) GetTracklistsByTrack(ctx context.Context, id string, page, limit int64) ([]*Tracklist, int64, error) {
 	op := errors.Op("trackliststore[get-tracklists-by-track]")
@@ -299,4 +299,37 @@ func (s *Store) GetTracklistsByTrack(ctx context.Context, id string, page, limit
 	}
 
 	return tracklists, total, nil
+}
+
+// DeleteTracklist deletes the tracklist with the given ID.
+// If the tracklist does not exist returns a not found error.
+func (s *Store) DeleteTracklist(ctx context.Context, id string) error {
+	op := errors.Op("trackliststore[delete-tracklist]")
+
+	_, err := uuid.Parse(id)
+	if err != nil {
+		return errors.E(op, http.StatusNotFound)
+	}
+
+	tx, err := s.dataStore.Begin(ctx)
+	if err != nil {
+		return errors.E(op, errors.Strf("db begin failed: %w", err))
+	}
+	defer tx.Rollback(ctx)
+
+	queries := s.dataStore.WithTx(tx)
+
+	if err := queries.DeleteTracklistTracks(ctx, id); err != nil {
+		return errors.E(op, errors.Strf("delete tracklist tracks failed: %w", err))
+	}
+
+	if err := queries.DeleteTracklist(ctx, id); err != nil {
+		return errors.E(op, errors.Strf("delete tracklist failed: %w", err))
+	}
+
+	if err := tx.Commit(ctx); err != nil {
+		return errors.E(op, errors.Strf("tx commit failed: %w", err))
+	}
+
+	return nil
 }
