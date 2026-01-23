@@ -34,7 +34,7 @@ func routes(
 		ware.RequestID(uuid.NewString),
 		ware.RequestLogging(),
 		ware.CORS(ware.CORSOptions{
-			AllowedMethods: []string{"GET", "POST", "PATCH"},
+			AllowedMethods: []string{"GET", "POST", "PATCH", "DELETE"},
 			AllowedHeaders: []string{"API-Token", "Content-Type"},
 		}),
 	)
@@ -54,7 +54,7 @@ func routes(
 	router.Handle("GET /tracklists/{id}", api(rw(tracklistscontroller.Show(tracklistStore))))
 	router.Handle("POST /tracklists", authorized(rw(tracklistscontroller.Create(tracklistStore))))
 	router.Handle("PATCH /tracklists/{id}", authorized(rw(tracklistscontroller.Update(tracklistStore))))
-	// router.Handle("DELETE /tracklists/{id}", authorized(rw(tracklistscontroller.Delete(tracklistStore))))
+	router.Handle("DELETE /tracklists/{id}", authorized(rw(tracklistscontroller.Delete(tracklistStore))))
 
 	// router.Handle("GET /tracks", api(rw(trackscontroller.Index(trackStore))))
 	router.Handle("GET /tracks/{id}", api(rw(trackscontroller.Show(trackStore))))
