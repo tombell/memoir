@@ -68,7 +68,7 @@ func (e *Error) Error() string {
 }
 
 // Unwrap returns the current error's underlying error if there is one.
-func (e *Error) Unrap() error {
+func (e *Error) Unwrap() error {
 	return e.err
 }
 

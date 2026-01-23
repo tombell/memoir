@@ -41,9 +41,10 @@ func WriteError(logger *slog.Logger, w http.ResponseWriter, err error) {
 		status: http.StatusInternalServerError,
 	}
 
-	if cr, ok := err.(ErrorReporter); ok {
-		resp.status = cr.Status()
-		resp.Errors = cr.Message()
+	var e *errors.Error
+	if errors.As(err, &e) {
+		resp.status = e.Status()
+		resp.Errors = e.Message()
 	}
 
 	if resp.status >= http.StatusInternalServerError {
