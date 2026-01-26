@@ -1,6 +1,6 @@
 NAME := memoir
 BUILD_DIR := bin
-PLATFORMS := windows-amd64 windows-arm64 darwin-amd64 darwin-arm64 linux-amd64 linux-arm64
+PLATFORMS := darwin-arm64 linux-arm64
 
 dev:
 	@echo "building ${BUILD_DIR}/${NAME}..."
