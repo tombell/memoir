@@ -5,10 +5,10 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/tombell/middle/ware"
-
 	"github.com/tombell/memoir/internal/api/payload"
 	"github.com/tombell/memoir/internal/controllers"
+
+	"github.com/tombell/middle/ware"
 )
 
 // rw wraps the given action function with reading HTTP request data, and
