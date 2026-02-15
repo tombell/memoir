@@ -65,6 +65,6 @@ require (
 	modernc.org/sqlite v1.29.1 // indirect
 )
 
-go 1.24.2
+go 1.26
 
 tool github.com/tombell/migrate/cmd/migrate
