@@ -1,66 +1,104 @@
 package config
 
 import (
-	"encoding/json"
 	"fmt"
 	"net"
 	"os"
+
+	"github.com/joho/godotenv"
 )
 
 // Config contains the configuration values for various parts of the
 // application.
 type Config struct {
-	Address string `json:"address"`
-	DB      string `json:"db"`
+	Address string
+	DB      string
 
 	API struct {
-		Token string `json:"token"`
-	} `json:"api"`
+		Token string
+	}
 
 	AWS struct {
-		Bucket string `json:"bucket"`
-		Region string `json:"region"`
-		Key    string `json:"key"`
-		Secret string `json:"secret"`
-	} `json:"aws"`
+		Bucket string
+		Region string
+		Key    string
+		Secret string
+	}
 }
 
-// Load reads the configuration file at the given path and returns a Config instance.
-// If the HOST or PORT environment variables are set, they override the host and port in the address.
-// If DATABASE_URL is set, it overrides the database connection URL.
-func Load(filepath string) (*Config, error) {
-	data, err := os.ReadFile(filepath)
+// Load reads environment variables from a .env file if present, then
+// populates and returns a Config with values from the environment.
+// Returns an error if required environment variables are not set.
+func Load() (*Config, error) {
+	_ = godotenv.Load()
+
+	host := getEnv("HOST", "127.0.0.1")
+	port := getEnv("PORT", "8080")
+
+	db, err := requireEnv("DATABASE_URL")
 	if err != nil {
-		return nil, fmt.Errorf("could not read config file: %w", err)
+		return nil, err
 	}
 
-	var cfg Config
-	if err := json.Unmarshal(data, &cfg); err != nil {
-		return nil, fmt.Errorf("could not parse config file: %w", err)
-	}
-
-	host, port, err := net.SplitHostPort(cfg.Address)
+	apiToken, err := requireEnv("API_TOKEN")
 	if err != nil {
-		host = ""
-		port = cfg.Address
-
-		if len(port) > 0 && port[0] == ':' {
-			port = port[1:]
-		}
+		return nil, err
 	}
 
-	if envHost := os.Getenv("HOST"); envHost != "" {
-		host = envHost
-	}
-	if envPort := os.Getenv("PORT"); envPort != "" {
-		port = envPort
+	awsBucket, err := requireEnv("AWS_BUCKET")
+	if err != nil {
+		return nil, err
 	}
 
-	cfg.Address = net.JoinHostPort(host, port)
-
-	if envDB := os.Getenv("DATABASE_URL"); envDB != "" {
-		cfg.DB = envDB
+	awsRegion, err := requireEnv("AWS_REGION")
+	if err != nil {
+		return nil, err
 	}
 
-	return &cfg, nil
+	awsKey, err := requireEnv("AWS_KEY")
+	if err != nil {
+		return nil, err
+	}
+
+	awsSecret, err := requireEnv("AWS_SECRET")
+	if err != nil {
+		return nil, err
+	}
+
+	cfg := &Config{
+		Address: net.JoinHostPort(host, port),
+		DB:      db,
+		API: struct {
+			Token string
+		}{
+			Token: apiToken,
+		},
+		AWS: struct {
+			Bucket string
+			Region string
+			Key    string
+			Secret string
+		}{
+			Bucket: awsBucket,
+			Region: awsRegion,
+			Key:    awsKey,
+			Secret: awsSecret,
+		},
+	}
+
+	return cfg, nil
+}
+
+func getEnv(key, defaultValue string) string {
+	if value := os.Getenv(key); value != "" {
+		return value
+	}
+	return defaultValue
+}
+
+func requireEnv(key string) (string, error) {
+	if value := os.Getenv(key); value != "" {
+		return value, nil
+	}
+	return "", fmt.Errorf("required environment variable %s is not set", key)
 }

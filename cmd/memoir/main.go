@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"flag"
 	"fmt"
 	"log/slog"
 	"os"
@@ -30,12 +29,9 @@ func main() {
 		ReportCaller:    true,
 	}))
 
-	cfgpath := flag.String("config", "config.dev.json", "")
-	flag.Parse()
-
-	cfg, err := config.Load(*cfgpath)
+	cfg, err := config.Load()
 	if err != nil {
-		logger.Error("failed loading config file", "err", err)
+		logger.Error("failed loading config", "err", err)
 		os.Exit(1)
 	}
 
