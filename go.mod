@@ -8,6 +8,7 @@ require (
 	github.com/charmbracelet/log v1.0.0
 	github.com/google/uuid v1.6.0
 	github.com/jackc/pgx/v5 v5.8.0
+	github.com/joho/godotenv v1.5.1
 	github.com/tombell/middle v0.0.5
 	github.com/tombell/valid v0.0.3
 )
