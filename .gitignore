@@ -24,5 +24,4 @@ go.work
 bin/
 
 # Configuration files
-config.json
-config.dev.json
+.env
