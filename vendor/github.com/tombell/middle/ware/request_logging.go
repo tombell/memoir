@@ -38,6 +38,8 @@ func RequestLogging() func(http.Handler) http.Handler {
 				r.Method,
 				"path",
 				r.URL.Path,
+				"user-agent",
+				r.UserAgent(),
 			)
 
 			rw := &responseWriter{ResponseWriter: w}
@@ -50,6 +52,8 @@ func RequestLogging() func(http.Handler) http.Handler {
 				r.Method,
 				"path",
 				r.URL.Path,
+				"user-agent",
+				r.UserAgent(),
 				"status",
 				rw.status,
 				"size",

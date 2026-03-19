@@ -110,8 +110,8 @@ github.com/stretchr/testify v1.3.0/go.mod h1:M5WIy9Dh21IEIfnGCwXGc5bZfKNJtfHm1UV
 github.com/stretchr/testify v1.7.0/go.mod h1:6Fq8oRcR53rry900zMqJjRRixrwX3KX962/h/Wwjteg=
 github.com/stretchr/testify v1.11.1 h1:7s2iGBzp5EwR7/aIZr8ao5+dra3wiQyKjjFuvgVKu7U=
 github.com/stretchr/testify v1.11.1/go.mod h1:wZwfW3scLgRK+23gO65QZefKpKQRnfz6sD981Nm4B6U=
-github.com/tombell/middle v0.0.5 h1:hLOPxoCIdN7dUZkTWQrSTVsjQUjJBaHvWMttVGUAXic=
-github.com/tombell/middle v0.0.5/go.mod h1:LDY6MZ6EbB3gYlzxk+ESHJY9zmATVNuVbHO5JeNHRvU=
+github.com/tombell/middle v0.0.6 h1:RzfcGosbRbwv44FMeFpC5zMxp5mCVXVT2/Lj60BVYnM=
+github.com/tombell/middle v0.0.6/go.mod h1:LDY6MZ6EbB3gYlzxk+ESHJY9zmATVNuVbHO5JeNHRvU=
 github.com/tombell/migrate v0.0.1-alpha.1 h1:lwRKjNxjoyGYwDbSNh9MuueFjvN9udzSdQ/Ly7oGjOA=
 github.com/tombell/migrate v0.0.1-alpha.1/go.mod h1:Pd2XWLvcVNKhAtzudExXTw8SGDrwWaVExL5DOw+UMjk=
 github.com/tombell/valid v0.0.3 h1:7ck92mpY7hRjHS4aJ+5l/rqysVQhOIruBwNqT8AjZyw=
