@@ -14,7 +14,6 @@ import (
 	"github.com/tombell/memoir/internal/controllers/searchcontroller"
 	"github.com/tombell/memoir/internal/controllers/tracklistscontroller"
 	"github.com/tombell/memoir/internal/controllers/trackscontroller"
-
 	"github.com/tombell/memoir/internal/stores/artworkstore"
 	"github.com/tombell/memoir/internal/stores/trackliststore"
 	"github.com/tombell/memoir/internal/stores/trackstore"
