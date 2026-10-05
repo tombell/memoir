@@ -40,13 +40,13 @@ func routes(
 
 	api := middle.Use(
 		base,
-		ware.Recovery(),
+		middleware.Recovery(),
 	)
 
 	authorized := middle.Use(
 		base,
+		middleware.Recovery(),
 		middleware.Authorize(config.API.Token),
-		ware.Recovery(),
 	)
 
 	router.Handle("GET /tracklists", api(rw(tracklistscontroller.Index(trackStore, tracklistStore))))

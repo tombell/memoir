@@ -2,6 +2,7 @@ package tracklistscontroller
 
 import (
 	"context"
+	"net/http"
 
 	"github.com/tombell/memoir/internal/controllers"
 	"github.com/tombell/memoir/internal/stores/trackliststore"
@@ -19,6 +20,11 @@ type CreateRequest struct {
 // CreateResponse defines the data to write to the HTTP response.
 type CreateResponse struct {
 	Tracklist *trackliststore.Tracklist `json:"data"`
+}
+
+// StatusCode returns the status code to use for the HTTP response.
+func (r *CreateResponse) StatusCode() int {
+	return http.StatusCreated
 }
 
 // Create returns an action function that creates a new tracklist.
