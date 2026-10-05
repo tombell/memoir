@@ -19,7 +19,14 @@ SELECT pg_advisory_xact_lock(hashtextextended('memoir.patch.track-identity', 0))
 
 -- name: GetMostPlayedTracks :many
 SELECT
-  sqlc.embed(tracks),
+  "tracks"."id",
+  "tracks"."artist",
+  "tracks"."name",
+  "tracks"."genre",
+  "tracks"."bpm",
+  "tracks"."key",
+  "tracks"."created",
+  "tracks"."updated",
   count(DISTINCT "tracklist_tracks"."tracklist_id") as "played"
 FROM "tracks"
 JOIN "tracklist_tracks" ON "tracklist_tracks"."track_id" = "tracks"."id"

@@ -115,7 +115,14 @@ func (q *Queries) GetTracklist(ctx context.Context, id string) (*Tracklist, erro
 const getTracklistWithTracks = `-- name: GetTracklistWithTracks :many
 SELECT
   tracklists.id, tracklists.name, tracklists.date, tracklists.artwork, tracklists.url, tracklists.created, tracklists.updated,
-  tracks.id, tracks.artist, tracks.name, tracks.genre, tracks.bpm, tracks.key, tracks.created, tracks.updated, tracks.fts_name_and_artist
+  "tracks"."id",
+  "tracks"."artist",
+  "tracks"."name",
+  "tracks"."genre",
+  "tracks"."bpm",
+  "tracks"."key",
+  "tracks"."created",
+  "tracks"."updated"
 FROM "tracklists"
 JOIN "tracklist_tracks" ON "tracklist_tracks"."tracklist_id" = "tracklists"."id"
 JOIN "tracks" ON "tracks"."id" = "tracklist_tracks"."track_id"
@@ -125,7 +132,14 @@ ORDER BY "tracklist_tracks"."track_number" ASC
 
 type GetTracklistWithTracksRow struct {
 	Tracklist Tracklist
-	Track     Track
+	ID        string
+	Artist    string
+	Name      string
+	Genre     string
+	BPM       float64
+	Key       string
+	Created   time.Time
+	Updated   time.Time
 }
 
 func (q *Queries) GetTracklistWithTracks(ctx context.Context, id string) ([]*GetTracklistWithTracksRow, error) {
@@ -145,15 +159,14 @@ func (q *Queries) GetTracklistWithTracks(ctx context.Context, id string) ([]*Get
 			&i.Tracklist.URL,
 			&i.Tracklist.Created,
 			&i.Tracklist.Updated,
-			&i.Track.ID,
-			&i.Track.Artist,
-			&i.Track.Name,
-			&i.Track.Genre,
-			&i.Track.BPM,
-			&i.Track.Key,
-			&i.Track.Created,
-			&i.Track.Updated,
-			&i.Track.FtsNameAndArtist,
+			&i.ID,
+			&i.Artist,
+			&i.Name,
+			&i.Genre,
+			&i.BPM,
+			&i.Key,
+			&i.Created,
+			&i.Updated,
 		); err != nil {
 			return nil, err
 		}

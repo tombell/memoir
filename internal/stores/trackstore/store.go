@@ -74,14 +74,14 @@ func (s *Store) GetMostPlayedTracks(ctx context.Context, page, limit int64) ([]*
 
 	for _, row := range rows {
 		track := &Track{
-			ID:      row.Track.ID,
-			Name:    row.Track.Name,
-			Artist:  row.Track.Artist,
-			BPM:     row.Track.BPM,
-			Key:     row.Track.Key,
-			Genre:   row.Track.Genre,
-			Created: row.Track.Created,
-			Updated: row.Track.Updated,
+			ID:      row.ID,
+			Name:    row.Name,
+			Artist:  row.Artist,
+			BPM:     row.BPM,
+			Key:     row.Key,
+			Genre:   row.Genre,
+			Created: row.Created,
+			Updated: row.Updated,
 			Played:  row.Played,
 		}
 

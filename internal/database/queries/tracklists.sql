@@ -29,7 +29,14 @@ FROM (
 -- name: GetTracklistWithTracks :many
 SELECT
   sqlc.embed(tracklists),
-  sqlc.embed(tracks)
+  "tracks"."id",
+  "tracks"."artist",
+  "tracks"."name",
+  "tracks"."genre",
+  "tracks"."bpm",
+  "tracks"."key",
+  "tracks"."created",
+  "tracks"."updated"
 FROM "tracklists"
 JOIN "tracklist_tracks" ON "tracklist_tracks"."tracklist_id" = "tracklists"."id"
 JOIN "tracks" ON "tracks"."id" = "tracklist_tracks"."track_id"
