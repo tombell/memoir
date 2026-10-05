@@ -230,6 +230,12 @@ func (s *Store) UpdateTracklist(ctx context.Context, id string, model *UpdateTra
 		return nil, errors.E(op, errors.Strf("update tracklist failed: %w", err))
 	}
 
+	if model.Tracks.Present {
+		if err := replaceTracklistTracks(ctx, queries, id, model.Tracks.Value); err != nil {
+			return nil, errors.E(op, err)
+		}
+	}
+
 	rows, err := queries.GetTracklistWithTracks(ctx, id)
 	if err != nil {
 		return nil, errors.E(op, errors.Strf("find tracklist failed: %w", err))

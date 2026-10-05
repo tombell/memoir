@@ -296,3 +296,12 @@ func (q *Queries) GetTracksByQuery(ctx context.Context, arg GetTracksByQueryPara
 	}
 	return items, nil
 }
+
+const lockPatchTrackIdentity = `-- name: LockPatchTrackIdentity :exec
+SELECT pg_advisory_xact_lock(hashtextextended('memoir.patch.track-identity', 0))
+`
+
+func (q *Queries) LockPatchTrackIdentity(ctx context.Context) error {
+	_, err := q.db.Exec(ctx, lockPatchTrackIdentity)
+	return err
+}

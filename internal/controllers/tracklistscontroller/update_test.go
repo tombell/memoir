@@ -13,7 +13,7 @@ import (
 )
 
 func TestUpdateRejectsInvalidMetadataBeforeDatabaseAccess(t *testing.T) {
-	for _, body := range []string{`{"name":null}`, `{"artwork":""}`, `{"date":"invalid"}`, `{"url":false}`} {
+	for _, body := range []string{`{"name":null}`, `{"artwork":""}`, `{"date":"invalid"}`, `{"url":false}`, `{"name":"Valid","tracks":[["short"]]}`, `{"tracks":[]}`, `{"tracks":null}`} {
 		t.Run(body, func(t *testing.T) {
 			req := httptest.NewRequest(http.MethodPatch, "/tracklists/mix", strings.NewReader(body))
 			req.Header.Set("Content-Type", "application/json")

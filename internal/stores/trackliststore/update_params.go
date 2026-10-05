@@ -33,10 +33,11 @@ func (f *PatchField[T]) UnmarshalJSON(data []byte) error {
 // UpdateTracklistParams contains only the metadata supplied by PATCH.
 // Omitted fields retain their values. Null and empty values are rejected.
 type UpdateTracklistParams struct {
-	Name    PatchField[string] `json:"name"`
-	Date    PatchField[string] `json:"date"`
-	URL     PatchField[string] `json:"url"`
-	Artwork PatchField[string] `json:"artwork"`
+	Name    PatchField[string]    `json:"name"`
+	Date    PatchField[string]    `json:"date"`
+	URL     PatchField[string]    `json:"url"`
+	Artwork PatchField[string]    `json:"artwork"`
+	Tracks  PatchField[TrackRows] `json:"tracks"`
 }
 
 func (t *UpdateTracklistParams) Validate() valid.Error {
@@ -67,6 +68,15 @@ func (t *UpdateTracklistParams) Validate() valid.Error {
 		v.Check("url", valid.Case{Cond: valid.IsURL(t.URL.Value), Msg: "Must be a valid URL"})
 	}
 	check("artwork", t.Artwork)
+	if t.Tracks.Present {
+		v.Check("tracks",
+			valid.Case{Cond: !t.Tracks.Null, Msg: "Must not be null"},
+			valid.Case{Cond: !t.Tracks.Invalid, Msg: "Must be an array of string arrays"},
+		)
+		if !t.Tracks.Null && !t.Tracks.Invalid {
+			validateReplacementTracks(v, t.Tracks.Value)
+		}
+	}
 	if v.Valid() {
 		return nil
 	}

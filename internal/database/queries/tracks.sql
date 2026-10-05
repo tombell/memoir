@@ -14,6 +14,9 @@ VALUES ($1, $2, $3, $4, $5, $6, $7, $8);
 -- name: CountMostPlayedTracks :one
 SELECT count(DISTINCT "track_id") FROM "tracklist_tracks";
 
+-- name: LockPatchTrackIdentity :exec
+SELECT pg_advisory_xact_lock(hashtextextended('memoir.patch.track-identity', 0));
+
 -- name: GetMostPlayedTracks :many
 SELECT
   sqlc.embed(tracks),
