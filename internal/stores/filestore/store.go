@@ -18,42 +18,51 @@ import (
 // Store is a store used for interacting with AWS S3.
 type Store struct {
 	config *cfg.Config
-	svc    *s3.Client
+	svc    s3Client
+}
+
+type s3Client interface {
+	HeadObject(context.Context, *s3.HeadObjectInput, ...func(*s3.Options)) (*s3.HeadObjectOutput, error)
+	PutObject(context.Context, *s3.PutObjectInput, ...func(*s3.Options)) (*s3.PutObjectOutput, error)
 }
 
 // New returns a new Store configured for the S3 bucket provided in the given
 // configuration.
-func New(cfg *cfg.Config) *Store {
+func New(cfg *cfg.Config) (*Store, error) {
+	op := errors.Op("filestore[new]")
+
 	creds := credentials.NewStaticCredentialsProvider(cfg.AWS.Key, cfg.AWS.Secret, "")
-	awscfg, _ := config.LoadDefaultConfig(
+	awscfg, err := config.LoadDefaultConfig(
 		context.TODO(),
 		config.WithCredentialsProvider(creds),
 		config.WithRegion(cfg.AWS.Region),
 	)
+	if err != nil {
+		return nil, errors.E(op, errors.Strf("loading AWS config failed: %w", err))
+	}
 
 	return &Store{
 		config: cfg,
 		svc:    s3.NewFromConfig(awscfg),
-	}
+	}, nil
 }
 
 // Exists checks if an object with the given key exists in the bucket.
 func (s *Store) Exists(ctx context.Context, key string) (bool, error) {
 	op := errors.Op("filestore[exists]")
 
-	input := &s3.GetObjectInput{
+	input := &s3.HeadObjectInput{
 		Bucket: aws.String(s.config.AWS.Bucket),
 		Key:    aws.String(key),
-		Range:  aws.String("bytes=0-1"),
 	}
 
-	if _, err := s.svc.GetObject(ctx, input); err != nil {
-		var nsk *types.NoSuchKey
-		if errors.As(err, &nsk) {
+	if _, err := s.svc.HeadObject(ctx, input); err != nil {
+		var notFound *types.NotFound
+		if errors.As(err, &notFound) {
 			return false, nil
 		}
 
-		return false, errors.E(op, errors.Strf("get object failed: %w", err))
+		return false, errors.E(op, errors.Strf("head object failed: %w", err))
 	}
 
 	return true, nil
@@ -63,10 +72,18 @@ func (s *Store) Exists(ctx context.Context, key string) (bool, error) {
 func (s *Store) Put(ctx context.Context, key string, r io.ReadSeeker) error {
 	op := errors.Op("filestore[put]")
 
+	if _, err := r.Seek(0, io.SeekStart); err != nil {
+		return errors.E(op, errors.Strf("seek failed: %w", err))
+	}
+
 	var buf [512]byte
 
-	if _, err := r.Read(buf[:]); err != nil {
+	n, err := io.ReadFull(r, buf[:])
+	if err != nil && err != io.EOF && err != io.ErrUnexpectedEOF {
 		return errors.E(op, errors.Strf("read file failed: %w", err))
+	}
+	if n == 0 {
+		return errors.E(op, errors.Strf("file is empty"))
 	}
 
 	if _, err := r.Seek(0, io.SeekStart); err != nil {
@@ -76,7 +93,7 @@ func (s *Store) Put(ctx context.Context, key string, r io.ReadSeeker) error {
 	input := &s3.PutObjectInput{
 		Bucket:      aws.String(s.config.AWS.Bucket),
 		Key:         aws.String(key),
-		ContentType: aws.String(http.DetectContentType(buf[:])),
+		ContentType: aws.String(http.DetectContentType(buf[:n])),
 		Body:        r,
 	}
 

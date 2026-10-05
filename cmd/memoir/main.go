@@ -43,7 +43,11 @@ func main() {
 	defer dbpool.Close()
 
 	dataStore := datastore.New(dbpool)
-	fileStore := filestore.New(cfg)
+	fileStore, err := filestore.New(cfg)
+	if err != nil {
+		logger.Error("failed creating file store", "err", err)
+		os.Exit(1)
+	}
 
 	server := api.New(
 		logger,

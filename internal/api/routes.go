@@ -19,6 +19,9 @@ import (
 	"github.com/tombell/memoir/internal/stores/trackstore"
 )
 
+// Allow 1 MiB for multipart boundaries, headers, and other form fields.
+const maxArtworkRequestSize = artworkstore.MaxUploadSize + (1 << 20)
+
 // routes configures the routes of the application.
 func routes(
 	logger *slog.Logger,
@@ -61,7 +64,7 @@ func routes(
 	// router.Handle("PATCH /tracks/{id}", authorized(rw(trackscontroller.Update(trackStore))))
 	// router.Handle("DELETE /tracks/{id}", authorized(rw(trackscontroller.Delete(trackStore))))
 
-	router.Handle("POST /artwork", authorized(rw(artworkcontroller.Create(artworkStore))))
+	router.Handle("POST /artwork", authorized(http.MaxBytesHandler(rw(artworkcontroller.Create(artworkStore)), maxArtworkRequestSize)))
 
 	router.Handle("GET /tracks/search", api(rw(searchcontroller.Tracks(trackStore))))
 	// router.Handle("GET /search/tracklists", api(rw(searchcontroller.Tracklists(trackStore))))
