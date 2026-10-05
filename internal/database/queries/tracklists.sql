@@ -29,7 +29,14 @@ FROM (
 -- name: GetTracklistWithTracks :many
 SELECT
   sqlc.embed(tracklists),
-  sqlc.embed(tracks)
+  "tracks"."id",
+  "tracks"."artist",
+  "tracks"."name",
+  "tracks"."genre",
+  "tracks"."bpm",
+  "tracks"."key",
+  "tracks"."created",
+  "tracks"."updated"
 FROM "tracklists"
 JOIN "tracklist_tracks" ON "tracklist_tracks"."tracklist_id" = "tracklists"."id"
 JOIN "tracks" ON "tracks"."id" = "tracklist_tracks"."track_id"
@@ -64,8 +71,13 @@ LIMIT $3;
 
 -- name: UpdateTracklist :one
 UPDATE "tracklists"
-SET "name" = $2, "url" = $3, "date" = $4, "updated" = NOW()
-WHERE "id" = $1
+SET
+  "name" = CASE WHEN sqlc.arg(update_name)::boolean THEN sqlc.arg(name)::text ELSE "name" END,
+  "url" = CASE WHEN sqlc.arg(update_url)::boolean THEN sqlc.arg(url)::text ELSE "url" END,
+  "date" = CASE WHEN sqlc.arg(update_date)::boolean THEN sqlc.arg(date)::timestamp ELSE "date" END,
+  "artwork" = CASE WHEN sqlc.arg(update_artwork)::boolean THEN sqlc.arg(artwork)::text ELSE "artwork" END,
+  "updated" = NOW()
+WHERE "id" = sqlc.arg(id)
 RETURNING *;
 
 -- name: GetTracklist :one
