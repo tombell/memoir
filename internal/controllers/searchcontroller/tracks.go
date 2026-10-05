@@ -9,9 +9,9 @@ import (
 
 // SearchTracksRequest defines the data to read from the HTTP request.
 type SearchTracksRequest struct {
-	Query   string `query:"q"`
-	Page    string `query:"page"`
-	PerPage string `query:"per_page"`
+	Query   string  `query:"q"`
+	Page    *string `query:"page"`
+	PerPage *string `query:"per_page"`
 }
 
 // SearchTracksResponse defines the data to write to the HTTP response.
@@ -23,12 +23,7 @@ type SearchTracksResponse struct {
 func Tracks(trackStore *trackstore.Store) controllers.ActionFunc[SearchTracksRequest, *SearchTracksResponse] {
 	return func(ctx context.Context, input SearchTracksRequest) (*SearchTracksResponse, error) {
 		// TODO: implement pagination
-		// page, err := controllers.IntQueryParam(input.Page, 1)
-		// if err != nil {
-		// 	return nil, err
-		// }
-
-		perPage, err := controllers.ParamAsInt(input.PerPage, 10)
+		_, perPage, err := controllers.PaginationParams(input.Page, input.PerPage)
 		if err != nil {
 			return nil, err
 		}
