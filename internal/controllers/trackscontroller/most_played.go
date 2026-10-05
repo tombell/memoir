@@ -15,6 +15,7 @@ type MostPlayedRequest struct {
 
 // MostPlayedResponse defines the data to write from the HTTP response.
 type MostPlayedResponse struct {
+	Meta   controllers.Meta    `json:"meta"`
 	Tracks []*trackstore.Track `json:"data"`
 }
 
@@ -22,22 +23,16 @@ type MostPlayedResponse struct {
 // contained in the most tracklists.
 func MostPlayed(trackStore *trackstore.Store) controllers.ActionFunc[MostPlayedRequest, *MostPlayedResponse] {
 	return func(ctx context.Context, input MostPlayedRequest) (*MostPlayedResponse, error) {
-		// TODO: implement pagination
-		// page, err := controllers.IntQueryParam(input.Page, 1)
-		// if err != nil {
-		// 	return nil, err
-		// }
-
-		perPage, err := controllers.ParamAsInt(input.PerPage, 10)
+		page, perPage, err := controllers.Pagination(input.Page, input.PerPage)
 		if err != nil {
 			return nil, err
 		}
 
-		tracks, err := trackStore.GetMostPlayedTracks(ctx, perPage)
+		tracks, total, err := trackStore.GetMostPlayedTracks(ctx, page, perPage)
 		if err != nil {
 			return nil, err
 		}
 
-		return &MostPlayedResponse{Tracks: tracks}, nil
+		return &MostPlayedResponse{Meta: controllers.NewMeta(total, page, perPage), Tracks: tracks}, nil
 	}
 }

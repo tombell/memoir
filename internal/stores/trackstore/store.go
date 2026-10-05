@@ -54,14 +54,20 @@ func (s *Store) GetTrack(ctx context.Context, id string) (*Track, error) {
 }
 
 // GetMostPlayedTracks returns a list of the tracks that are contained in the
-// most tracklists. The list is limited with the limit argument.
-// TODO: properly paginate.
-func (s *Store) GetMostPlayedTracks(ctx context.Context, limit int64) ([]*Track, error) {
+// most distinct tracklists, together with the total number of played tracks.
+func (s *Store) GetMostPlayedTracks(ctx context.Context, page, limit int64) ([]*Track, int64, error) {
 	op := errors.Op("trackstore[get-most-played-tracks]")
 
-	rows, err := s.dataStore.GetMostPlayedTracks(ctx, int32(limit))
+	total, err := s.dataStore.CountMostPlayedTracks(ctx)
 	if err != nil {
-		return nil, errors.E(op, errors.Strf("find most played tracks failed: %w", err))
+		return nil, 0, errors.E(op, errors.Strf("count most played tracks failed: %w", err))
+	}
+	rows, err := s.dataStore.GetMostPlayedTracks(ctx, db.GetMostPlayedTracksParams{
+		RowLimit:  int32(limit),
+		RowOffset: int32(limit * (page - 1)),
+	})
+	if err != nil {
+		return nil, 0, errors.E(op, errors.Strf("find most played tracks failed: %w", err))
 	}
 
 	tracks := make([]*Track, 0, len(rows))
@@ -82,21 +88,25 @@ func (s *Store) GetMostPlayedTracks(ctx context.Context, limit int64) ([]*Track,
 		tracks = append(tracks, track)
 	}
 
-	return tracks, nil
+	return tracks, total, nil
 }
 
 // SearchTracks returns a list of tracks that match the full text search
-// results. The list is limited with the limit arugment.
-// TODO: properly paginate.
-func (s *Store) SearchTracks(ctx context.Context, query string, limit int64) ([]*Track, error) {
+// results, together with the total number of matches before pagination.
+func (s *Store) SearchTracks(ctx context.Context, query string, page, limit int64) ([]*Track, int64, error) {
 	op := errors.Op("trackstore[search-tracks]")
 
+	total, err := s.dataStore.CountTracksByQuery(ctx, query)
+	if err != nil {
+		return nil, 0, errors.E(op, errors.Strf("count tracks by query failed: %w", err))
+	}
 	rows, err := s.dataStore.GetTracksByQuery(ctx, db.GetTracksByQueryParams{
-		Query:    query,
-		RowLimit: int32(limit),
+		Query:     query,
+		RowLimit:  int32(limit),
+		RowOffset: int32(limit * (page - 1)),
 	})
 	if err != nil {
-		return nil, errors.E(op, errors.Strf("find tracks by query failed: %w", err))
+		return nil, 0, errors.E(op, errors.Strf("find tracks by query failed: %w", err))
 	}
 
 	tracks := make([]*Track, 0, len(rows))
@@ -118,5 +128,5 @@ func (s *Store) SearchTracks(ctx context.Context, query string, limit int64) ([]
 		tracks = append(tracks, track)
 	}
 
-	return tracks, nil
+	return tracks, total, nil
 }

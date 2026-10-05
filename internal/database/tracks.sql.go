@@ -49,24 +49,54 @@ func (q *Queries) AddTrack(ctx context.Context, arg AddTrackParams) error {
 	return err
 }
 
+const countMostPlayedTracks = `-- name: CountMostPlayedTracks :one
+SELECT count(DISTINCT "track_id") FROM "tracklist_tracks"
+`
+
+func (q *Queries) CountMostPlayedTracks(ctx context.Context) (int64, error) {
+	row := q.db.QueryRow(ctx, countMostPlayedTracks)
+	var count int64
+	err := row.Scan(&count)
+	return count, err
+}
+
+const countTracksByQuery = `-- name: CountTracksByQuery :one
+SELECT count("id")
+FROM "tracks", websearch_to_tsquery('english', $1::text) "q"
+WHERE "fts_name_and_artist" @@ "q"
+`
+
+func (q *Queries) CountTracksByQuery(ctx context.Context, query string) (int64, error) {
+	row := q.db.QueryRow(ctx, countTracksByQuery, query)
+	var count int64
+	err := row.Scan(&count)
+	return count, err
+}
+
 const getMostPlayedTracks = `-- name: GetMostPlayedTracks :many
 SELECT
   tracks.id, tracks.artist, tracks.name, tracks.genre, tracks.bpm, tracks.key, tracks.created, tracks.updated, tracks.fts_name_and_artist,
-  count("tracks"."id") as "played"
+  count(DISTINCT "tracklist_tracks"."tracklist_id") as "played"
 FROM "tracks"
 JOIN "tracklist_tracks" ON "tracklist_tracks"."track_id" = "tracks"."id"
 GROUP BY "tracks"."id"
-ORDER BY "played" DESC
-LIMIT $1
+ORDER BY "played" DESC, "tracks"."id" ASC
+LIMIT $2::int
+OFFSET $1::int
 `
+
+type GetMostPlayedTracksParams struct {
+	RowOffset int32
+	RowLimit  int32
+}
 
 type GetMostPlayedTracksRow struct {
 	Track  Track
 	Played int64
 }
 
-func (q *Queries) GetMostPlayedTracks(ctx context.Context, limit int32) ([]*GetMostPlayedTracksRow, error) {
-	rows, err := q.db.Query(ctx, getMostPlayedTracks, limit)
+func (q *Queries) GetMostPlayedTracks(ctx context.Context, arg GetMostPlayedTracksParams) ([]*GetMostPlayedTracksRow, error) {
+	rows, err := q.db.Query(ctx, getMostPlayedTracks, arg.RowOffset, arg.RowLimit)
 	if err != nil {
 		return nil, err
 	}
@@ -209,17 +239,18 @@ FROM (
     "updated",
     ts_rank("fts_name_and_artist", "q") as "rank",
     "q"
-  FROM "tracks", websearch_to_tsquery($1::text) "q"
+  FROM "tracks", websearch_to_tsquery('english', $1::text) "q"
   WHERE "fts_name_and_artist" @@ "q"
-  ORDER BY "rank" DESC
 ) as "searched_tracks"
-ORDER BY "rank" DESC
-LIMIT $2::int
+ORDER BY "rank" DESC, "id" ASC
+LIMIT $3::int
+OFFSET $2::int
 `
 
 type GetTracksByQueryParams struct {
-	Query    string
-	RowLimit int32
+	Query     string
+	RowOffset int32
+	RowLimit  int32
 }
 
 type GetTracksByQueryRow struct {
@@ -236,7 +267,7 @@ type GetTracksByQueryRow struct {
 }
 
 func (q *Queries) GetTracksByQuery(ctx context.Context, arg GetTracksByQueryParams) ([]*GetTracksByQueryRow, error) {
-	rows, err := q.db.Query(ctx, getTracksByQuery, arg.Query, arg.RowLimit)
+	rows, err := q.db.Query(ctx, getTracksByQuery, arg.Query, arg.RowOffset, arg.RowLimit)
 	if err != nil {
 		return nil, err
 	}

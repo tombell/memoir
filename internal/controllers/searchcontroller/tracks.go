@@ -16,28 +16,23 @@ type SearchTracksRequest struct {
 
 // SearchTracksResponse defines the data to write to the HTTP response.
 type SearchTracksResponse struct {
+	Meta   controllers.Meta    `json:"meta"`
 	Tracks []*trackstore.Track `json:"data"`
 }
 
 // Tracks returns an action function for searching tracks using the track store.
 func Tracks(trackStore *trackstore.Store) controllers.ActionFunc[SearchTracksRequest, *SearchTracksResponse] {
 	return func(ctx context.Context, input SearchTracksRequest) (*SearchTracksResponse, error) {
-		// TODO: implement pagination
-		// page, err := controllers.IntQueryParam(input.Page, 1)
-		// if err != nil {
-		// 	return nil, err
-		// }
-
-		perPage, err := controllers.ParamAsInt(input.PerPage, 10)
+		page, perPage, err := controllers.Pagination(input.Page, input.PerPage)
 		if err != nil {
 			return nil, err
 		}
 
-		tracks, err := trackStore.SearchTracks(ctx, input.Query, perPage)
+		tracks, total, err := trackStore.SearchTracks(ctx, input.Query, page, perPage)
 		if err != nil {
 			return nil, err
 		}
 
-		return &SearchTracksResponse{Tracks: tracks}, nil
+		return &SearchTracksResponse{Meta: controllers.NewMeta(total, page, perPage), Tracks: tracks}, nil
 	}
 }
