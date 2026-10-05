@@ -274,24 +274,39 @@ func (q *Queries) GetTracklistsByTrack(ctx context.Context, arg GetTracklistsByT
 
 const updateTracklist = `-- name: UpdateTracklist :one
 UPDATE "tracklists"
-SET "name" = $2, "url" = $3, "date" = $4, "updated" = NOW()
-WHERE "id" = $1
+SET
+  "name" = CASE WHEN $1::boolean THEN $2::text ELSE "name" END,
+  "url" = CASE WHEN $3::boolean THEN $4::text ELSE "url" END,
+  "date" = CASE WHEN $5::boolean THEN $6::timestamp ELSE "date" END,
+  "artwork" = CASE WHEN $7::boolean THEN $8::text ELSE "artwork" END,
+  "updated" = NOW()
+WHERE "id" = $9
 RETURNING id, name, date, artwork, url, created, updated
 `
 
 type UpdateTracklistParams struct {
-	ID   string
-	Name string
-	URL  string
-	Date time.Time
+	UpdateName    bool
+	Name          string
+	UpdateUrl     bool
+	URL           string
+	UpdateDate    bool
+	Date          time.Time
+	UpdateArtwork bool
+	Artwork       string
+	ID            string
 }
 
 func (q *Queries) UpdateTracklist(ctx context.Context, arg UpdateTracklistParams) (*Tracklist, error) {
 	row := q.db.QueryRow(ctx, updateTracklist,
-		arg.ID,
+		arg.UpdateName,
 		arg.Name,
+		arg.UpdateUrl,
 		arg.URL,
+		arg.UpdateDate,
 		arg.Date,
+		arg.UpdateArtwork,
+		arg.Artwork,
+		arg.ID,
 	)
 	var i Tracklist
 	err := row.Scan(

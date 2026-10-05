@@ -194,7 +194,7 @@ func (s *Store) AddTracklist(ctx context.Context, model *AddTracklistParams) (*T
 	}, nil
 }
 
-// UpdateTracklist uupdates the tracklist with the given ID.
+// UpdateTracklist updates supplied metadata on the tracklist with the given ID.
 // If the data is not valid returns an unprocessable entity error.
 // If the tracklist does not exist returns a not found error.
 func (s *Store) UpdateTracklist(ctx context.Context, id string, model *UpdateTracklistParams) (*Tracklist, error) {
@@ -217,31 +217,32 @@ func (s *Store) UpdateTracklist(ctx context.Context, id string, model *UpdateTra
 
 	queries := s.dataStore.WithTx(tx)
 
-	if _, err = queries.UpdateTracklist(ctx, model.ToDatabaseParams(id)); err != nil {
+	updated, err := queries.UpdateTracklist(ctx, model.ToDatabaseParams(id))
+	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
 			return nil, errors.E(op, http.StatusNotFound)
+		}
+		var pgErr *pgconn.PgError
+		if errors.As(err, &pgErr) && pgErr.Code == "23505" {
+			return nil, errors.E(op, errors.M{"name": {"Must be unique"}}, http.StatusUnprocessableEntity)
 		}
 
 		return nil, errors.E(op, errors.Strf("update tracklist failed: %w", err))
 	}
 
-	if err := tx.Commit(ctx); err != nil {
-		return nil, errors.E(op, errors.Strf("tx commit failed: %w", err))
-	}
-
-	rows, err := s.dataStore.GetTracklistWithTracks(ctx, id)
+	rows, err := queries.GetTracklistWithTracks(ctx, id)
 	if err != nil {
 		return nil, errors.E(op, errors.Strf("find tracklist failed: %w", err))
 	}
 
 	tracklist := &Tracklist{
-		ID:      rows[0].Tracklist.ID,
-		Name:    rows[0].Tracklist.Name,
-		Artwork: rows[0].Tracklist.Artwork,
-		URL:     rows[0].Tracklist.URL,
-		Date:    rows[0].Tracklist.Date,
-		Created: rows[0].Tracklist.Created,
-		Updated: rows[0].Tracklist.Updated,
+		ID:      updated.ID,
+		Name:    updated.Name,
+		Artwork: updated.Artwork,
+		URL:     updated.URL,
+		Date:    updated.Date,
+		Created: updated.Created,
+		Updated: updated.Updated,
 	}
 
 	for _, row := range rows {
@@ -258,6 +259,10 @@ func (s *Store) UpdateTracklist(ctx context.Context, id string, model *UpdateTra
 	}
 
 	tracklist.TrackCount = len(tracklist.Tracks)
+
+	if err := tx.Commit(ctx); err != nil {
+		return nil, errors.E(op, errors.Strf("tx commit failed: %w", err))
+	}
 
 	return tracklist, nil
 }

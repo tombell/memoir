@@ -11,9 +11,10 @@ import (
 type UpdateRequest struct {
 	ID string `path:"id"`
 
-	Name string `json:"name"`
-	Date string `json:"date"`
-	URL  string `json:"url"`
+	Name    trackliststore.PatchField[string] `json:"name"`
+	Date    trackliststore.PatchField[string] `json:"date"`
+	URL     trackliststore.PatchField[string] `json:"url"`
+	Artwork trackliststore.PatchField[string] `json:"artwork"`
 }
 
 // UpdateResponse defines the data to write to the HTTP response.
@@ -25,9 +26,10 @@ type UpdateResponse struct {
 func Update(tracklistStore *trackliststore.Store) controllers.ActionFunc[UpdateRequest, *UpdateResponse] {
 	return func(ctx context.Context, input UpdateRequest) (*UpdateResponse, error) {
 		params := &trackliststore.UpdateTracklistParams{
-			Name: input.Name,
-			Date: input.Date,
-			URL:  input.URL,
+			Name:    input.Name,
+			Date:    input.Date,
+			URL:     input.URL,
+			Artwork: input.Artwork,
 		}
 
 		tracklist, err := tracklistStore.UpdateTracklist(ctx, input.ID, params)
