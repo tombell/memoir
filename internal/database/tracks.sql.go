@@ -10,7 +10,7 @@ import (
 	"time"
 )
 
-const addTrack = `-- name: AddTrack :exec
+const addOrReuseTrack = `-- name: AddOrReuseTrack :one
 INSERT INTO "tracks" (
   "id",
   "artist",
@@ -22,9 +22,11 @@ INSERT INTO "tracks" (
   "updated"
 )
 VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+ON CONFLICT ("artist", "name") DO UPDATE SET "artist" = "tracks"."artist"
+RETURNING "id"
 `
 
-type AddTrackParams struct {
+type AddOrReuseTrackParams struct {
 	ID      string
 	Artist  string
 	Name    string
@@ -35,8 +37,10 @@ type AddTrackParams struct {
 	Updated time.Time
 }
 
-func (q *Queries) AddTrack(ctx context.Context, arg AddTrackParams) error {
-	_, err := q.db.Exec(ctx, addTrack,
+// A no-op update returns the existing ID even when a concurrent insert wins.
+// Keep all existing metadata, including the timestamps, on identity reuse.
+func (q *Queries) AddOrReuseTrack(ctx context.Context, arg AddOrReuseTrackParams) (string, error) {
+	row := q.db.QueryRow(ctx, addOrReuseTrack,
 		arg.ID,
 		arg.Artist,
 		arg.Name,
@@ -46,7 +50,9 @@ func (q *Queries) AddTrack(ctx context.Context, arg AddTrackParams) error {
 		arg.Created,
 		arg.Updated,
 	)
-	return err
+	var id string
+	err := row.Scan(&id)
+	return id, err
 }
 
 const getMostPlayedTracks = `-- name: GetMostPlayedTracks :many

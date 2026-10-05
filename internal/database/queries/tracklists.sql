@@ -15,16 +15,13 @@ RETURNING *;
 SELECT count("id") FROM "tracklists";
 
 -- name: CountTracklistsByTrack :one
-SELECT
-  count("tracklists"."id")
-FROM (
-  SELECT "tracklists"."id"
-  FROM "tracklists"
-  JOIN "tracklist_tracks" ON "tracklist_tracks"."tracklist_id" = "tracklists"."id"
-  WHERE "tracklist_tracks"."track_id" = $1
-  GROUP BY "tracklists"."id"
-  ORDER BY "tracklists"."date" DESC
-) AS "tracklists";
+SELECT count("tracklists"."id")
+FROM "tracklists"
+WHERE EXISTS (
+  SELECT 1 FROM "tracklist_tracks"
+  WHERE "tracklist_tracks"."tracklist_id" = "tracklists"."id"
+    AND "tracklist_tracks"."track_id" = $1
+);
 
 -- name: GetTracklistWithTracks :many
 SELECT
@@ -56,9 +53,12 @@ SELECT
     WHERE "tracklist_tracks"."tracklist_id" = "tracklists"."id"
   ) as "track_count"
 FROM "tracklists"
-JOIN "tracklist_tracks" ON "tracklist_tracks"."tracklist_id" = "tracklists"."id"
-WHERE "tracklist_tracks"."track_id" = $1
-ORDER BY "tracklists"."date" DESC
+WHERE EXISTS (
+  SELECT 1 FROM "tracklist_tracks"
+  WHERE "tracklist_tracks"."tracklist_id" = "tracklists"."id"
+    AND "tracklist_tracks"."track_id" = $1
+)
+ORDER BY "tracklists"."date" DESC, "tracklists"."id" ASC
 OFFSET $2
 LIMIT $3;
 
@@ -70,6 +70,9 @@ RETURNING *;
 
 -- name: GetTracklist :one
 SELECT * FROM "tracklists" WHERE "id" = $1;
+
+-- name: GetTracklistForUpdate :one
+SELECT * FROM "tracklists" WHERE "id" = $1 FOR UPDATE;
 
 -- name: DeleteTracklist :exec
 DELETE FROM "tracklists" WHERE "id" = $1;
