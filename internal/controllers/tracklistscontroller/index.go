@@ -11,8 +11,8 @@ import (
 // IndexRequest defines the data to read from the HTTP request.
 type IndexRequest struct {
 	// Pagination
-	Page    string `query:"page"`
-	PerPage string `query:"per_page"`
+	Page    *string `query:"page"`
+	PerPage *string `query:"per_page"`
 
 	// Filters
 	TrackID string `query:"track_id"`
@@ -30,12 +30,7 @@ func Index(
 	tracklistStore *trackliststore.Store,
 ) controllers.ActionFunc[IndexRequest, *IndexResponse] {
 	return func(ctx context.Context, input IndexRequest) (*IndexResponse, error) {
-		page, err := controllers.ParamAsInt(input.Page, 1)
-		if err != nil {
-			return nil, err
-		}
-
-		perPage, err := controllers.ParamAsInt(input.PerPage, 10)
+		page, perPage, err := controllers.PaginationParams(input.Page, input.PerPage)
 		if err != nil {
 			return nil, err
 		}

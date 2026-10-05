@@ -1,6 +1,9 @@
 package trackliststore
 
 import (
+	"fmt"
+	"math"
+	"strconv"
 	"time"
 
 	"github.com/google/uuid"
@@ -35,7 +38,7 @@ type AddTracklistParams struct {
 	Tracks  [][]string `json:"tracks"`
 }
 
-// Validate validate that the data provided is correct for adding a new
+// Validate validates that the data provided is correct for adding a new
 // tracklist.
 func (t *AddTracklistParams) Validate() valid.Error {
 	validator := valid.New()
@@ -53,12 +56,40 @@ func (t *AddTracklistParams) Validate() valid.Error {
 		valid.Case{Cond: valid.IsURL(t.URL), Msg: "Must be a valid URL"},
 	)
 	validator.Check("artwork",
-		valid.Case{Cond: valid.NotEmpty(t.URL), Msg: "Must not be empty"},
-		valid.Case{Cond: valid.MaxLength(t.URL, 256), Msg: "Must be less than, or equal to 256 characters"},
+		valid.Case{Cond: valid.NotEmpty(t.Artwork), Msg: "Must not be empty"},
+		valid.Case{Cond: valid.MaxLength(t.Artwork, 256), Msg: "Must be less than, or equal to 256 characters"},
 	)
 	validator.Check("tracks",
 		valid.Case{Cond: len(t.Tracks) != 0, Msg: "Must not be empty"},
 	)
+	for i, row := range t.Tracks {
+		field := fmt.Sprintf("tracks[%d]", i)
+		validator.Check(field,
+			valid.Case{Cond: len(row) == 5, Msg: "Must contain five fields: name, artist, bpm, key, genre"},
+		)
+		if len(row) != 5 {
+			continue
+		}
+
+		validator.Check(field+".name",
+			valid.Case{Cond: valid.NotEmpty(row[0]), Msg: "Must not be empty"},
+			valid.Case{Cond: valid.MaxLength(row[0], 256), Msg: "Must be less than, or equal to 256 characters"},
+		)
+		validator.Check(field+".artist",
+			valid.Case{Cond: valid.NotEmpty(row[1]), Msg: "Must not be empty"},
+			valid.Case{Cond: valid.MaxLength(row[1], 256), Msg: "Must be less than, or equal to 256 characters"},
+		)
+		bpm, err := strconv.ParseFloat(row[2], 64)
+		validator.Check(field+".bpm",
+			valid.Case{Cond: err == nil && !math.IsNaN(bpm) && !math.IsInf(bpm, 0), Msg: "Must be a finite number"},
+		)
+		validator.Check(field+".key",
+			valid.Case{Cond: valid.MaxLength(row[3], 8), Msg: "Must be less than, or equal to 8 characters"},
+		)
+		validator.Check(field+".genre",
+			valid.Case{Cond: valid.MaxLength(row[4], 128), Msg: "Must be less than, or equal to 128 characters"},
+		)
+	}
 
 	if validator.Valid() {
 		return nil
