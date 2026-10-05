@@ -19,7 +19,18 @@ import (
 
 // Store is a store for interacting with tracklists in the data store.
 type Store struct {
-	dataStore *datastore.Store
+	dataStore tracklistDataStore
+}
+
+type tracklistDataStore interface {
+	Begin(context.Context) (pgx.Tx, error)
+	WithTx(pgx.Tx) *db.Queries
+	CountTracklists(context.Context) (int64, error)
+	CountTracklistsByTrack(context.Context, string) (int64, error)
+	GetTracklists(context.Context, db.GetTracklistsParams) ([]*db.GetTracklistsRow, error)
+	GetTracklistsByTrack(context.Context, db.GetTracklistsByTrackParams) ([]*db.GetTracklistsByTrackRow, error)
+	GetTracklist(context.Context, string) (*db.Tracklist, error)
+	GetTracklistWithTracks(context.Context, string) ([]*db.GetTracklistWithTracksRow, error)
 }
 
 // New returns a new store.
@@ -131,13 +142,7 @@ func (s *Store) AddTracklist(ctx context.Context, model *AddTracklistParams) (*T
 
 	tracklist, err := queries.AddTracklist(ctx, model.ToDatabaseParams())
 	if err != nil {
-		var pgErr *pgconn.PgError
-		if errors.As(err, &pgErr) && pgErr.Code == "23505" {
-			return nil, errors.E(op, http.StatusUnprocessableEntity)
-		}
-
-		return nil, errors.E(op, errors.Strf("add tracklist failed: %w", err))
-
+		return nil, tracklistWriteError(op, errors.Strf("add tracklist failed: %w", err))
 	}
 
 	for idx, data := range model.Tracks {
@@ -183,15 +188,7 @@ func (s *Store) AddTracklist(ctx context.Context, model *AddTracklistParams) (*T
 		return nil, errors.E(op, errors.Strf("tx commit failed: %w", err))
 	}
 
-	return &Tracklist{
-		ID:      tracklist.ID,
-		Name:    tracklist.Name,
-		Date:    tracklist.Date,
-		Artwork: tracklist.Artwork,
-		URL:     tracklist.URL,
-		Created: tracklist.Created,
-		Updated: tracklist.Updated,
-	}, nil
+	return s.GetTracklist(ctx, tracklist.ID)
 }
 
 // UpdateTracklist uupdates the tracklist with the given ID.
@@ -222,7 +219,7 @@ func (s *Store) UpdateTracklist(ctx context.Context, id string, model *UpdateTra
 			return nil, errors.E(op, http.StatusNotFound)
 		}
 
-		return nil, errors.E(op, errors.Strf("update tracklist failed: %w", err))
+		return nil, tracklistWriteError(op, errors.Strf("update tracklist failed: %w", err))
 	}
 
 	if err := tx.Commit(ctx); err != nil {
@@ -260,6 +257,16 @@ func (s *Store) UpdateTracklist(ctx context.Context, id string, model *UpdateTra
 	tracklist.TrackCount = len(tracklist.Tracks)
 
 	return tracklist, nil
+}
+
+// tracklistWriteError reports name conflicts as field validation errors while
+// retaining other database failures as internal errors.
+func tracklistWriteError(op errors.Op, err error) error {
+	var pgErr *pgconn.PgError
+	if errors.As(err, &pgErr) && pgErr.Code == "23505" && pgErr.ConstraintName == "tracklists_name_key" {
+		return errors.E(op, err, errors.M{"name": []string{"Must be unique"}}, http.StatusUnprocessableEntity)
+	}
+	return errors.E(op, err)
 }
 
 // GetTracklistsByTrack returns a list of tracklists that contain the track
