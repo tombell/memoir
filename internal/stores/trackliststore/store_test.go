@@ -81,7 +81,6 @@ func TestAddTracklistResponseMatchesGet(t *testing.T) {
 		for _, id := range trackIDs {
 			track := tracks[id]
 			values := append(tracklistValues(mix), trackValues(track)...)
-			values = append(values, track.FtsNameAndArtist)
 			rows = append(rows, values)
 		}
 		return &valueRows{values: rows}, nil

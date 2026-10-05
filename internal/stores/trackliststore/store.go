@@ -107,14 +107,14 @@ func (s *Store) GetTracklist(ctx context.Context, id string) (*Tracklist, error)
 
 	for _, row := range rows {
 		tracklist.Tracks = append(tracklist.Tracks, &trackstore.Track{
-			ID:      row.Track.ID,
-			Artist:  row.Track.Artist,
-			Name:    row.Track.Name,
-			Genre:   row.Track.Genre,
-			BPM:     row.Track.BPM,
-			Key:     row.Track.Key,
-			Created: row.Track.Created,
-			Updated: row.Track.Updated,
+			ID:      row.ID,
+			Artist:  row.Artist,
+			Name:    row.Name,
+			Genre:   row.Genre,
+			BPM:     row.BPM,
+			Key:     row.Key,
+			Created: row.Created,
+			Updated: row.Updated,
 		})
 	}
 
@@ -243,14 +243,14 @@ func (s *Store) UpdateTracklist(ctx context.Context, id string, model *UpdateTra
 
 	for _, row := range rows {
 		tracklist.Tracks = append(tracklist.Tracks, &trackstore.Track{
-			ID:      row.Track.ID,
-			Artist:  row.Track.Artist,
-			Name:    row.Track.Name,
-			Genre:   row.Track.Genre,
-			BPM:     row.Track.BPM,
-			Key:     row.Track.Key,
-			Created: row.Track.Created,
-			Updated: row.Track.Updated,
+			ID:      row.ID,
+			Artist:  row.Artist,
+			Name:    row.Name,
+			Genre:   row.Genre,
+			BPM:     row.BPM,
+			Key:     row.Key,
+			Created: row.Created,
+			Updated: row.Updated,
 		})
 	}
 
