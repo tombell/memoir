@@ -21,6 +21,12 @@ sql:
             go_type: "time.Time"
           - db_type: "timestamptz"
             go_type: "time.Time"
+          - db_type: "timestamptz"
+            nullable: true
+            go_type:
+              import: "time"
+              type: "Time"
+              pointer: true
           - db_type: "uuid"
             go_type: "string"
           - column: "tracks.fts_name_and_artist"

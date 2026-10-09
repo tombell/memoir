@@ -38,7 +38,7 @@ type User struct {
 	Email           string
 	PasswordHash    string
 	DisplayName     string
-	EmailVerifiedAt pgtype.Timestamptz
+	EmailVerifiedAt *time.Time
 	Created         time.Time
 	Updated         time.Time
 }

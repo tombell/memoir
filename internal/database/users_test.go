@@ -21,7 +21,7 @@ func TestAccountSchema(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if user.EmailVerifiedAt.Valid {
+	if user.EmailVerifiedAt != nil {
 		t.Fatal("new accounts must be unverified")
 	}
 	if _, err := q.CreateUser(ctx, database.CreateUserParams{ID: uuid.NewString(), Email: user.Email, PasswordHash: "!", DisplayName: "Duplicate"}); err == nil {
@@ -31,8 +31,29 @@ func TestAccountSchema(t *testing.T) {
 	if err := q.CreateSession(ctx, database.CreateSessionParams{TokenHash: hash[:], UserID: user.ID, ExpiresAt: time.Now().Add(time.Hour)}); err != nil {
 		t.Fatal(err)
 	}
-	if _, err := q.GetSession(ctx, hash[:]); err != nil {
+	session, err := q.GetSession(ctx, hash[:])
+	if err != nil {
 		t.Fatal(err)
+	}
+	if session.User.EmailVerifiedAt != nil {
+		t.Fatal("session must reflect an unverified account")
+	}
+	if err := q.VerifyUserEmail(ctx, user.ID); err != nil {
+		t.Fatal(err)
+	}
+	user, err = q.GetUser(ctx, user.ID)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if user.EmailVerifiedAt == nil || user.EmailVerifiedAt.IsZero() {
+		t.Fatal("verified accounts must have a verification time")
+	}
+	session, err = q.GetSession(ctx, hash[:])
+	if err != nil {
+		t.Fatal(err)
+	}
+	if session.User.EmailVerifiedAt == nil || !session.User.EmailVerifiedAt.Equal(*user.EmailVerifiedAt) {
+		t.Fatal("session must reflect the account verification time")
 	}
 	if _, err := pool.Exec(ctx, "UPDATE sessions SET expires_at = NOW() - INTERVAL '1 second'"); err != nil {
 		t.Fatal(err)
