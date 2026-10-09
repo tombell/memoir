@@ -19,8 +19,16 @@ func rw[In, Out any](fn controllers.ActionFunc[In, Out]) http.Handler {
 		defer cancel()
 
 		logger := ware.LoggerFromContext(ctx)
+		limit := int64(1 << 20)
+		if r.URL.Path == "/artwork" {
+			limit = (8 << 20) + (64 << 10)
+		}
+		r.Body = http.MaxBytesReader(w, r.Body, limit)
 
 		input, err := payload.Read[In](r)
+		if r.MultipartForm != nil {
+			defer r.MultipartForm.RemoveAll()
+		}
 		if err != nil {
 			payload.WriteError(logger, w, err)
 			return

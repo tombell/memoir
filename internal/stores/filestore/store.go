@@ -47,7 +47,8 @@ func (s *Store) Exists(ctx context.Context, key string) (bool, error) {
 		Range:  aws.String("bytes=0-1"),
 	}
 
-	if _, err := s.svc.GetObject(ctx, input); err != nil {
+	output, err := s.svc.GetObject(ctx, input)
+	if err != nil {
 		var nsk *types.NoSuchKey
 		if errors.As(err, &nsk) {
 			return false, nil
@@ -55,6 +56,7 @@ func (s *Store) Exists(ctx context.Context, key string) (bool, error) {
 
 		return false, errors.E(op, errors.Strf("get object failed: %w", err))
 	}
+	defer output.Body.Close()
 
 	return true, nil
 }
@@ -65,7 +67,8 @@ func (s *Store) Put(ctx context.Context, key string, r io.ReadSeeker) error {
 
 	var buf [512]byte
 
-	if _, err := r.Read(buf[:]); err != nil {
+	n, err := r.Read(buf[:])
+	if err != nil && err != io.EOF {
 		return errors.E(op, errors.Strf("read file failed: %w", err))
 	}
 
@@ -76,7 +79,7 @@ func (s *Store) Put(ctx context.Context, key string, r io.ReadSeeker) error {
 	input := &s3.PutObjectInput{
 		Bucket:      aws.String(s.config.AWS.Bucket),
 		Key:         aws.String(key),
-		ContentType: aws.String(http.DetectContentType(buf[:])),
+		ContentType: aws.String(http.DetectContentType(buf[:n])),
 		Body:        r,
 	}
 

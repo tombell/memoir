@@ -21,8 +21,6 @@ type Config struct {
 	Auth    AuthConfig
 	SMTP    SMTPConfig
 
-	API struct{ Token string }
-
 	AWS struct {
 		Bucket string
 		Region string
@@ -78,11 +76,6 @@ func Load() (*Config, error) {
 		return nil, err
 	}
 
-	apiToken, err := requireEnv("API_TOKEN")
-	if err != nil {
-		return nil, err
-	}
-
 	awsBucket, err := requireEnv("AWS_BUCKET")
 	if err != nil {
 		return nil, err
@@ -125,7 +118,6 @@ func Load() (*Config, error) {
 			Host:   getEnv("POSTHOG_HOST", "https://us.i.posthog.com"),
 		},
 	}
-	cfg.API.Token = apiToken
 	if err := cfg.loadAccounts(); err != nil {
 		return nil, err
 	}

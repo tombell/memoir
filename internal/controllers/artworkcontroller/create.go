@@ -6,6 +6,7 @@ import (
 
 	"github.com/tombell/memoir/internal/api/payload"
 	"github.com/tombell/memoir/internal/controllers"
+	"github.com/tombell/memoir/internal/errors"
 	"github.com/tombell/memoir/internal/stores/artworkstore"
 )
 
@@ -30,7 +31,14 @@ func (r *CreateResponse) StatusCode() int {
 // store.
 func Create(artworkStore *artworkstore.Store) controllers.ActionFunc[CreateRequest, *CreateResponse] {
 	return func(ctx context.Context, input CreateRequest) (*CreateResponse, error) {
-		upload, exists, err := artworkStore.Upload(ctx, input.Artwork.File, input.Artwork.Header.Filename)
+		if input.Artwork == nil {
+			return nil, errors.E("artwork[create]", http.StatusBadRequest, errors.M{"artwork": {"an image file is required"}})
+		}
+		defer input.Artwork.File.Close()
+		if input.Artwork.Header.Size > 8<<20 {
+			return nil, errors.E("artwork[create]", http.StatusRequestEntityTooLarge)
+		}
+		upload, exists, err := artworkStore.Upload(ctx, input.Artwork.File)
 		if err != nil {
 			return nil, err
 		}

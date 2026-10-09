@@ -2,8 +2,11 @@ package tracklistscontroller
 
 import (
 	"context"
+	"net/http"
 
+	"github.com/tombell/memoir/internal/auth"
 	"github.com/tombell/memoir/internal/controllers"
+	"github.com/tombell/memoir/internal/errors"
 	"github.com/tombell/memoir/internal/stores/trackliststore"
 )
 
@@ -24,13 +27,17 @@ type UpdateResponse struct {
 // Update returns an action function that updates a tracklist with the given ID.
 func Update(tracklistStore *trackliststore.Store) controllers.ActionFunc[UpdateRequest, *UpdateResponse] {
 	return func(ctx context.Context, input UpdateRequest) (*UpdateResponse, error) {
+		user, ok := auth.UserFromContext(ctx)
+		if !ok {
+			return nil, errors.E("tracklists[update]", http.StatusUnauthorized)
+		}
 		params := &trackliststore.UpdateTracklistParams{
 			Name: input.Name,
 			Date: input.Date,
 			URL:  input.URL,
 		}
 
-		tracklist, err := tracklistStore.UpdateTracklist(ctx, input.ID, params)
+		tracklist, err := tracklistStore.UpdateTracklist(ctx, input.ID, user.ID, params)
 		if err != nil {
 			return nil, err
 		}
