@@ -65,16 +65,13 @@ func (q *Queries) CountTracklists(ctx context.Context) (int64, error) {
 }
 
 const countTracklistsByTrack = `-- name: CountTracklistsByTrack :one
-SELECT
-  count("tracklists"."id")
-FROM (
-  SELECT "tracklists"."id"
-  FROM "tracklists"
-  JOIN "tracklist_tracks" ON "tracklist_tracks"."tracklist_id" = "tracklists"."id"
-  WHERE "tracklist_tracks"."track_id" = $1
-  GROUP BY "tracklists"."id"
-  ORDER BY "tracklists"."date" DESC
-) AS "tracklists"
+SELECT count("tracklists"."id")
+FROM "tracklists"
+WHERE EXISTS (
+  SELECT 1 FROM "tracklist_tracks"
+  WHERE "tracklist_tracks"."tracklist_id" = "tracklists"."id"
+    AND "tracklist_tracks"."track_id" = $1
+)
 `
 
 func (q *Queries) CountTracklistsByTrack(ctx context.Context, trackID string) (int64, error) {
@@ -99,6 +96,25 @@ SELECT id, name, date, artwork, url, created, updated FROM "tracklists" WHERE "i
 
 func (q *Queries) GetTracklist(ctx context.Context, id string) (*Tracklist, error) {
 	row := q.db.QueryRow(ctx, getTracklist, id)
+	var i Tracklist
+	err := row.Scan(
+		&i.ID,
+		&i.Name,
+		&i.Date,
+		&i.Artwork,
+		&i.URL,
+		&i.Created,
+		&i.Updated,
+	)
+	return &i, err
+}
+
+const getTracklistForUpdate = `-- name: GetTracklistForUpdate :one
+SELECT id, name, date, artwork, url, created, updated FROM "tracklists" WHERE "id" = $1 FOR UPDATE
+`
+
+func (q *Queries) GetTracklistForUpdate(ctx context.Context, id string) (*Tracklist, error) {
+	row := q.db.QueryRow(ctx, getTracklistForUpdate, id)
 	var i Tracklist
 	err := row.Scan(
 		&i.ID,
@@ -225,9 +241,12 @@ SELECT
     WHERE "tracklist_tracks"."tracklist_id" = "tracklists"."id"
   ) as "track_count"
 FROM "tracklists"
-JOIN "tracklist_tracks" ON "tracklist_tracks"."tracklist_id" = "tracklists"."id"
-WHERE "tracklist_tracks"."track_id" = $1
-ORDER BY "tracklists"."date" DESC
+WHERE EXISTS (
+  SELECT 1 FROM "tracklist_tracks"
+  WHERE "tracklist_tracks"."tracklist_id" = "tracklists"."id"
+    AND "tracklist_tracks"."track_id" = $1
+)
+ORDER BY "tracklists"."date" DESC, "tracklists"."id" ASC
 OFFSET $2
 LIMIT $3
 `

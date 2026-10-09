@@ -1,4 +1,4 @@
--- name: AddTrack :exec
+-- name: AddOrReuseTrack :one
 INSERT INTO "tracks" (
   "id",
   "artist",
@@ -9,7 +9,11 @@ INSERT INTO "tracks" (
   "created",
   "updated"
 )
-VALUES ($1, $2, $3, $4, $5, $6, $7, $8);
+VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+-- A no-op update returns the existing ID even when a concurrent insert wins.
+-- Keep all existing metadata, including the timestamps, on identity reuse.
+ON CONFLICT ("artist", "name") DO UPDATE SET "artist" = "tracks"."artist"
+RETURNING "id";
 
 -- name: GetMostPlayedTracks :many
 SELECT

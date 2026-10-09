@@ -3,6 +3,7 @@ package trackliststore
 import (
 	"context"
 	"net/http"
+	"slices"
 	"strconv"
 	"strings"
 	"time"
@@ -140,39 +141,56 @@ func (s *Store) AddTracklist(ctx context.Context, model *AddTracklistParams) (*T
 
 	}
 
-	for idx, data := range model.Tracks {
-		row, err := queries.GetTrackByArtistAndName(ctx, db.GetTrackByArtistAndNameParams{
-			Artist: data[1],
-			Name:   data[0],
+	type trackIdentity struct {
+		artist string
+		name   string
+	}
+
+	identities := make([]trackIdentity, 0, len(model.Tracks))
+	trackData := make(map[trackIdentity][]string, len(model.Tracks))
+	for _, data := range model.Tracks {
+		identity := trackIdentity{artist: data[1], name: data[0]}
+		if _, exists := trackData[identity]; !exists {
+			identities = append(identities, identity)
+			trackData[identity] = data
+		}
+	}
+
+	// Acquire identity locks in a consistent order to avoid deadlocks when
+	// concurrent tracklists contain the same tracks in different orders.
+	slices.SortFunc(identities, func(a, b trackIdentity) int {
+		if order := strings.Compare(a.artist, b.artist); order != 0 {
+			return order
+		}
+		return strings.Compare(a.name, b.name)
+	})
+
+	trackIDs := make(map[trackIdentity]string, len(identities))
+	for _, identity := range identities {
+		data := trackData[identity]
+		bpm, _ := strconv.ParseFloat(data[2], 64)
+		now := time.Now().UTC()
+		id, err := queries.AddOrReuseTrack(ctx, db.AddOrReuseTrackParams{
+			ID:      uuid.NewString(),
+			Artist:  identity.artist,
+			Name:    identity.name,
+			BPM:     bpm,
+			Key:     strings.ToUpper(data[3]),
+			Genre:   data[4],
+			Created: now,
+			Updated: now,
 		})
-		if err != nil && !errors.Is(err, pgx.ErrNoRows) {
-			return nil, errors.E(op, errors.Strf("get track by artist and name failed: %w", err))
+		if err != nil {
+			return nil, errors.E(op, errors.Strf("add or reuse track failed: %w", err))
 		}
+		trackIDs[identity] = id
+	}
 
-		foundTrackID := row.ID
-
-		if errors.Is(err, pgx.ErrNoRows) {
-			foundTrackID = uuid.NewString()
-			bpm, _ := strconv.ParseFloat(data[2], 64)
-
-			if err := queries.AddTrack(ctx, db.AddTrackParams{
-				ID:      foundTrackID,
-				Name:    data[0],
-				Artist:  data[1],
-				BPM:     bpm,
-				Key:     strings.ToUpper(data[3]),
-				Genre:   data[4],
-				Created: time.Now().UTC(),
-				Updated: time.Now().UTC(),
-			}); err != nil {
-				return nil, errors.E(op, errors.Strf("add track failed: %w", err))
-			}
-		}
-
+	for idx, data := range model.Tracks {
 		if err := queries.AddTracklistTrack(ctx, db.AddTracklistTrackParams{
 			ID:          uuid.NewString(),
 			TracklistID: tracklist.ID,
-			TrackID:     foundTrackID,
+			TrackID:     trackIDs[trackIdentity{artist: data[1], name: data[0]}],
 			TrackNumber: int32(idx + 1),
 		}); err != nil {
 			return nil, errors.E(op, errors.Strf("add tracklist track failed: %w", err))
@@ -311,14 +329,6 @@ func (s *Store) DeleteTracklist(ctx context.Context, id string) error {
 		return errors.E(op, http.StatusNotFound)
 	}
 
-	if _, err = s.dataStore.GetTracklist(ctx, id); err != nil {
-		if errors.Is(err, pgx.ErrNoRows) {
-			return errors.E(op, http.StatusNotFound)
-		}
-
-		return errors.E(op, errors.Strf("get tracklist failed: %w", err))
-	}
-
 	tx, err := s.dataStore.Begin(ctx)
 	if err != nil {
 		return errors.E(op, errors.Strf("db begin failed: %w", err))
@@ -326,6 +336,14 @@ func (s *Store) DeleteTracklist(ctx context.Context, id string) error {
 	defer tx.Rollback(ctx)
 
 	queries := s.dataStore.WithTx(tx)
+
+	if _, err = queries.GetTracklistForUpdate(ctx, id); err != nil {
+		if errors.Is(err, pgx.ErrNoRows) {
+			return errors.E(op, http.StatusNotFound)
+		}
+
+		return errors.E(op, errors.Strf("get tracklist failed: %w", err))
+	}
 
 	if err := queries.DeleteTracklistTracks(ctx, id); err != nil {
 		return errors.E(op, errors.Strf("delete tracklist tracks failed: %w", err))
