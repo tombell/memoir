@@ -13,7 +13,7 @@ type User struct {
 }
 
 func userModel(row database.User) User {
-	return User{ID: row.ID, Email: row.Email, DisplayName: row.DisplayName, EmailVerified: row.EmailVerifiedAt.Valid}
+	return User{ID: row.ID, Email: row.Email, DisplayName: row.DisplayName, EmailVerified: row.EmailVerifiedAt != nil}
 }
 
 type userContextKey struct{}

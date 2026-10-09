@@ -237,7 +237,7 @@ func (s *Service) deliverToken(ctx context.Context, userID, purpose string) erro
 	if err != nil {
 		return err
 	}
-	if purpose == "verify_email" && user.EmailVerifiedAt.Valid {
+	if purpose == "verify_email" && user.EmailVerifiedAt != nil {
 		return nil
 	}
 	subject, path, ttl := "Verify your Memoir email", "/verify-email", 24*time.Hour
