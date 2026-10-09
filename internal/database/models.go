@@ -30,4 +30,15 @@ type Tracklist struct {
 	URL     string
 	Created time.Time
 	Updated time.Time
+	OwnerID pgtype.UUID
+}
+
+type User struct {
+	ID              string
+	Email           string
+	PasswordHash    string
+	DisplayName     string
+	EmailVerifiedAt pgtype.Timestamptz
+	Created         time.Time
+	Updated         time.Time
 }
