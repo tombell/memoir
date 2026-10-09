@@ -6,6 +6,8 @@ package database
 
 import (
 	"time"
+
+	"github.com/jackc/pgx/v5/pgtype"
 )
 
 type Track struct {
@@ -17,7 +19,7 @@ type Track struct {
 	Key              string
 	Created          time.Time
 	Updated          time.Time
-	FtsNameAndArtist string
+	FtsNameAndArtist pgtype.TSVector
 }
 
 type Tracklist struct {

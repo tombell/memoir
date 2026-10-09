@@ -22,4 +22,6 @@ sql:
           - db_type: "uuid"
             go_type: "string"
           - column: "tracks.fts_name_and_artist"
-            go_type: "string"
+            go_type:
+              import: "github.com/jackc/pgx/v5/pgtype"
+              type: "TSVector"
