@@ -24,6 +24,11 @@ type Config struct {
 		Key    string
 		Secret string
 	}
+
+	PostHog struct {
+		APIKey string
+		Host   string
+	}
 }
 
 // Load reads environment variables from a .env file if present, then
@@ -83,6 +88,13 @@ func Load() (*Config, error) {
 			Region: awsRegion,
 			Key:    awsKey,
 			Secret: awsSecret,
+		},
+		PostHog: struct {
+			APIKey string
+			Host   string
+		}{
+			APIKey: os.Getenv("POSTHOG_API_KEY"),
+			Host:   getEnv("POSTHOG_HOST", "https://us.i.posthog.com"),
 		},
 	}
 

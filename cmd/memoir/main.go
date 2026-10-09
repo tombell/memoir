@@ -19,9 +19,14 @@ import (
 	"github.com/tombell/memoir/internal/stores/filestore"
 	"github.com/tombell/memoir/internal/stores/trackliststore"
 	"github.com/tombell/memoir/internal/stores/trackstore"
+	"github.com/tombell/memoir/internal/telemetry"
 )
 
 func main() {
+	os.Exit(run())
+}
+
+func run() int {
 	logger := slog.New(log.NewWithOptions(os.Stderr, log.Options{
 		ReportTimestamp: true,
 		TimeFunction:    log.NowUTC,
@@ -32,13 +37,28 @@ func main() {
 	cfg, err := config.Load()
 	if err != nil {
 		logger.Error("failed loading config", "err", err)
-		os.Exit(1)
+		return 1
 	}
+
+	consoleLogger := logger
+	logger, shutdownLogs, err := telemetry.NewLogger(context.Background(), cfg, logger)
+	if err != nil {
+		consoleLogger.Error("failed configuring log export", "err", err)
+		return 1
+	}
+	defer func() {
+		ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+		defer cancel()
+
+		if err := shutdownLogs(ctx); err != nil {
+			consoleLogger.Error("failed shutting down log export", "err", err)
+		}
+	}()
 
 	dbpool, err := pgxpool.New(context.Background(), cfg.DB)
 	if err != nil {
 		logger.Error("failed creating database connection pool", "err", err)
-		os.Exit(1)
+		return 1
 	}
 	defer dbpool.Close()
 
@@ -54,10 +74,11 @@ func main() {
 	)
 
 	idleConnsClosed := make(chan struct{})
+	done := make(chan os.Signal, 1)
+	signal.Notify(done, syscall.SIGINT, syscall.SIGTERM)
+	defer signal.Stop(done)
 
 	go func() {
-		done := make(chan os.Signal, 1)
-		signal.Notify(done, syscall.SIGINT, syscall.SIGTERM)
 		<-done
 
 		logger.Info("shutting down api server")
@@ -76,8 +97,9 @@ func main() {
 
 	if err := server.Run(); err != nil {
 		logger.Error("failed to start the api server", "err", err)
-		os.Exit(1)
+		return 1
 	}
 
 	<-idleConnsClosed
+	return 0
 }
