@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/tombell/memoir/internal/auth"
 	"github.com/tombell/memoir/internal/config"
 	"github.com/tombell/memoir/internal/stores/artworkstore"
 	"github.com/tombell/memoir/internal/stores/trackliststore"
@@ -27,6 +28,7 @@ func New(
 	tracklistStore *trackliststore.Store,
 	trackStore *trackstore.Store,
 	artworkStore *artworkstore.Store,
+	accounts *auth.Service,
 ) *Server {
 	router := http.NewServeMux()
 	server := &Server{router: router}
@@ -46,6 +48,7 @@ func New(
 		tracklistStore,
 		trackStore,
 		artworkStore,
+		accounts,
 	)
 
 	return server

@@ -9,8 +9,10 @@ import (
 	"github.com/tombell/middle/ware"
 
 	"github.com/tombell/memoir/internal/api/middleware"
+	"github.com/tombell/memoir/internal/auth"
 	"github.com/tombell/memoir/internal/config"
 	"github.com/tombell/memoir/internal/controllers/artworkcontroller"
+	"github.com/tombell/memoir/internal/controllers/authcontroller"
 	"github.com/tombell/memoir/internal/controllers/searchcontroller"
 	"github.com/tombell/memoir/internal/controllers/tracklistscontroller"
 	"github.com/tombell/memoir/internal/controllers/trackscontroller"
@@ -27,16 +29,32 @@ func routes(
 	tracklistStore *trackliststore.Store,
 	trackStore *trackstore.Store,
 	artworkStore *artworkstore.Store,
+	accounts *auth.Service,
 ) {
 	base := middle.Use(
+		varyOrigin,
 		ware.Logger(logger),
 		ware.RequestID(uuid.NewString),
 		ware.RequestLogging(),
 		ware.CORS(ware.CORSOptions{
-			AllowedMethods: []string{"GET", "POST", "PATCH", "DELETE"},
-			AllowedHeaders: []string{"API-Token", "Content-Type"},
+			AllowedOrigins:   []string{config.Auth.Origin},
+			AllowedMethods:   []string{"GET", "POST", "PATCH", "DELETE"},
+			AllowedHeaders:   []string{"API-Token", "Content-Type", "X-CSRF-Token"},
+			AllowCredentials: true,
 		}),
 	)
+	account := middle.Use(base, middleware.CSRF(config.Auth), ware.Recovery())
+	signedIn := middle.Use(account, middleware.Session(accounts, config.Auth, false))
+	authController := authcontroller.New(accounts, config.Auth)
+	router.Handle("GET /auth/csrf", account(authController.Handler(authController.CSRF)))
+	router.Handle("POST /auth/register", account(authController.Handler(authController.Register)))
+	router.Handle("POST /auth/login", account(authController.Handler(authController.Login)))
+	router.Handle("POST /auth/logout", account(authController.Handler(authController.Logout)))
+	router.Handle("GET /auth/me", signedIn(authController.Handler(authController.Me)))
+	router.Handle("POST /auth/verify-email", account(authController.Handler(authController.VerifyEmail)))
+	router.Handle("POST /auth/resend-verification", account(authController.Handler(authController.ResendVerification)))
+	router.Handle("POST /auth/forgot-password", account(authController.Handler(authController.ForgotPassword)))
+	router.Handle("POST /auth/reset-password", account(authController.Handler(authController.ResetPassword)))
 
 	api := middle.Use(
 		base,
@@ -55,11 +73,7 @@ func routes(
 	router.Handle("PATCH /tracklists/{id}", authorized(rw(tracklistscontroller.Update(tracklistStore))))
 	router.Handle("DELETE /tracklists/{id}", authorized(rw(tracklistscontroller.Delete(tracklistStore))))
 
-	// router.Handle("GET /tracks", api(rw(trackscontroller.Index(trackStore))))
 	router.Handle("GET /tracks/{id}", api(rw(trackscontroller.Show(trackStore))))
-	// router.Handle("POST /tracks", authorized(rw(trackscontroller.Create(trackStore))))
-	// router.Handle("PATCH /tracks/{id}", authorized(rw(trackscontroller.Update(trackStore))))
-	// router.Handle("DELETE /tracks/{id}", authorized(rw(trackscontroller.Delete(trackStore))))
 
 	router.Handle("POST /artwork", authorized(rw(artworkcontroller.Create(artworkStore))))
 
@@ -77,4 +91,11 @@ func routes(
 	router.Handle("/{path...}", api(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
 		w.WriteHeader(http.StatusNotFound)
 	})))
+}
+
+func varyOrigin(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Add("Vary", "Origin")
+		next.ServeHTTP(w, r)
+	})
 }
