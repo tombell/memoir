@@ -29,3 +29,34 @@ func TestLoadPostHog(t *testing.T) {
 		})
 	}
 }
+
+func TestAccountConfiguration(t *testing.T) {
+	for _, key := range []string{"APP_ORIGIN", "SESSION_TTL", "SMTP_ADDRESS", "SMTP_USERNAME", "SMTP_PASSWORD", "SMTP_FROM", "SMTP_TLS_MODE"} {
+		t.Setenv(key, "")
+	}
+	for _, tt := range []struct {
+		key, value string
+		valid      bool
+	}{
+		{"APP_ORIGIN", "https://app.example.test", true},
+		{"APP_ORIGIN", "http://app.example.test", false},
+		{"APP_ORIGIN", "https://app.example.test/path", false},
+		{"APP_ORIGIN", "https://user:secret@app.example.test", false},
+		{"SESSION_TTL", "0s", false},
+		{"SESSION_TTL", "721h", false},
+		{"SMTP_ADDRESS", "missing-port", false},
+		{"SMTP_TLS_MODE", "none", true},
+		{"SMTP_TLS_MODE", "invalid", false},
+		{"SMTP_FROM", "sender@example.test\r\nBcc: other@example.test", false},
+		{"SMTP_USERNAME", "user", false},
+	} {
+		t.Run(tt.key+"="+tt.value, func(t *testing.T) {
+			t.Setenv(tt.key, tt.value)
+			cfg := &Config{}
+			err := cfg.loadAccounts()
+			if (err == nil) != tt.valid {
+				t.Fatalf("valid=%v, error=%v", tt.valid, err)
+			}
+		})
+	}
+}
