@@ -2,6 +2,13 @@
 
 Command-line tools and API server for hosting track lists for DJ mixes.
 
+## User storage
+
+The user migration adds accounts, hashed session and recovery tokens, and a
+nullable tracklist owner for an explicit legacy-data backfill. Ownership becomes
+required in the later cutover migration. Existing tracklists are preserved and
+are not assigned to a user automatically.
+
 ## Logs
 
 The API writes logs to stderr. Set `POSTHOG_API_KEY` to your PostHog project

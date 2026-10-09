@@ -21,7 +21,7 @@ INSERT INTO "tracklists" (
   "updated"
 )
 VALUES ($1, $2, $3, $4, $5, NOW(), NOW())
-RETURNING id, name, date, artwork, url, created, updated
+RETURNING id, name, date, artwork, url, created, updated, owner_id
 `
 
 type AddTracklistParams struct {
@@ -49,6 +49,7 @@ func (q *Queries) AddTracklist(ctx context.Context, arg AddTracklistParams) (*Tr
 		&i.URL,
 		&i.Created,
 		&i.Updated,
+		&i.OwnerID,
 	)
 	return &i, err
 }
@@ -94,7 +95,7 @@ func (q *Queries) DeleteTracklist(ctx context.Context, id string) error {
 }
 
 const getTracklist = `-- name: GetTracklist :one
-SELECT id, name, date, artwork, url, created, updated FROM "tracklists" WHERE "id" = $1
+SELECT id, name, date, artwork, url, created, updated, owner_id FROM "tracklists" WHERE "id" = $1
 `
 
 func (q *Queries) GetTracklist(ctx context.Context, id string) (*Tracklist, error) {
@@ -108,13 +109,14 @@ func (q *Queries) GetTracklist(ctx context.Context, id string) (*Tracklist, erro
 		&i.URL,
 		&i.Created,
 		&i.Updated,
+		&i.OwnerID,
 	)
 	return &i, err
 }
 
 const getTracklistWithTracks = `-- name: GetTracklistWithTracks :many
 SELECT
-  tracklists.id, tracklists.name, tracklists.date, tracklists.artwork, tracklists.url, tracklists.created, tracklists.updated,
+  tracklists.id, tracklists.name, tracklists.date, tracklists.artwork, tracklists.url, tracklists.created, tracklists.updated, tracklists.owner_id,
   tracks.id, tracks.artist, tracks.name, tracks.genre, tracks.bpm, tracks.key, tracks.created, tracks.updated, tracks.fts_name_and_artist
 FROM "tracklists"
 JOIN "tracklist_tracks" ON "tracklist_tracks"."tracklist_id" = "tracklists"."id"
@@ -145,6 +147,7 @@ func (q *Queries) GetTracklistWithTracks(ctx context.Context, id string) ([]*Get
 			&i.Tracklist.URL,
 			&i.Tracklist.Created,
 			&i.Tracklist.Updated,
+			&i.Tracklist.OwnerID,
 			&i.Track.ID,
 			&i.Track.Artist,
 			&i.Track.Name,
@@ -167,7 +170,7 @@ func (q *Queries) GetTracklistWithTracks(ctx context.Context, id string) ([]*Get
 
 const getTracklists = `-- name: GetTracklists :many
 SELECT
-  tracklists.id, tracklists.name, tracklists.date, tracklists.artwork, tracklists.url, tracklists.created, tracklists.updated,
+  tracklists.id, tracklists.name, tracklists.date, tracklists.artwork, tracklists.url, tracklists.created, tracklists.updated, tracklists.owner_id,
   count("tracklists"."id") as "track_count"
 FROM "tracklists"
 JOIN "tracklist_tracks" ON "tracklist_tracks"."tracklist_id" = "tracklists"."id"
@@ -204,6 +207,7 @@ func (q *Queries) GetTracklists(ctx context.Context, arg GetTracklistsParams) ([
 			&i.Tracklist.URL,
 			&i.Tracklist.Created,
 			&i.Tracklist.Updated,
+			&i.Tracklist.OwnerID,
 			&i.TrackCount,
 		); err != nil {
 			return nil, err
@@ -218,7 +222,7 @@ func (q *Queries) GetTracklists(ctx context.Context, arg GetTracklistsParams) ([
 
 const getTracklistsByTrack = `-- name: GetTracklistsByTrack :many
 SELECT
-  tracklists.id, tracklists.name, tracklists.date, tracklists.artwork, tracklists.url, tracklists.created, tracklists.updated,
+  tracklists.id, tracklists.name, tracklists.date, tracklists.artwork, tracklists.url, tracklists.created, tracklists.updated, tracklists.owner_id,
   (
     SELECT count("id")
     FROM "tracklist_tracks"
@@ -260,6 +264,7 @@ func (q *Queries) GetTracklistsByTrack(ctx context.Context, arg GetTracklistsByT
 			&i.Tracklist.URL,
 			&i.Tracklist.Created,
 			&i.Tracklist.Updated,
+			&i.Tracklist.OwnerID,
 			&i.TrackCount,
 		); err != nil {
 			return nil, err
@@ -276,7 +281,7 @@ const updateTracklist = `-- name: UpdateTracklist :one
 UPDATE "tracklists"
 SET "name" = $2, "url" = $3, "date" = $4, "updated" = NOW()
 WHERE "id" = $1
-RETURNING id, name, date, artwork, url, created, updated
+RETURNING id, name, date, artwork, url, created, updated, owner_id
 `
 
 type UpdateTracklistParams struct {
@@ -302,6 +307,7 @@ func (q *Queries) UpdateTracklist(ctx context.Context, arg UpdateTracklistParams
 		&i.URL,
 		&i.Created,
 		&i.Updated,
+		&i.OwnerID,
 	)
 	return &i, err
 }

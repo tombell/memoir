@@ -19,8 +19,21 @@ sql:
             go_type: "float64"
           - db_type: "pg_catalog.timestamp"
             go_type: "time.Time"
+          - db_type: "timestamptz"
+            go_type: "time.Time"
+          - db_type: "timestamptz"
+            nullable: true
+            go_type:
+              import: "time"
+              type: "Time"
+              pointer: true
           - db_type: "uuid"
             go_type: "string"
+          - db_type: "uuid"
+            nullable: true
+            go_type:
+              type: "string"
+              pointer: true
           - column: "tracks.fts_name_and_artist"
             go_type:
               import: "github.com/jackc/pgx/v5/pgtype"
