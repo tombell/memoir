@@ -30,7 +30,7 @@ type Tracklist struct {
 	URL     string
 	Created time.Time
 	Updated time.Time
-	OwnerID pgtype.UUID
+	OwnerID *string
 }
 
 type User struct {

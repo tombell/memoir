@@ -29,6 +29,11 @@ sql:
               pointer: true
           - db_type: "uuid"
             go_type: "string"
+          - db_type: "uuid"
+            nullable: true
+            go_type:
+              type: "string"
+              pointer: true
           - column: "tracks.fts_name_and_artist"
             go_type:
               import: "github.com/jackc/pgx/v5/pgtype"
