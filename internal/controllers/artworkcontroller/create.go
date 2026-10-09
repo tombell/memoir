@@ -6,6 +6,7 @@ import (
 
 	"github.com/tombell/memoir/internal/api/payload"
 	"github.com/tombell/memoir/internal/controllers"
+	"github.com/tombell/memoir/internal/errors"
 	"github.com/tombell/memoir/internal/stores/artworkstore"
 )
 
@@ -30,6 +31,10 @@ func (r *CreateResponse) StatusCode() int {
 // store.
 func Create(artworkStore *artworkstore.Store) controllers.ActionFunc[CreateRequest, *CreateResponse] {
 	return func(ctx context.Context, input CreateRequest) (*CreateResponse, error) {
+		if input.Artwork == nil || input.Artwork.File == nil || input.Artwork.Header == nil {
+			return nil, errors.E(errors.Op("artworkcontroller[create]"), errors.M{"artwork": {"is required"}}, http.StatusBadRequest)
+		}
+
 		upload, exists, err := artworkStore.Upload(ctx, input.Artwork.File, input.Artwork.Header.Filename)
 		if err != nil {
 			return nil, err

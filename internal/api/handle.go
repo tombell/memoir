@@ -20,6 +20,13 @@ func rw[In, Out any](fn controllers.ActionFunc[In, Out]) http.Handler {
 
 		logger := ware.LoggerFromContext(ctx)
 
+		var input In
+		defer func() {
+			if err := payload.Cleanup(r, input); err != nil {
+				logger.Error("could not clean up multipart files", "err", err)
+			}
+		}()
+
 		input, err := payload.Read[In](r)
 		if err != nil {
 			payload.WriteError(logger, w, err)
