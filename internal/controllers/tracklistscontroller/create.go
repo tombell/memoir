@@ -2,8 +2,11 @@ package tracklistscontroller
 
 import (
 	"context"
+	"net/http"
 
+	"github.com/tombell/memoir/internal/auth"
 	"github.com/tombell/memoir/internal/controllers"
+	"github.com/tombell/memoir/internal/errors"
 	"github.com/tombell/memoir/internal/stores/trackliststore"
 )
 
@@ -24,7 +27,12 @@ type CreateResponse struct {
 // Create returns an action function that creates a new tracklist.
 func Create(tracklistStore *trackliststore.Store) controllers.ActionFunc[CreateRequest, *CreateResponse] {
 	return func(ctx context.Context, input CreateRequest) (*CreateResponse, error) {
+		user, ok := auth.UserFromContext(ctx)
+		if !ok {
+			return nil, errors.E("tracklists[create]", http.StatusUnauthorized)
+		}
 		params := &trackliststore.AddTracklistParams{
+			OwnerID: user.ID,
 			Name:    input.Name,
 			Date:    input.Date,
 			URL:     input.URL,
@@ -40,3 +48,5 @@ func Create(tracklistStore *trackliststore.Store) controllers.ActionFunc[CreateR
 		return &CreateResponse{Tracklist: tracklist}, nil
 	}
 }
+
+func (*CreateResponse) StatusCode() int { return http.StatusCreated }

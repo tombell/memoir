@@ -16,6 +16,7 @@ type IndexRequest struct {
 
 	// Filters
 	TrackID string `query:"track_id"`
+	UserID  string `query:"user_id"`
 }
 
 // IndexResponse defines the data to write to the HTTP response.
@@ -40,10 +41,9 @@ func Index(
 			return nil, err
 		}
 
-		var (
-			tracklists []*trackliststore.Tracklist
-			total      int64
-		)
+		if perPage > 100 {
+			perPage = 100
+		}
 
 		if input.TrackID != "" {
 			track, err := trackStore.GetTrack(ctx, input.TrackID)
@@ -51,15 +51,11 @@ func Index(
 				return nil, err
 			}
 
-			tracklists, total, err = tracklistStore.GetTracklistsByTrack(ctx, track.ID, page, perPage)
-			if err != nil {
-				return nil, err
-			}
-		} else {
-			tracklists, total, err = tracklistStore.GetTracklists(ctx, page, perPage)
-			if err != nil {
-				return nil, err
-			}
+			input.TrackID = track.ID
+		}
+		tracklists, total, err := tracklistStore.GetTracklists(ctx, input.UserID, input.TrackID, page, perPage)
+		if err != nil {
+			return nil, err
 		}
 
 		resp := &IndexResponse{

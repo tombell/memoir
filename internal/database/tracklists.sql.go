@@ -11,16 +11,8 @@ import (
 )
 
 const addTracklist = `-- name: AddTracklist :one
-INSERT INTO "tracklists" (
-  "id",
-  "name",
-  "url",
-  "artwork",
-  "date",
-  "created",
-  "updated"
-)
-VALUES ($1, $2, $3, $4, $5, NOW(), NOW())
+INSERT INTO tracklists (id, name, url, artwork, date, owner_id, created, updated)
+VALUES ($1, $2, $3, $4, $5, $6, NOW(), NOW())
 RETURNING id, name, date, artwork, url, created, updated, owner_id
 `
 
@@ -30,6 +22,7 @@ type AddTracklistParams struct {
 	URL     string
 	Artwork string
 	Date    time.Time
+	OwnerID string
 }
 
 func (q *Queries) AddTracklist(ctx context.Context, arg AddTracklistParams) (*Tracklist, error) {
@@ -39,6 +32,7 @@ func (q *Queries) AddTracklist(ctx context.Context, arg AddTracklistParams) (*Tr
 		arg.URL,
 		arg.Artwork,
 		arg.Date,
+		arg.OwnerID,
 	)
 	var i Tracklist
 	err := row.Scan(
@@ -55,79 +49,57 @@ func (q *Queries) AddTracklist(ctx context.Context, arg AddTracklistParams) (*Tr
 }
 
 const countTracklists = `-- name: CountTracklists :one
-SELECT count("id") FROM "tracklists"
+SELECT count(*) FROM tracklists
+WHERE ($1::uuid IS NULL OR owner_id = $1)
+  AND ($2::uuid IS NULL OR EXISTS (
+    SELECT 1 FROM tracklist_tracks
+    WHERE tracklist_tracks.tracklist_id = tracklists.id AND tracklist_tracks.track_id = $2
+  ))
 `
 
-func (q *Queries) CountTracklists(ctx context.Context) (int64, error) {
-	row := q.db.QueryRow(ctx, countTracklists)
+type CountTracklistsParams struct {
+	OwnerID *string
+	TrackID *string
+}
+
+func (q *Queries) CountTracklists(ctx context.Context, arg CountTracklistsParams) (int64, error) {
+	row := q.db.QueryRow(ctx, countTracklists, arg.OwnerID, arg.TrackID)
 	var count int64
 	err := row.Scan(&count)
 	return count, err
 }
 
-const countTracklistsByTrack = `-- name: CountTracklistsByTrack :one
-SELECT
-  count("tracklists"."id")
-FROM (
-  SELECT "tracklists"."id"
-  FROM "tracklists"
-  JOIN "tracklist_tracks" ON "tracklist_tracks"."tracklist_id" = "tracklists"."id"
-  WHERE "tracklist_tracks"."track_id" = $1
-  GROUP BY "tracklists"."id"
-  ORDER BY "tracklists"."date" DESC
-) AS "tracklists"
+const deleteTracklist = `-- name: DeleteTracklist :execrows
+DELETE FROM tracklists WHERE id = $1 AND owner_id = $2
 `
 
-func (q *Queries) CountTracklistsByTrack(ctx context.Context, trackID string) (int64, error) {
-	row := q.db.QueryRow(ctx, countTracklistsByTrack, trackID)
-	var count int64
-	err := row.Scan(&count)
-	return count, err
+type DeleteTracklistParams struct {
+	ID      string
+	OwnerID string
 }
 
-const deleteTracklist = `-- name: DeleteTracklist :exec
-DELETE FROM "tracklists" WHERE "id" = $1
-`
-
-func (q *Queries) DeleteTracklist(ctx context.Context, id string) error {
-	_, err := q.db.Exec(ctx, deleteTracklist, id)
-	return err
-}
-
-const getTracklist = `-- name: GetTracklist :one
-SELECT id, name, date, artwork, url, created, updated, owner_id FROM "tracklists" WHERE "id" = $1
-`
-
-func (q *Queries) GetTracklist(ctx context.Context, id string) (*Tracklist, error) {
-	row := q.db.QueryRow(ctx, getTracklist, id)
-	var i Tracklist
-	err := row.Scan(
-		&i.ID,
-		&i.Name,
-		&i.Date,
-		&i.Artwork,
-		&i.URL,
-		&i.Created,
-		&i.Updated,
-		&i.OwnerID,
-	)
-	return &i, err
+func (q *Queries) DeleteTracklist(ctx context.Context, arg DeleteTracklistParams) (int64, error) {
+	result, err := q.db.Exec(ctx, deleteTracklist, arg.ID, arg.OwnerID)
+	if err != nil {
+		return 0, err
+	}
+	return result.RowsAffected(), nil
 }
 
 const getTracklistWithTracks = `-- name: GetTracklistWithTracks :many
-SELECT
-  tracklists.id, tracklists.name, tracklists.date, tracklists.artwork, tracklists.url, tracklists.created, tracklists.updated, tracklists.owner_id,
-  tracks.id, tracks.artist, tracks.name, tracks.genre, tracks.bpm, tracks.key, tracks.created, tracks.updated, tracks.fts_name_and_artist
-FROM "tracklists"
-JOIN "tracklist_tracks" ON "tracklist_tracks"."tracklist_id" = "tracklists"."id"
-JOIN "tracks" ON "tracks"."id" = "tracklist_tracks"."track_id"
-WHERE "tracklists"."id" = $1
-ORDER BY "tracklist_tracks"."track_number" ASC
+SELECT tracklists.id, tracklists.name, tracklists.date, tracklists.artwork, tracklists.url, tracklists.created, tracklists.updated, tracklists.owner_id, tracks.id, tracks.artist, tracks.name, tracks.genre, tracks.bpm, tracks.key, tracks.created, tracks.updated, tracks.fts_name_and_artist, users.display_name AS owner_display_name
+FROM tracklists
+JOIN users ON users.id = tracklists.owner_id
+JOIN tracklist_tracks ON tracklist_tracks.tracklist_id = tracklists.id
+JOIN tracks ON tracks.id = tracklist_tracks.track_id
+WHERE tracklists.id = $1
+ORDER BY tracklist_tracks.track_number ASC
 `
 
 type GetTracklistWithTracksRow struct {
-	Tracklist Tracklist
-	Track     Track
+	Tracklist        Tracklist
+	Track            Track
+	OwnerDisplayName string
 }
 
 func (q *Queries) GetTracklistWithTracks(ctx context.Context, id string) ([]*GetTracklistWithTracksRow, error) {
@@ -157,6 +129,7 @@ func (q *Queries) GetTracklistWithTracks(ctx context.Context, id string) ([]*Get
 			&i.Track.Created,
 			&i.Track.Updated,
 			&i.Track.FtsNameAndArtist,
+			&i.OwnerDisplayName,
 		); err != nil {
 			return nil, err
 		}
@@ -169,29 +142,38 @@ func (q *Queries) GetTracklistWithTracks(ctx context.Context, id string) ([]*Get
 }
 
 const getTracklists = `-- name: GetTracklists :many
-SELECT
-  tracklists.id, tracklists.name, tracklists.date, tracklists.artwork, tracklists.url, tracklists.created, tracklists.updated, tracklists.owner_id,
-  count("tracklists"."id") as "track_count"
-FROM "tracklists"
-JOIN "tracklist_tracks" ON "tracklist_tracks"."tracklist_id" = "tracklists"."id"
-GROUP BY "tracklists"."id"
-ORDER BY "tracklists"."date" DESC
-OFFSET $1
-LIMIT $2
+SELECT tracklists.id, tracklists.name, tracklists.date, tracklists.artwork, tracklists.url, tracklists.created, tracklists.updated, tracklists.owner_id, users.display_name AS owner_display_name,
+  (SELECT count(*) FROM tracklist_tracks WHERE tracklist_id = tracklists.id) AS track_count
+FROM tracklists JOIN users ON users.id = tracklists.owner_id
+WHERE ($1::uuid IS NULL OR tracklists.owner_id = $1)
+  AND ($2::uuid IS NULL OR EXISTS (
+    SELECT 1 FROM tracklist_tracks
+    WHERE tracklist_tracks.tracklist_id = tracklists.id AND tracklist_tracks.track_id = $2
+  ))
+ORDER BY tracklists.date DESC, tracklists.id
+OFFSET $3 LIMIT $4
 `
 
 type GetTracklistsParams struct {
-	Offset int32
-	Limit  int32
+	OwnerID    *string
+	TrackID    *string
+	PageOffset int32
+	PageLimit  int32
 }
 
 type GetTracklistsRow struct {
-	Tracklist  Tracklist
-	TrackCount int64
+	Tracklist        Tracklist
+	OwnerDisplayName string
+	TrackCount       int64
 }
 
 func (q *Queries) GetTracklists(ctx context.Context, arg GetTracklistsParams) ([]*GetTracklistsRow, error) {
-	rows, err := q.db.Query(ctx, getTracklists, arg.Offset, arg.Limit)
+	rows, err := q.db.Query(ctx, getTracklists,
+		arg.OwnerID,
+		arg.TrackID,
+		arg.PageOffset,
+		arg.PageLimit,
+	)
 	if err != nil {
 		return nil, err
 	}
@@ -208,6 +190,7 @@ func (q *Queries) GetTracklists(ctx context.Context, arg GetTracklistsParams) ([
 			&i.Tracklist.Created,
 			&i.Tracklist.Updated,
 			&i.Tracklist.OwnerID,
+			&i.OwnerDisplayName,
 			&i.TrackCount,
 		); err != nil {
 			return nil, err
@@ -220,83 +203,53 @@ func (q *Queries) GetTracklists(ctx context.Context, arg GetTracklistsParams) ([
 	return items, nil
 }
 
-const getTracklistsByTrack = `-- name: GetTracklistsByTrack :many
-SELECT
-  tracklists.id, tracklists.name, tracklists.date, tracklists.artwork, tracklists.url, tracklists.created, tracklists.updated, tracklists.owner_id,
-  (
-    SELECT count("id")
-    FROM "tracklist_tracks"
-    WHERE "tracklist_tracks"."tracklist_id" = "tracklists"."id"
-  ) as "track_count"
-FROM "tracklists"
-JOIN "tracklist_tracks" ON "tracklist_tracks"."tracklist_id" = "tracklists"."id"
-WHERE "tracklist_tracks"."track_id" = $1
-ORDER BY "tracklists"."date" DESC
-OFFSET $2
-LIMIT $3
+const lockOwnedTracklist = `-- name: LockOwnedTracklist :one
+SELECT id, name, date, artwork, url, created, updated, owner_id FROM tracklists WHERE id = $1 AND owner_id = $2 FOR UPDATE
 `
 
-type GetTracklistsByTrackParams struct {
-	TrackID string
-	Offset  int32
-	Limit   int32
+type LockOwnedTracklistParams struct {
+	ID      string
+	OwnerID string
 }
 
-type GetTracklistsByTrackRow struct {
-	Tracklist  Tracklist
-	TrackCount int64
-}
-
-func (q *Queries) GetTracklistsByTrack(ctx context.Context, arg GetTracklistsByTrackParams) ([]*GetTracklistsByTrackRow, error) {
-	rows, err := q.db.Query(ctx, getTracklistsByTrack, arg.TrackID, arg.Offset, arg.Limit)
-	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
-	items := []*GetTracklistsByTrackRow{}
-	for rows.Next() {
-		var i GetTracklistsByTrackRow
-		if err := rows.Scan(
-			&i.Tracklist.ID,
-			&i.Tracklist.Name,
-			&i.Tracklist.Date,
-			&i.Tracklist.Artwork,
-			&i.Tracklist.URL,
-			&i.Tracklist.Created,
-			&i.Tracklist.Updated,
-			&i.Tracklist.OwnerID,
-			&i.TrackCount,
-		); err != nil {
-			return nil, err
-		}
-		items = append(items, &i)
-	}
-	if err := rows.Err(); err != nil {
-		return nil, err
-	}
-	return items, nil
+func (q *Queries) LockOwnedTracklist(ctx context.Context, arg LockOwnedTracklistParams) (*Tracklist, error) {
+	row := q.db.QueryRow(ctx, lockOwnedTracklist, arg.ID, arg.OwnerID)
+	var i Tracklist
+	err := row.Scan(
+		&i.ID,
+		&i.Name,
+		&i.Date,
+		&i.Artwork,
+		&i.URL,
+		&i.Created,
+		&i.Updated,
+		&i.OwnerID,
+	)
+	return &i, err
 }
 
 const updateTracklist = `-- name: UpdateTracklist :one
-UPDATE "tracklists"
-SET "name" = $2, "url" = $3, "date" = $4, "updated" = NOW()
-WHERE "id" = $1
+UPDATE tracklists
+SET name = $1, url = $2, date = $3, updated = NOW()
+WHERE id = $4 AND owner_id = $5
 RETURNING id, name, date, artwork, url, created, updated, owner_id
 `
 
 type UpdateTracklistParams struct {
-	ID   string
-	Name string
-	URL  string
-	Date time.Time
+	Name    string
+	URL     string
+	Date    time.Time
+	ID      string
+	OwnerID string
 }
 
 func (q *Queries) UpdateTracklist(ctx context.Context, arg UpdateTracklistParams) (*Tracklist, error) {
 	row := q.db.QueryRow(ctx, updateTracklist,
-		arg.ID,
 		arg.Name,
 		arg.URL,
 		arg.Date,
+		arg.ID,
+		arg.OwnerID,
 	)
 	var i Tracklist
 	err := row.Scan(

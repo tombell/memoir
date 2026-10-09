@@ -20,6 +20,10 @@ func Write[T any](w http.ResponseWriter, out T) error {
 	}
 
 	encode(w, out)
+	if status == http.StatusNoContent {
+		w.WriteHeader(status)
+		return nil
+	}
 
 	// TODO: move this and the JSON encoding into the encode method?
 	w.Header().Add("Content-Type", "application/json")

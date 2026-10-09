@@ -4,7 +4,9 @@ import (
 	"context"
 	"net/http"
 
+	"github.com/tombell/memoir/internal/auth"
 	"github.com/tombell/memoir/internal/controllers"
+	"github.com/tombell/memoir/internal/errors"
 	"github.com/tombell/memoir/internal/stores/trackliststore"
 )
 
@@ -24,7 +26,11 @@ func (r *DeleteResponse) StatusCode() int {
 // Delete returns an action function that deletes a tracklist with the given ID.
 func Delete(tracklistStore *trackliststore.Store) controllers.ActionFunc[DeleteRequest, *DeleteResponse] {
 	return func(ctx context.Context, input DeleteRequest) (*DeleteResponse, error) {
-		err := tracklistStore.DeleteTracklist(ctx, input.ID)
+		user, ok := auth.UserFromContext(ctx)
+		if !ok {
+			return nil, errors.E("tracklists[delete]", http.StatusUnauthorized)
+		}
+		err := tracklistStore.DeleteTracklist(ctx, input.ID, user.ID)
 		if err != nil {
 			return nil, err
 		}

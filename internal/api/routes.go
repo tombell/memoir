@@ -39,7 +39,7 @@ func routes(
 		ware.CORS(ware.CORSOptions{
 			AllowedOrigins:   []string{config.Auth.Origin},
 			AllowedMethods:   []string{"GET", "POST", "PATCH", "DELETE"},
-			AllowedHeaders:   []string{"API-Token", "Content-Type", "X-CSRF-Token"},
+			AllowedHeaders:   []string{"Content-Type", "X-CSRF-Token"},
 			AllowCredentials: true,
 		}),
 	)
@@ -63,8 +63,9 @@ func routes(
 
 	authorized := middle.Use(
 		base,
-		middleware.Authorize(config.API.Token),
 		ware.Recovery(),
+		middleware.CSRF(config.Auth),
+		middleware.Session(accounts, config.Auth, true),
 	)
 
 	router.Handle("GET /tracklists", api(rw(tracklistscontroller.Index(trackStore, tracklistStore))))

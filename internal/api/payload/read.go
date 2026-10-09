@@ -2,6 +2,8 @@ package payload
 
 import (
 	"encoding/json"
+	"io"
+	"mime"
 	"net/http"
 	"reflect"
 
@@ -15,23 +17,35 @@ func Read[T any](r *http.Request) (T, error) {
 
 	var in T
 
-	if r.Header.Get("Content-Type") == "application/json" {
-		if err := json.NewDecoder(r.Body).Decode(&in); err != nil {
-			return in, errors.E(op, errors.Strf("could not decode json: %w", err))
+	media, _, _ := mime.ParseMediaType(r.Header.Get("Content-Type"))
+	if (r.Method == http.MethodPost || r.Method == http.MethodPatch) && media == "application/json" {
+		decoder := json.NewDecoder(r.Body)
+		decoder.DisallowUnknownFields()
+		if err := decoder.Decode(&in); err != nil {
+			return in, errors.E(op, http.StatusBadRequest)
+		}
+		if err := decoder.Decode(new(any)); err != io.EOF {
+			return in, errors.E(op, http.StatusBadRequest)
+		}
+	} else if r.Method == http.MethodPost || r.Method == http.MethodPatch {
+		if media != "multipart/form-data" {
+			return in, errors.E(op, http.StatusUnsupportedMediaType)
 		}
 	}
 
-	decode(r, &in)
+	if err := decode(r, &in); err != nil {
+		return in, err
+	}
 
 	return in, nil
 }
 
 // decode reads specific data from the HTTP request based on struct tags found
 // on the type T.
-func decode[T any](r *http.Request, in T) {
+func decode[T any](r *http.Request, in T) error {
 	st := reflect.TypeOf(in).Elem()
 	if st.Kind() != reflect.Struct {
-		return
+		return nil
 	}
 
 	for i := range st.NumField() {
@@ -57,9 +71,16 @@ func decode[T any](r *http.Request, in T) {
 			if file, header, err := r.FormFile(key); err == nil {
 				val := &File{File: file, Header: header}
 				fieldValue.Set(reflect.ValueOf(val))
+			} else if !errors.Is(err, http.ErrMissingFile) {
+				var tooLarge *http.MaxBytesError
+				if errors.As(err, &tooLarge) {
+					return errors.E("payload[file]", http.StatusRequestEntityTooLarge)
+				}
+				return errors.E("payload[file]", http.StatusBadRequest)
 			}
 
 			continue
 		}
 	}
+	return nil
 }

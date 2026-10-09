@@ -85,6 +85,14 @@ func (e *Error) Message() M {
 			return M{"message": []string{"forbidden"}}
 		case http.StatusNotFound:
 			return M{"message": []string{"not found"}}
+		case http.StatusRequestEntityTooLarge:
+			return M{"message": []string{"request too large"}}
+		case http.StatusUnsupportedMediaType:
+			return M{"message": []string{"unsupported media type"}}
+		case http.StatusUnprocessableEntity:
+			return M{"message": []string{"unprocessable entity"}}
+		case http.StatusTooManyRequests:
+			return M{"message": []string{"too many requests"}}
 		default:
 			return M{"message": []string{"something went wrong"}}
 		}
