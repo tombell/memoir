@@ -9,12 +9,6 @@ nullable tracklist owner for an explicit legacy-data backfill. Ownership becomes
 required in the later cutover migration. Existing tracklists are preserved and
 are not assigned to a user automatically.
 
-## Tests
-
-Run `go test ./...`. Set `TEST_DATABASE_URL` to a disposable PostgreSQL database
-to include integration tests. Each database test creates and removes an isolated
-schema, so the test role needs permission to create schemas.
-
 ## Logs
 
 The API writes logs to stderr. Set `POSTHOG_API_KEY` to your PostHog project
