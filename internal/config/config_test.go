@@ -3,7 +3,7 @@ package config
 import "testing"
 
 func TestLoadPostHog(t *testing.T) {
-	for _, key := range []string{"DATABASE_URL", "AWS_BUCKET", "AWS_REGION", "AWS_KEY", "AWS_SECRET"} {
+	for _, key := range []string{"DATABASE_URL", "API_TOKEN", "AWS_BUCKET", "AWS_REGION", "AWS_KEY", "AWS_SECRET"} {
 		t.Setenv(key, "test")
 	}
 
