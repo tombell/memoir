@@ -4,31 +4,85 @@ Command-line tools and API server for hosting track lists for DJ mixes.
 
 ## Accounts
 
-Anyone can register with an email address, a password of 15 to 128 characters,
-and a display name. Login uses an HttpOnly, host-only cookie; logout revokes the
-session and password reset revokes all sessions. Passwords use Argon2id.
+Tracklists, tracks, search, and most-played tracks are public. Anyone can register
+with an email address, a password of 15 to 128 characters, and a display name.
+Users must verify their email before creating, updating, or deleting their own
+tracklists, or uploading artwork. Tracklist names are unique within each account.
+Tracks and artwork remain shared. A public tracklist includes an `owner` with
+only `id` and `display_name`; email addresses appear only in `/auth/me` and login
+responses.
 
-Set `APP_ORIGIN` to the browser application's origin. HTTPS is required outside
-localhost. Host the browser app and API on the same site for SameSite cookies.
-`SESSION_TTL` defaults to `168h` and accepts up to `720h`.
+Set `APP_ORIGIN` to the browser application's origin, such as
+`https://memoir.example.com`. It is the allowed CORS origin and the base URL for
+account links. Production requires HTTPS on both the browser application and
+API. Host them on the same site, such as `memoir.example.com` and
+`api.example.com`, or proxy the API through the application's origin. The
+`SameSite=Lax` cookies do not support unrelated frontend and API domains.
 
-Fetch `GET /auth/csrf` with credentials, then send `data.csrf_token` in the
-`X-CSRF-Token` header on account POST requests. Use `credentials: 'include'`.
-The server requires the configured Origin and JSON request bodies.
+Local development defaults to `APP_ORIGIN=http://localhost:3000` and an API at
+`http://localhost:8080`. Use the same hostname for both. Plain HTTP cookies are
+supported only with a localhost origin. `SESSION_TTL` defaults to `168h` and
+accepts a positive Go duration up to `720h`.
 
-Account endpoints include registration, login, logout, `/auth/me`, email
-verification and resending, forgot password, and reset password. Verification
-links expire after 24 hours, and reset links after one hour. Links work once.
-The frontend must handle `/verify-email` and `/reset-password` with a token in
-the URL fragment and submit that token in the API request body.
+Sessions use HttpOnly, host-only cookies, with Secure and the `__Host-` prefix
+under HTTPS. The database stores token hashes. Logout revokes the current
+session, and password reset revokes every session for the account. Passwords use
+Argon2id with a random salt, 64 MiB of memory, three iterations, and one lane.
 
-Account requests are limited per process and client IP, with additional limits
-per email and operation. Forwarded IP headers are not trusted implicitly.
-Content writes still use `API_TOKEN` until the ownership cutover layer.
+| Endpoint | JSON body | Result |
+| --- | --- | --- |
+| `GET /auth/csrf` | None | `data.csrf_token` and a CSRF cookie |
+| `POST /auth/register` | `email`, `password`, `display_name` | 202 and a generic message |
+| `POST /auth/login` | `email`, `password` | `data` containing the account and a session cookie |
+| `POST /auth/logout` | None | 204 and a cleared session cookie |
+| `GET /auth/me` | None | `data` containing the current account |
+| `POST /auth/verify-email` | `token` | 204 |
+| `POST /auth/resend-verification` | `email` | 202 and a generic message |
+| `POST /auth/forgot-password` | `email` | 202 and a generic message |
+| `POST /auth/reset-password` | `token`, `password` | 204; log in again |
 
-`memoir-user` provisions a verified account using a password from stdin. Its
-`-claim-legacy-tracklists` flag assigns currently unowned tracklists to that
-account in the same transaction.
+Fetch `/auth/csrf` with credentials before posting. Send its token in
+`X-CSRF-Token` on every POST, PATCH, or DELETE, including login and logout.
+Browser requests must use `credentials: 'include'`. The server requires an exact
+matching `Origin` on those requests. JSON endpoints accept `application/json`,
+including a charset parameter, and reject unknown fields.
+
+```js
+const api = 'http://localhost:8080';
+const { data } = await fetch(`${api}/auth/csrf`, {
+  credentials: 'include',
+}).then(response => response.json());
+
+const response = await fetch(`${api}/auth/login`, {
+  method: 'POST',
+  credentials: 'include',
+  headers: {
+    'Content-Type': 'application/json',
+    'X-CSRF-Token': data.csrf_token,
+  },
+  body: JSON.stringify({ email, password }),
+});
+```
+
+The frontend must implement `/verify-email` and `/reset-password`. Emails link
+to these paths with a `#token=...` fragment. Read the fragment, remove it from
+browser history, then submit the token in the appropriate API request body.
+Verification links expire after 24 hours and reset links after one hour. Both
+work once; consuming a link invalidates other outstanding links for the same
+account and purpose. A failed delivery does not invalidate an earlier link.
+
+Authentication is limited per process to 50 POST requests per client IP every
+15 minutes, with 10 attempts per email and operation in the same period. The
+API uses the connection's peer IP and ignores forwarded IP headers. When using
+a reverse proxy, apply limits per client at the proxy too. Multiple API
+instances need a shared limiter or gateway limits.
+
+Filter public tracklists with `GET /tracklists?user_id=<uuid>`. This combines
+with `track_id`, `page`, and `per_page`; page size is capped at 100. Authenticated
+writes derive the owner from the session. Missing and non-owned update/delete
+targets return 404. `API_TOKEN` and the `API-Token` header no longer authorize
+requests. Artwork accepts PNG, JPEG, GIF, and WebP files up to 8 MiB. JSON
+content requests are limited to 1 MiB and auth requests to 8 KiB.
 
 ## SMTP
 
@@ -45,6 +99,46 @@ disclose whether an account exists. Delivery errors are logged without
 addresses, credentials, or tokens. Delivery is best effort: a restart, full
 queue, or SMTP failure requires the user to request another email. Sessions and
 expired account tokens are cleaned up hourly.
+
+## Database upgrade
+
+Back up the database and stop the old API before upgrading an existing
+installation. The old API cannot run against the final ownership schema.
+For an empty database, apply all migrations:
+
+```sh
+go tool migrate apply --dsn "$DATABASE_URL" --migrations internal/database/migrations
+```
+
+For an existing installation, first apply migrations through the nullable-owner
+stage using a temporary directory. Then create the chosen owner's verified
+account and assign the old tracklists. The password is read from stdin; do not
+put it in command arguments or shell history.
+
+```sh
+memoir_migrations=$(mktemp -d)
+cp internal/database/migrations/201*.sql "$memoir_migrations/"
+cp internal/database/migrations/20261009000100_add_users_and_sessions.sql "$memoir_migrations/"
+go tool migrate apply --dsn "$DATABASE_URL" --migrations "$memoir_migrations"
+
+read -rs memoir_password
+printf '%s\n' "$memoir_password" | go run ./cmd/memoir-user \
+  -email you@example.com -name 'Your name' -claim-legacy-tracklists
+unset memoir_password
+
+go tool migrate apply --dsn "$DATABASE_URL" --migrations internal/database/migrations
+```
+
+The bootstrap command creates a verified account and claims unowned tracklists
+in one transaction. The final migration refuses to run while any unowned rows
+remain. Downgrading refuses to restore global name uniqueness if different
+owners now share a name; resolve those conflicts first. Configure SMTP and the
+browser origin before starting the new API, and update clients to use cookies.
+
+Development CSV seeds should load in this order: `users`, `tracks`, `tracklists`,
+`tracklist_tracks`. Track seeds omit the generated search vector. The sample
+account has a disabled password hash and cannot
+log in. Provision a real account with `memoir-user` instead.
 
 ## Logs
 
