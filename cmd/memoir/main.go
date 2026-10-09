@@ -13,7 +13,9 @@ import (
 	"github.com/jackc/pgx/v5/pgxpool"
 
 	"github.com/tombell/memoir/internal/api"
+	"github.com/tombell/memoir/internal/auth"
 	"github.com/tombell/memoir/internal/config"
+	"github.com/tombell/memoir/internal/mail"
 	"github.com/tombell/memoir/internal/stores/artworkstore"
 	"github.com/tombell/memoir/internal/stores/datastore"
 	"github.com/tombell/memoir/internal/stores/filestore"
@@ -64,6 +66,15 @@ func run() int {
 
 	dataStore := datastore.New(dbpool)
 	fileStore := filestore.New(cfg)
+	accounts, err := auth.New(dataStore, cfg.Auth, mail.New(cfg.SMTP), logger)
+	if err != nil {
+		logger.Error("failed configuring accounts", "err", err)
+		return 1
+	}
+	cleanupCtx, stopCleanup := context.WithCancel(context.Background())
+	defer stopCleanup()
+	go accounts.RunCleanup(cleanupCtx)
+	go accounts.RunEmail(cleanupCtx)
 
 	server := api.New(
 		logger,
@@ -71,6 +82,7 @@ func run() int {
 		trackliststore.New(dataStore),
 		trackstore.New(dataStore),
 		artworkstore.New(fileStore),
+		accounts,
 	)
 
 	idleConnsClosed := make(chan struct{})
